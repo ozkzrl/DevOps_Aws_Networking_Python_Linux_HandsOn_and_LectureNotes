@@ -120,6 +120,6 @@ Period: 6 hours
   Alarm name  : Billing Alarm
   Descriptions: optional
 ``` 
-- Preview and create
+- Preview and create.
 
 
