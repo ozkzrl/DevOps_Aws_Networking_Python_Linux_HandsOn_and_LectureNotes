@@ -1,4 +1,4 @@
-# Hands-on EC2-05 : Working with EC2 Snapshots
+# Hands-on EC2-05 (Verison 2.0.0) : Working with EC2 Snapshots and AMI's
 
 Purpose of the this hands-on training is to teach students how to take a snapshot of EC2 instance, create an image from EC2 instance and using Data Lifecycle Manager. 
 
@@ -12,8 +12,6 @@ Purpose of the this hands-on training is to teach students how to take a snapsho
 
 - understand of difference between the image and the snapshot.
 
-- create different types of AMI.
-
 - using the Data Lifecycle Manager 
 
 - coping and sharing AMI
@@ -22,15 +20,11 @@ Purpose of the this hands-on training is to teach students how to take a snapsho
 
 Part 1 - Creating an Image from the Snapshot of the Nginx Server and Launching a new Instance
 
-Part 2 - Creating an Image and Launching an Instance from the same Image
+Part 2 - Creating an Image with action menu
 
-Part 3 - Creating an Image from the Snapshot of the Root Volume and Launching a new Instance
+Part 3 - Using Data Lifecycle Manager
 
 Part 4 - Make AMI Public
-
-Part 5 - Create Wordpress with AMI (Bitnami)
-
-Part 6 - Using Data Lifecycle Manager 
 
 ## Part 1 - Creating an Image from the Snapshot of the Nginx Server and Launching a new Instance
 
@@ -58,7 +52,7 @@ Part 6 - Using Data Lifecycle Manager
 
   ```text
   Key: Name 
-  Value: SampleInstance  
+  Value: SnapshotInstance  
   ```
 - First copy the Instance ID and then go to EC2 dashboard and click "Snapshot" section from left-hand menu.
 
@@ -67,129 +61,53 @@ Part 6 - Using Data Lifecycle Manager
 
 Select resource type : Instance
 Instance ID          : Select the instance ID of Nginx
-Name(manually)       : Instance-Snapshot_First
+Name(manually)       : FirstSnapshotNginx
 
 - Click create snapshot.
 
 - Click snapshot `Action` menu and select `create image`
 
 ```text
-Name        : AWSAMI_1
-Description : AWSAMI_1
+Name        : FirstAMINginx
+Description : FirstAMINginx
 ```
 
 - Click the `launch instance` tab.
 
 - Click `myAMI` from left-hand menu.
 
-- Select `AWSAMI_1' AS AMI
+- Select `FirstAMINginx' AS AMI
 
-- Launch instance named "Instance_1_from_Sample_Instance"
+- Launch instance named "InstancefromSnapshotAMI"
 
 - Copy the public IP of the newly created instance and paste it to the browser.
 
 - Show that the Nginx Web Server is working.
 
-## Part 2 - Creating an Image and Launching an Instance from the same Image with "Action Menu"
+## Part 2 - Creating an Image  with "Action Menu"
 
-- Go to `SampleInstance`
+- Go to `SnapshotInstance`
 
 - Click the actions menu.
 
 - Select image >> create image.
 
 ```text
-Name        : AWSAMI_2
-Description : AWSAMI_2
+Name        : SecondAMINginx
+Description : SecondAMINginx
 ```
 
-- Click AMI section from left hand menu and show `AWSAMI_2`
+- Click AMI section from left hand menu and show `SecondAMINginx`
 
-- After AWSAMI creation process is completed, click snapshot section from left-hand menu.
+- After SecondAMINginx creation process is completed, click snapshot section from left-hand menu.
 
--  Show that AWS has created a new snapshot for newly created `AWSAMI_2` image.
+-  Show that AWS has created a new snapshot for newly created `SecondAMINginx` image.
 
--  Click the `launch instance` tab.
+-  Do not create an instace!!!! just show  that altough we skip createing an instance AWS creates snapshot in backround.
 
-- Click `myAMI` from left-hand menu.
+-  Explain the reason. Since you don't create the snaphot manualy  you  may forget to delete snapshot and this cause AWS may charge you. 
 
-- Select `AWSAMI_2`.
-
-
-- Launch instance as named "Instance_2_from_Sample_Instance_"
-
-- Copy the public IP of the newly created instance and paste it to the browser.
-
-- Show that the Nginx Web Server is working.
-
-- Check the "Snapshot Menu" ıf there is an extra snapshot or not. If yes, then  name it. Explain the reason.
-
-```text
-Name : Snapshot_Second_Auto 
-```
-## Part 3 - Creating an Image from the Snapshot of the Root Volume and Launching a new Instance
-
-- Go to EC2 menu and click snapshot section from left-hand menu.
-
-- Click `create snapshot` button.
-```text
-Select resource type : ****Volume
-Instance ID : select the root volume of the SampleInstance
-Name(manually)       : Snapshot_Third 
-```
-
-- Go to the AMI menu and Click create AMI.
-
-```text
-Name        : AWSAMI_3
-Description : AWSAMI_3
-```
-- Click the `launch instance` tab.
-
-- Click `myAMI` from left-hand menu.
-
-- Select `AWSAMI_3`.
-
-- Launch instance as named "Instance_3_from_Sample_Instance_"
-
-- Copy the public IP of the newly created instance and paste it to the browser.
-
-- Show that the Nginx Web Server is working.
-
-## Part 4 - Make AMI public.
-
-- First go to the AMI section  from left-hand menu and say students to not to do together.
-
-- Select the AWSAMI_4
-
-- Click on permission and Click on  "Make public "
-
-- After a while it will be public. Send the AMI ID from slack
-
-- Tell the student to  go Launch Instance-----> Choose AMI------> Community AMI, and paste the "ID of AMI" to the search bar 
-
-- Delete all AMIs and Snapshots. 
-
-## Part 5 - Hosting WordPress on EC2 with AMI
-
-- Create EC2 instnace
-  - AMI: AWS Marketplace  : "WordPress Certified by Bitnami and Automattic" (Free tier)       
-                            ( ami-094729b931e96f9c1)
-  - Instance type         : t2.micro
-  - Volume                : 10Gb is default.***
-  - Tag                   : Key=Name, Value= WordPress
-  - Sec.Grp               : HTTP & HTTPS & SSH are default ***
-  - 
-- Go to the browser and paste WP IP .
-
-- to customize the page >>>>> after the IP add "/wp-admin"
-- In the opening page you need a user name and password for customizing WP
-- Select the wordpress Instance from console
-   - Action  >>>  Monitor and Troubleshoot >>>>>> Get System logs >>>> "user name and password" 
-- Go to browser and log in with credentials. 
-- Delete the WP instance. 
-
-## Part 6 - Using Data Lifecycle Manager :
+## Part 3 - Using Data Lifecycle Manager :
 
 - In the Amazon EC2 Console, under Elastic Block Store——>Lifecycle Manager——>Create Snapshot Lifecycle Policy. 
 
@@ -213,9 +131,9 @@ Description: "Test policy"
 
 ```text
   Key: Name 
-  Value: SampleInstance  
+  Value: SnapshotInstance  
 ```
-- 55.This policy must be associated with an IAM role that has the appropriate permissions. If you choose to create a new role, you must grant relevant role permissions and setup trust relationships correctly. If you are unsure of what role to use, choose Default role. 
+- This policy must be associated with an IAM role that has the appropriate permissions. If you choose to create a new role, you must grant relevant role permissions and setup trust relationships correctly. If you are unsure of what role to use, choose Default role. 
 ```text
   Default Role 
 ```
@@ -250,6 +168,20 @@ Enable Policy
 ```
 - Finally, choose Create Policy. 
 
-- That's it, you're DLM policy is created. Check ıt from console. 
+- That's it, you're DLM policy is created. Check it from console. 
 
 - Delete the policy. 
+
+## Part 4 - Make AMI public.
+
+- First go to the AMI section  from left-hand menu and say students to not to do together.
+
+- Select the FirstAMINginx
+
+- Click on permission and Click on  "Make public"
+
+- After a while it will be public. Send the AMI ID from slack
+
+- Tell the student to check from Community AMI, and paste the "ID of AMI" to the search bar 
+
+- Delete all AMIs and Snapshots. 
