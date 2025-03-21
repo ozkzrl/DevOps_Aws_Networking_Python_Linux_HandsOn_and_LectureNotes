@@ -18,8 +18,8 @@ Kittens Carousel is a static website application deployed with Apache Web Server
    - Application should be deployed in the development environment on AWS EC2 Instance using AWS Cloudformation Service. In the development environment, you can configure your Cloudformation template using the followings,
 
       - The application stack should be created with new AWS resources. 
-   
-      - The application should run on Amazon Linux 2 EC2 Instance
+
+      - Bonus:!!!The application should run on the latest version of Amazon Linux 2023 Image . Here is the link where you can find information about this challenge. ( https://docs.aws.amazon.com/linux/al2023/ug/ec2.html#launch-from-cloudformation )
 
       - EC2 Instance type can be configured as `t2.micro`.
 
