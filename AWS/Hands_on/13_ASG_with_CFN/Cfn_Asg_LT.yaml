@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  This CFN template create ASG and ALB with ASG Target Tracking Policy via CloudFormation template. 
+Parameters:
+
+Mappings:
+  
+Resources:
+
+  myASGPolicy:
+
+  myASG:
+
+  myListener:
+
+  myALB:
+
+  myLT:
+
+  myTargetGrp:
+
+  mySecGrp:
+
+  
+Outputs:
