@@ -11,6 +11,8 @@ Parameters:
     Description: Choose your vpc
     Type: AWS::EC2::VPC::Id
 
+
+ 
   myKeyPair:
     Description: Choose your keypair
     Type: AWS::EC2::KeyPair::KeyName
