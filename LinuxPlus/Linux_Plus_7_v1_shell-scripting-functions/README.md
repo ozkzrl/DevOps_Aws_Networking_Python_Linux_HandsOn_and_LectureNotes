@@ -82,7 +82,7 @@ pwd
 echo $?  #0
 pwt  # It is wrong command
 echo $?  #127
-```
+```vä
 
 - When a bash function completes, its return value is the status of the last statement executed in the function. We can speciy return status by using the `return` keyword. We can think the `return` keyword as exit status of function. 
 
