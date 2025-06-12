@@ -1,10 +1,10 @@
-# Hands-on Terraform-01 : Terraform Installation and Basic Operations:
+# Hands-on Terraform-01: Terraform Installation and Basic Operations:
 
-Purpose of the this hands-on training is to give students the knowledge of basic operations in Terraform.
+The purpose of this hands-on training is to give students the knowledge of basic operations in Terraform.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
 - Install Terraform
 
@@ -18,7 +18,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Install Terraform
 
-- Launch an EC2 instance using the Amazon Linux 2023 AMI with security group allowing SSH connections.
+- Launch an EC2 instance using the Amazon Linux 2023 AMI with a security group allowing SSH connections.
 
 - Connect to your instance with SSH.
 
@@ -37,7 +37,7 @@ sudo dnf update -y
 ```bash
 sudo dnf install -y yum-utils shadow-utils
 ```
-- Use yum-config-manager to add the official HashiCorp Linux repository to the directory of /etc/yum.repos.d.
+- Use yum-config-manager to add the official HashiCorp Linux repository to the directory/etc/yum.repos.d.
 
 ```bash
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
@@ -54,7 +54,7 @@ sudo dnf -y install terraform
 ```bash
 terraform version
 ```
-- list Terraform's available subcommands.
+- List Terraform's available subcommands.
 
 ```bash
 terraform -help
@@ -72,7 +72,7 @@ Common commands:
 
 ```
 
-- Add any subcommand to terraform -help to learn more about what it does and available options.
+- Add any subcommand to terraform -help to learn more about what it does and the available options.
 
 ```bash
 terraform -help apply
@@ -86,9 +86,9 @@ terraform apply -help
 
 - An AWS account.
 
-- The AWS CLI installed. 
+- The AWS CLI is installed. 
 
-- Your AWS credentials configured locally. 
+- Your AWS credentials are configured locally. 
 
 ```bash
 aws configure
@@ -98,15 +98,15 @@ aws configure
 
 - We will use IAM role (temporary credentials) for accessing your AWS account. 
 
-### Create a role in IAM management console.
+### Create a role in the IAM management console.
 
-- Secure way to make API calls is to create a role and assume it. It gives temporary credentials for access your account and makes API calls.
+- A secure way to make API calls is to create a role and assume it. It gives temporary credentials for accessing your account and making API calls.
 
-- Go to the IAM service, click "roles" in the navigation panel on the left then click "create role". 
+- Go to the IAM service, click "roles" in the navigation panel on the left, then click "create role". 
 
-- Under the use cases, Select `EC2`, click "Next Permission" button.
+- Under the use cases, Select `EC2`, click the "Next Permission" button.
 
-- In the search box write EC2 and select `AmazonEC2FullAccess` then click "Next: Tags" and "Next: Reviews".
+- In the search box, write EC2 and select `AmazonEC2FullAccess`, then click "Next: Tags" and "Next: Reviews".
 
 - Name it `terraform`.
 
@@ -152,30 +152,30 @@ resource "aws_instance" "tf-ec2" {
 }
 ```
 
-- Explain the each block via the following section.
+- Explain each block via the following section.
 
 ### Providers
 
-The `provider` block configures the name of provider, in our case `aws`, which is responsible for creating and managing resources. A provider is a plugin that Terraform uses to translate the API interactions with the service. A provider is responsible for understanding API interactions and exposing resources. Because Terraform can interact with any API, you can represent almost any infrastructure type as a resource in Terraform.
+The `provider` block configures the name of the provider, in our case `aws`, which is responsible for creating and managing resources. A provider is a plugin that Terraform uses to translate the API interactions with the service. A provider is responsible for understanding API interactions and exposing resources. Because Terraform can interact with any API, you can represent almost any infrastructure type as a resource in Terraform.
 
-The `profile` attribute in your provider block refers Terraform to the AWS credentials stored in your AWS Config File, which you created when you configured the AWS CLI. HashiCorp recommends that you never hard-code credentials into `*.tf configuration files`.
+The `profile` attribute in your provider block refers to the AWS credentials stored in your AWS Config File, which you created when you configured the AWS CLI. HashiCorp recommends that you never hard-code credentials into `*.tf configuration files`.
 
-- Note: If you delete your AWS credentials from provider block, Terraform will automatically search for saved API credentials (for example, in ~/.aws/credentials) or IAM instance profile credentials. 
+- Note: If you delete your AWS credentials from the provider block, Terraform will automatically search for saved API credentials (for example, in ~/.aws/credentials) or IAM instance profile credentials. 
 
 ### Resources
 
-The `resource` block defines a piece of infrastructure. A resource might be a physical component such as an EC2 instance.
+The `resource` block defines a piece of infrastructure. A resource might be a physical component, such as an EC2 instance.
 
-The resource block must have two required data for EC2. : the resource type and the resource name. In the example, the resource type is `aws_instance` and the local name is `tf-ec2`. The prefix of the type maps to the provider. In our case "aws_instance" automatically tells Terraform that it is managed by the "aws" provider.
+The resource block must have two required datapoints for EC2. : the resource type and the resource name. In the example, the resource type is `aws_instance` and the local name is `tf-ec2`. The prefix of the type maps to the provider. In our case "aws_instance" automatically tells Terraform that it is managed by the "aws" provider.
 
-The arguments for the resource are within the resource block. The arguments could be things like machine sizes, disk image names, or VPC IDs. For your EC2 instance, you specified an AMI for `Amazon Linux 2023` and instance type will be `t2.micro`.
+The arguments for the resource are within the resource block. The arguments could be things like machine sizes, disk image names, or VPC IDs. For your EC2 instance, you specified an AMI for `Amazon Linux 2023`, and the instance type will be `t2.micro`.
 
 ![terraform-workflow](terraform-workflow.png)
 
 
 ### Initialize the directory
 
-When you create a new configuration you need to initialize the directory with `terraform init`.
+When you create a new configuration, you need to initialize the directory with `terraform init`.
 
 - Initialize the directory.
 
@@ -298,7 +298,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 Note: You didn't specify an "-out" parameter to save this plan, so Terraform can't guarantee that exactly these actions will be performed if "terraform apply" is subsequently run.
 ```
 
-- This output shows the execution plan, describing which actions Terraform will take in order to change real infrastructure to match the configuration. 
+- This output shows the execution plan, describing which actions Terraform will take to change the real infrastructure to match the configuration. 
 
 - Run `terraform apply`. You should see an output similar to the one shown above.
 
@@ -306,7 +306,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so Terraform can
 terraform apply
 ```
 
-- Terraform will wait for your approval before proceeding. If anything in the plan seems incorrect it is safe to abort (ctrl+c) here with no changes made to your infrastructure.
+- Terraform will wait for your approval before proceeding. If anything in the plan seems incorrect, it is safe to abort (ctrl+c) here with no changes made to your infrastructure.
 
 - If the plan is acceptable, type "yes" at the confirmation prompt to proceed. Executing the plan will take a few minutes since Terraform waits for the EC2 instance to become available.
 
@@ -335,16 +335,16 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 ### Manually Managing State
 
-- Terraform has a command called `terraform state` for advanced state management. For example, if you have a long state file (detailed) and you just want to see the name of your resources, which you can get them by using the `list` subcommand.
+- Terraform has a command called `terraform state` for advanced state management. For example, if you have a long state file (detailed) and you just want to see the name of your resources, you can get them by using the `list` subcommand.
 
 ```bash
 terraform state list
 aws_instance.tf-ec2
 ```
 
-### Creating a AWS S3 bucket
+### Creating an AWS S3 bucket
 
-- Create a S3 bucket. Go to the `main.tf` and add the followings.
+- Create an S3 bucket. Go to the `main.tf` and add the following.
 
 ```t
 terraform {
@@ -374,9 +374,9 @@ resource "aws_s3_bucket" "tf-s3" {
 }
 ```
 
-- Write your pem file without .pem extension and change the "addwhateveryouwant" part of the bucket name. Because bucket name must be unique.
+- Write your pem file without .pem extension and change the "addwhateveryouwant" part of the bucket name. Because the bucket name must be unique.
 
-- Run the command `terraform plan` and `terraform apply`.
+- Run the commands `terraform plan` and `terraform apply`.
 
 ```bash
 terraform plan
@@ -395,9 +395,9 @@ Error: Error creating S3 bucket: AccessDenied: Access Denied
 terraform apply -auto-approve
 ```
 
-- `-auto-approve` means to skip the approval of plan before applying.
+- `-auto-approve` means to skip the approval of the plan before applying.
 
-- Go to the AWS console, check the S3 bucket. Then check the `terraform.tfstate` and `terraform.tfstate.backup` file.
+- Go to the AWS console, check the S3 bucket. Then check the `terraform.tfstate` and `terraform.tfstate.backup` files.
 
 
 ### Destroy
