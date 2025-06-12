@@ -1,10 +1,10 @@
-# Hands-on Terraform-03 : Terraform Data Sources, Remote Backend and Provisioners.
+# Hands-on Terraform-03: Terraform Data Sources, Remote Backend, and Provisioners.
 
-Purpose of the this hands-on training is to give students the knowledge of terraform data sources, remote backend and provisioners in Terraform.
+The purpose of this hands-on training is to give students the knowledge of Terraform data sources, remote backend, and provisioners in Terraform.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
 - Use terraform data sources.
 - Create a remote backend.
@@ -20,9 +20,9 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Terraform Data Sources
 
-- `Data sources` allow data to be fetched or computed for use elsewhere in Terraform configuration.
+- `Data sources` allow data to be fetched or computed for use elsewhere in the Terraform configuration.
 
-- Go to the `AWS console and create an image` from your EC2. Select your instance and from actions click image and templates and then give a name for ami `my-ami` and click create. 
+- Go to the `AWS console and create an image` from your EC2. Select your instance and from actions click image and templates, and then give a name for ami `my-ami` and click create. 
 
 # It will take some time. go to the next steps.
 
@@ -49,7 +49,7 @@ terraform {
 }
 
 locals {
-  mytag = "clarusway-local-name"
+  mytag = "local-name"
 }
 
 data "aws_ami" "tf_ami" {
@@ -69,7 +69,7 @@ variable "ec2_type" {
 resource "aws_instance" "tf-ec2" {
   ami           = data.aws_ami.tf_ami.id
   instance_type = var.ec2_type
-  key_name      = "clarus"
+  key_name      = "mykey"
   tags = {
     Name = "${local.mytag}-this is from my-ami"
   }
@@ -84,9 +84,9 @@ terraform plan
 terraform apply
 ```
 
-- Check EC2 instance's ami id.
+- Check the EC2 instance's ami ID.
 
-- You can see which data sources can be used with a resource in the documentation of terraform. For example EBS snapshot.
+- You can see which data sources can be used with a resource in the documentation of Terraform, for example EBS snapshot.
 
 ```bash
 terraform destroy
@@ -94,7 +94,7 @@ terraform destroy
 
 ## Part 2 - Terraform Remote State (Remote backend)
 
-- A `backend` in Terraform determines how tfstate file is loaded/stored and how an operation such as apply is executed. This abstraction enables non-local file state storage, remote execution, etc. By default, Terraform uses the "local" backend, which is the normal behavior of Terraform you're used to.
+- A `backend` in Terraform determines how the tfstate file is loaded/stored and how an operation such as apply is executed. This abstraction enables non-local file state storage, remote execution, etc. By default, Terraform uses the "local" backend, which is the normal behavior of Terraform you're used to.
 
 - Go to the AWS console and attach ``DynamoDBFullAccess`` policy to the existing role.
 
@@ -110,7 +110,7 @@ terraform destroy
      
 ```
 
-- Go to the `s3-backend` folder and create a file name `backend.tf`. Add the followings.
+- Go to the `s3-backend` folder and create a file named `backend.tf`. Add the following.
 
 ```bash
 cd && mkdir s3-backend && cd s3-backend && touch backend.tf
@@ -122,7 +122,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "tf-remote-state" {
-  bucket = "tf-remote-s3-bucket-clarusways-changehere"
+  bucket = "tf-remote-s3-bucket--changehere"
 
   force_destroy = true # Normally it must be false. Because if we delete s3 mistakenly, we lost all of the states.
 }
@@ -154,7 +154,7 @@ terraform init
 terraform apply
 ```
 
-- We have created a S3 bucket and a Dynamodb table. Now associate S3 bucket with the Dynamodb table.
+- We have created an S3 bucket and a DynamoDB table. Now associate the S3 bucket with the Dynamodb table.
 
 - Go to the `main.tf` file under /tf-data/ folder and make the changes.
 
@@ -167,7 +167,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "tf-remote-s3-bucket-clarusways-changehere"
+    bucket = "tf-remote-s3-bucket-changehere"
     key = "env/dev/tf-remote-backend.tfstate"
     region = "us-east-1"
     dynamodb_table = "tf-s3-app-lock"
@@ -176,7 +176,7 @@ terraform {
 }
 ```
 
-- Go to the `tf-data` directoy and run the commands below. First try to terraform apply command.
+- Go to the `tf-data` directory and run the commands below. First, try to terraform apply command.
 
 ```bash
 cd ../tf-data
@@ -190,15 +190,15 @@ terraform init
 terraform apply
 ```
 
-- Because of using S3 bucket for backend, run `terraform init` again. It will ask you to copy the existing tfstate file to s3. yes.
+- Because of using an S3 bucket for the backend, run `terraform init` again. It will ask you to copy the existing tfstate file to S3. yes.
 
 - Go to the AWS console and check the S3 bucket and tfstate file. tfstate file is copied from local to S3 backend.
 
-- Go to the `main.tf` file add the followings and check the versioning on AWS S3 console.
+- Go to the `main.tf` file, add the following, and check the versioning on the AWS S3 console.
 
 ```go
 resource "aws_s3_bucket" "tf-test-1" {
-  bucket = "clarusway-test-1-versioning"
+  bucket = "test-1-versioning"
 }
 ```
 
@@ -206,19 +206,19 @@ resource "aws_s3_bucket" "tf-test-1" {
 terraform apply
 ```
 
-- Go to the `main.tf` file make the changes.
+- Go to the `main.tf` file, make the changes.
 
 ```go
 resource "aws_s3_bucket" "tf-test-2" {
-  bucket = "clarusway-test-2-locking-2"
+  bucket = "test-2-locking-2"
 }
 ```
 
-- Open a new terminal. Write `terraform apply` in the both terminal. Try to run the command in both terminals at the same time.
+- Open a new terminal. Write `terraform apply` in both terminals. Try to run the command in both terminals at the same time.
 
-- We do not get an error in the terminal that we run `terraform apply` command for the first time, but we get an error in the terminal we run later.
+- We do not get an error in the terminal when we run `terraform apply` command for the first time, but we get an error in the terminal when we run it later.
 
-- Now you can try to run the same command with the second terminal. Check the Dynamo DB table and items.
+- Now you can try to run the same command in the second terminal. Check the Dynamo DB table and items.
 
 - Destroy all resources. (Run the command in the `terraform-aws` and `s3-backend` folders.)
 
@@ -232,7 +232,7 @@ terraform destroy
 
 ## Part 3 - Terraform Provisioners
 
-- Provisioners can be used to model specific actions on the local machine or on a remote machine in order to prepare servers or other infrastructure objects for service.
+- Provisioners can be used to model specific actions on the local machine or a remote machine to prepare servers or other infrastructure objects for service.
 
 - The `local-exec` provisioner invokes a local executable after a resource is created. This invokes a process on the machine running Terraform, not on the resource.
 
@@ -240,7 +240,7 @@ terraform destroy
 
 - The `file` provisioner is used to copy files or directories from the machine executing Terraform to the newly created resource. The file provisioner supports both ssh and winrm type connections.
 
-- Most provisioners require access to the remote resource via SSH or WinRM, and expect a nested connection block with details about how to connect. Connection blocks don't take a block label, and can be nested within either a resource or a provisioner.
+- Most provisioners require access to the remote resource via SSH or WinRM, and expect a nested connection block with details about how to connect. Connection blocks don't take a block label and can be nested within either a resource or a provisioner.
 
 - The `self` object represents the provisioner's parent resource, and has all of that resource's attributes. For example, use `self.public_ip` to reference an aws_instance's public_ip attribute.
 
@@ -252,13 +252,13 @@ terraform destroy
 scp -i ~/.ssh/<your pem file> <your pem file> ec2-user@<terraform instance public ip>:/home/ec2-user
 ```
 
-- Or you can drag and drop your pem file to VS Code. Then change permissions of the pem file.
+- Or you can drag and drop your pem file to VS Code. Then, change the permissions of the pem file.
 
 ```bash
 chmod 400 <your pem file>
 ```
 
-- Create a folder name `provisioners` and create a file name `main.tf`. Add the followings.
+- Create a folder named `provisioners` and create a file named `main.tf`. Add the following.
 
 ```bash
 cd && mkdir provisioners && cd provisioners && touch main.tf
@@ -281,7 +281,7 @@ provider "aws" {
 resource "aws_instance" "instance" {
   ami = "ami-0bb84b8ffd87024d8"
   instance_type = "t2.micro"
-  key_name = "clarus"
+  key_name = "mykey"
   vpc_security_group_ids = [ aws_security_group.tf-sec-gr.id ]
   tags = {
     Name = "terraform-instance-with-provisioner"
@@ -296,7 +296,7 @@ resource "aws_instance" "instance" {
     host = self.public_ip
     type = "ssh"
     user = "ec2-user"
-    private_key = file("~/clarus.pem")
+    private_key = file("~/mykey.pem")
   }
 
   provisioner "remote-exec" {
@@ -350,7 +350,7 @@ terraform init
 terraform apply
 ```
 
-- Check the resources that created by terraform.
+- Check the resources that were created by Terraform.
 
 - Terminate the resources.
 
