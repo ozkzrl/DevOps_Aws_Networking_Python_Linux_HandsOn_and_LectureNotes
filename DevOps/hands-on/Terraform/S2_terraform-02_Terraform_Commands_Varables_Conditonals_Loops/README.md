@@ -1,12 +1,12 @@
-# Hands-on Terraform-02 : Terraform Commands, Variables, Conditionals, Loops:
+# Hands-on Terraform-02: Terraform Commands, Variables, Conditionals, Loops:
 
-Purpose of the this hands-on training is to give students the knowledge of terraform commands, variables, conditionals and loops in Terraform.
+The purpose of this hands-on training is to give students the knowledge of Terraform commands, variables, conditionals, and loops in Terraform.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- Use terraform commands, variables, conditionals and loops.
+- Use terraform commands, variables, conditionals, and loops.
 
 ## Outline
 
@@ -44,7 +44,7 @@ provider "aws" {
 resource "aws_instance" "tf-ec2" {
   ami           = "ami-01b799c439fd5516a"
   instance_type = "t2.micro"
-  key_name      = "recep2"  # write your pem file without .pem extension
+  key_nam      = "test"  # write your pem file without .pem extension
   tags = {
     "Name" = "tf-ec2"
   }
@@ -55,7 +55,7 @@ resource "aws_s3_bucket" "tf-s3" {
 }
 ```
 
-- Run the command `terraform plan` and `terraform apply`.
+- Run the commands `terraform plan` and `terraform apply`.
 
 ```bash
 terraform plan
@@ -65,13 +65,13 @@ terraform apply
 
 ### Validate command.
 
-- Go to the terminal and run `terraform validate`. It validates the Terraform files syntactically correct and internally consistent.  
+- Go to the terminal and run `terraform validate`. It validates that the Terraform files are syntactically correct and internally consistent.  
 
 ```bash
 terraform validate
 ```
 
-- Go to `main.tf` file and delete last curly bracket "}" and key_name's last letter (key_nam). And Go to terminal and run the command `terraform validate`. After taking the errors correct them. Then run the command again.
+- Go to `main.tf` file and delete the last curly bracket "}" and key_name's last letter (key_nam). And go to the terminal and run the command `terraform validate`. After taking the errors correct them. Then run the command again.
 
 ```bash
 $ terraform validate 
@@ -89,7 +89,7 @@ $ terraform validate
 Error: Unsupported argument
 │ 
 │   on main.tf line 17, in resource "aws_instance" "tf-ec2":
-│   17:     key_nam = "recep2"
+│   17:     key_nam = "test"
 │ 
 │ An argument named "key_nam" is not expected here. Did you mean "key_name"?
 
@@ -99,7 +99,7 @@ Success! The configuration is valid.
 ```
 
 
-- Go to `main.tf` file and copy the EC2 instance block and paste it. And Go to terminal and run the command `terraform validate`. After taking the errors correct them. Then run the command again.
+- Go to `main.tf` file and copy the EC2 instance block and paste it. And go to the terminal and run the command `terraform validate`. After taking the errors, correct them. Then run the command again.
 
 ```bash
 $ terraform validate 
@@ -115,7 +115,7 @@ $ terraform validate
 
 ### fmt command.
 
-- Go to `main.tf` file and add random indentations. Then go to terminal and run the command `terraform fmt`. "terraform fmt" command reformat your configuration file in the standard style.
+- Go to `main.tf` file and add random indentations. Then go to the terminal and run the command `terraform fmt`. The "terraform fmt" command reformats your configuration file in the standard style.
 
 ```bash
 terraform fmt
@@ -125,7 +125,7 @@ terraform fmt
 
 ### terraform console
 
-- Go to the terminal and run `terraform console`.This command provides an interactive command-line console for evaluating and experimenting with expressions. This is useful for testing interpolations before using them in configurations, and for interacting with any values currently saved in state. You can see the attributes of resources in tfstate file and check built in functions before you write in your configuration file. 
+- Go to the terminal and run `terraform console`.This command provides an interactive command-line console for evaluating and experimenting with expressions. This is useful for testing interpolations before using them in configurations, and for interacting with any values currently saved in state. You can see the attributes of resources in the tfstate file and check built-in functions before you write in your configuration file. 
 
 - Lets create a file under the terraform-aws directory and name it `cloud` and paste `hello devops engineers`.
 
@@ -149,7 +149,7 @@ terraform console
 
 - Go to the terminal and run `terraform show`.
 
- You can see tfstate file or plan in the terminal. It is more readable than `terraform.tfstate`.
+ You can see the tfstate file or plan in the terminal. It is more readable than `terraform.tfstate`.
 
 ```bash
 terraform show
@@ -157,9 +157,9 @@ terraform show
 
 ### graph command.
 
-- Go to the terminal and run `terraform graph`. It creates a visual graph of Terraform resources. The output of "terraform graph" command is in the DOT format, which can easily be converted to an image by making use of dot provided by GraphViz.
+- Go to the terminal and run `terraform graph`. It creates a visual graph of Terraform resources. The output of the "terraform graph" command is in the DOT format, which can easily be converted to an image by making use of the dot provided by GraphViz.
 
-- Copy the output and paste it to the `https://dreampuf.github.io/GraphvizOnline`. Then display it. If you want to display this output in your local, you can download graphviz (`sudo yum install graphviz`) and take a `graph.svg` with the command `terraform graph | dot -Tsvg > graph.svg`.
+- Copy the output and paste it into the `https://dreampuf.github.io/GraphvizOnline`. Then display it. If you want to display this output locally, you can download Graphviz (`sudo yum install graphviz`) and take a `graph.svg` with the command `terraform graph | dot -Tsvg > graph.svg`.
 
 ```bash
 terraform graph
@@ -169,7 +169,7 @@ terraform graph
 
 - Output values make information about your infrastructure available on the command line, and can expose information for other Terraform configurations to use.
 
-- Now add the followings to the `main.tf` file.  Then run the commands `terraform apply or terraform refresh` and `terraform output`. `terraform output` command is used for reading an output from a state file. It reads an output variable from a Terraform state file and prints the value. With no additional arguments, output will display all the outputs for the (parent) root module.  If NAME is not specified, all outputs are printed.
+- Now add the following to the `main.tf` file.  Then run the commands `terraform apply or terraform refresh` and `terraform output`. `terraform output` command is used for reading an output from a state file. It reads an output variable from a Terraform state file and prints the value. With no additional arguments, output will display all the outputs for the (parent) root module.  If NAME is not specified, all outputs are printed.
 
 ```go
 output "tf_example_public_ip" {
@@ -229,7 +229,7 @@ variable "ec2_ami" {
 resource "aws_instance" "tf-ec2" {
   ami           = var.ec2_ami
   instance_type = var.ec2_type
-  key_name      = "clarus"
+  key_name      = "mykey"
   tags = {
     Name = "${var.ec2_name}-instance"
   }
@@ -260,7 +260,7 @@ output "tf_s3_meta" {
 terraform apply
 ```
 
-- Create a file name `variables.tf`. Take the variables from `main.tf` file and paste into "variables.tf". 
+- Create a file named `variables.tf`. Take the variables from `main.tf` file and paste them into "variables.tf". 
 
 ```bash
 terraform validate
@@ -302,7 +302,7 @@ terraform plan -var="s3_bucket_name=recep-new-s3-bucket-2"
 
 - Terraform searches the environment of its own process for environment variables named `TF_VAR_` followed by the name of a declared variable.
 
-- You can also define variable with environment variables that begin with `TF_VAR_`.
+- You can also define a variable with environment variables that begin with `TF_VAR_`.
 
 ```bash
 export TF_VAR_s3_bucket_name=recep-env-varible-bucket
@@ -311,7 +311,7 @@ terraform plan
 
 #### In variable definitions (.tfvars)
 
-- Create a file name `terraform.tfvars`. Add the followings.
+- Create a file named `terraform.tfvars`. Add the following.
 
 ```go
 s3_bucket_name = "tfvars-bucket"
@@ -323,7 +323,7 @@ s3_bucket_name = "tfvars-bucket"
 terraform plan
 ```
 
-- Create a file name `recep.tfvars`. Add the followings.
+- Create a file named `recep.tfvars`. Add the following.
 
 ```go
 s3_bucket_name = "recep-tfvar-bucket"
@@ -335,7 +335,7 @@ s3_bucket_name = "recep-tfvar-bucket"
 terraform plan --var-file="recep.tfvars"
 ```
 
-- Create a file named `recep.auto.tfvars`. Add the followings.
+- Create a file named `recep.auto.tfvars`. Add the following.
 
 ```go
 s3_bucket_name = "recep-auto-tfvar-bucket"
@@ -353,7 +353,7 @@ terraform plan
   - The terraform.tfvars file, if present.
   - Environment variables
 
-- Run terraform apply command.
+- Run the terraform apply command.
 
 ```bash
 terraform apply 
@@ -411,7 +411,7 @@ terraform destroy
 
 - By default, a resource block configures one real infrastructure object. However, sometimes you want to manage several similar objects (like a fixed pool of compute instances) without writing a separate block for each one. Terraform has two ways to do this: count and for_each.
 
-- The `count` argument accepts a whole number, and creates that many instances of the resource or module. Each instance has a distinct infrastructure object associated with it, and each is separately created, updated, or destroyed when the configuration is applied.
+- The `count` argument accepts a whole number and creates that many instances of the resource or module. Each instance has a distinct infrastructure object associated with it, and each is separately created, updated, or destroyed when the configuration is applied.
 
 -  Create a directory ("terraform-conditions-loops") for the new configuration and change into the directory.
 
@@ -455,11 +455,11 @@ terraform init
 terraform apply
 ```
 
-- Check the S3 buckets from console.
+- Check the S3 buckets from the console.
 
 ### Conditional Expressions
 
-- A conditional expression uses the value of a boolean expression to select one of two values.
+- A conditional expression uses the value of a Boolean expression to select one of two values.
 
 - Go to the `main.tf` file, make the changes in order.
 
@@ -488,7 +488,7 @@ variable "users" {
 }
 ```
 
-- Go to the `main.tf` file make the changes. Change the IAM role and add ``IAMFullAccess`` policy.
+- Go to the `main.tf` file, make the changes. Change the IAM role and add ``IAMFullAccess`` policy.
 
 ```go
 resource "aws_s3_bucket" "tf-s3" {
