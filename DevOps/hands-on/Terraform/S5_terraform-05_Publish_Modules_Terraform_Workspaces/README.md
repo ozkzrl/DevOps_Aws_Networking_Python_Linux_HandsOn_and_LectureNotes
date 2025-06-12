@@ -1,10 +1,10 @@
 # Hands-on Terraform-05: Publishing Modules and Terraform Workspaces
 
-Purpose of the this hands-on training is to give students the knowledge of publishing modules and using workspaces in Terraform.
+The purpose of this hands-on training is to give students the knowledge of publishing modules and using workspaces in Terraform.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
 - Publish Terraform Modules
 
@@ -20,7 +20,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Anyone can publish and share modules on the Terraform Registry.
 
-- Published modules support versioning, automatically generate documentation, allow browsing version histories, show examples and READMEs, and more. Terraform recommend publishing reusable modules to a registry.
+- Published modules support versioning, automatically generate documentation, allow browsing version histories, show examples and READMEs, and more. Terraform recommends publishing reusable modules to a registry.
 
 - Public modules are managed via ``Git`` and ``GitHub``. Once a module is published, you can release a new version of a module by simply pushing a properly formed Git tag.
 
@@ -40,12 +40,12 @@ At the end of the this hands-on training, students will be able to;
 
 - source link: https://www.terraform.io/registry/modules/publish
 
-### Create a module to create an aws instance with amazon linux 2023 ami (kernel 6.1).
+### Create a module to create an AWS instance with Amazon Linux 2023 ami (kernel 6.1).
 
 - Create a directory for modules to publish.
 
 ```bash
-cd && mkdir clarusway-modules && cd clarusway-modules && touch main.tf variables.tf outputs.tf versions.tf userdata.sh README.md .gitignore
+cd && mkdir modules && cd modules && touch main.tf variables.tf outputs.tf versions.tf userdata.sh README.md .gitignore
 ```
 
 - Go to the `versions.tf` and copy the latest provider version from the terraform documentaion (https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
@@ -61,7 +61,7 @@ terraform {
 }
 ```
 
-- Go to the `variables.tf` and prepare your modules variables.
+- Go to the `variables.tf` and prepare your module variables.
 
 ```go
 variable "instance_type" {
@@ -182,7 +182,7 @@ output "instance_id" {
 }
 ```
 
-- Go to the `userdata.sh` file and write the followings.
+- Go to the `userdata.sh` file and write the following.
 
 ```bash
 #!/bin/bash
@@ -197,7 +197,7 @@ curl -SL https://github.com/docker/compose/releases/download/v2.23.3/docker-comp
 chmod +x /usr/local/bin/docker-compose
 ```
 
-- Go to the `.gitignore` file and write the followings. 
+- Go to the `.gitignore` file and write the following. 
 
 ```bash
 # Local .terraform directories
@@ -213,8 +213,8 @@ chmod +x /usr/local/bin/docker-compose
 # Crash log files
 crash.log
 
-# Exclude all .tfvars files, which are likely to contain sentitive data, such as
-# password, private keys, and other secrets. These should not be part of version
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# passwords, private keys, and other secrets. These should not be part of version
 # control as they are data points which are potentially sensitive and subject
 # to change depending on the environment.
 *.tfvars
@@ -223,11 +223,11 @@ crash.log
 - Go to the `README.md` and make a description of your module.
 
 ---
-Terraform Module to provision an AWS EC2 instance with the latest amazon linux 2023 ami and installed docker in it.
+Terraform Module to provision an AWS EC2 instance with the latest Amazon Linux 2023 ami and install Docker on it.
 
 Not intended for production use. It is an example module.
 
-It is just for showing how to create a publish module in Terraform Registry.
+It is just for showing how to create a publish module in the Terraform Registry.
 
 Usage:
 
@@ -239,14 +239,14 @@ provider "aws" {
 
 module "docker_instance" {
     source = "<github-username>/docker-instance/aws"
-    key_name = "clarusway"
+    key_name = "mykey"
 }
 ```
 ---
 
-### Create a Github repository for our terraform module
+### Create a GitHub repository for our Terraform module
 
-- Create a `public` github repo and name it as `terraform-aws-docker-instance`.
+- Create a `public` GitHub repo and name it `terraform-aws-docker-instance`.
 
 - Clone the repository to your local.
 
@@ -256,7 +256,7 @@ git clone https://github.com/<your-github-account>/terraform-aws-docker-instance
 
 - ``Copy`` the module files to this repository folder.
 
-- Next, ``push`` the files to github repo and give a tag to version our module. You should give a semantic version to your module.(https://semver.org/)
+- Next, ``push`` the files to github repo and give a tag to version our module. You should give a semantic version to your module. (https://semver.org/)
 
 ```bash
 git add .
@@ -272,25 +272,25 @@ git push --tags
 
 * Terraform Registry --> Sign in --> Github account --> Publish --> Modules --> Select the module repo in Github (terraform-aws-docker-instance) --> Click Agree in Terms --> Publish Module
 
-- Go to the ``Github Repository``. Define a description in `About` part in github repository. (Click settings wheel)
+- Go to the ``Github Repository``. Define a description in the `About` part in github repository. (Click settings wheel)
 
 ```yml
-- Description: Terraform module which creates a docker instance resource on AWS.
+- Description: Terraform module that creates a Docker instance resource on AWS.
 
 - Website: https://registry.terraform.io/modules/<account>/docker-instance/aws/latest
 ```
 
-### Create an EC2 instance on AWS that installed docker with your public module.
+### Create an EC2 instance on AWS that has Docker installed with your public module.
 
-- Create a terraform config file to create an aws instance on AWS.
+- Create a Terraform config file to create an AWS instance on AWS.
 
 ```bash
 cd && mkdir cw-modules && cd cw-modules && touch main.tf
 ```
 
-- Go to the the module page in `Terraform Registry`.
+- Go to the module page in `Terraform Registry`.
 
-- Copy `Provision Instructions` or `Usage` part. Next, paste it to the `main.tf` and add your `key file` name.
+- Copy `Provision Instructions` or `Usage` part. Next, paste it into the `main.tf` and add your `key file` name.
 
 ```go
 provider "aws" {
@@ -299,11 +299,11 @@ provider "aws" {
 
 module "docker-instance" {
   source  = "<github-username>/docker-instance/aws"
-  key_name = "clarusway"
+  key_name = "mykey"
 }
 ```
 
-- Run terraform file.
+- Run the Terraform file.
 
 ```bash
 terraform init
@@ -319,9 +319,9 @@ terraform destroy --auto-approve
 
 ## Part 2 - Terraform Workspaces
 
-### When to use Multiple Workspaces
+### When to Use Multiple Workspaces
 
-- Terraform relies on state to associate resources with real-world objects, so if you run the same configuration multiple times with completely separate state data, Terraform can manage many non-overlapping groups of resources. In some cases you'll want to change variable values for these different resource collections (like when specifying differences between staging and production deployments), and in other cases you might just want many instances of a particular infrastructure pattern.
+- Terraform relies on state to associate resources with real-world objects, so if you run the same configuration multiple times with completely separate state data, Terraform can manage many non-overlapping groups of resources. In some cases you'll want to change variable values for these different resource collections (like when specifying differences between staging and production deployments), and in other cases, you might just want many instances of a particular infrastructure pattern.
 
 - The simplest way to maintain multiple instances of a configuration with completely separate state data is to use multiple working directories.
 
@@ -335,13 +335,13 @@ terraform destroy --auto-approve
 
 ### Using Workspaces
 
-- Create a directory name `workspaces` to learn terraform workspaces. Next create terraform config file name `workspace.tf`.
+- Create a directory name `workspaces` to learn terraform workspaces. Next, create a Terraform config file named `workspace.tf`.
 
 ```bash
 cd && mkdir workspaces && cd workspaces && touch workspace.tf
 ```
 
-- Add the followings.
+- Add the following.
 
 ```go
 provider "aws" {
@@ -387,9 +387,9 @@ terraform workspace show
 terraform workspace select dev
 ```
 
-- After creating namespaces, terraform creates new folders for new workspaces. Check the `workspace` folder and see the new folders.(`terraform.tfstate.d`)
+- After creating namespaces, Terraform creates new folders for new workspaces. Check the `workspace` folder and see the new folders.(`terraform.tfstate.d`)
 
-- Run the following terraform commands to create instances in `dev` and `default` workspaces.
+- Run the following Terraform commands to create instances in `dev` and `default` workspaces.
 
 ```bash
 terraform init
@@ -398,7 +398,7 @@ terraform plan
 terraform workspace select prod
 terraform workspace show
 terraform plan
-# check the plan's "instance_type", "ami", "number of instances" and "tag" parts.
+# check the plan's "instance_type", "ami", "number of instances", and "tag" parts.
 
 terraform workspace select dev
 terraform workspace show
@@ -409,7 +409,7 @@ terraform destroy --auto-approve
 terraform workspace select default
 terraform workspace show
 terraform apply --auto-approve
-# Terraform was created "terraform.tfstate" file in root folder for the "default" workspace.
+# Terraform was created "terraform.tfstate" file in the root folder for the "default" workspace.
 terraform destroy --auto-approve
 ```
 
@@ -420,5 +420,5 @@ terraform workspace list
 terraform workspace show
 terraform workspace delete prod
 terraform workspace delete dev
-# terraform deletes workspaces and their folders included their "state" files. 
+# terraform deletes workspaces and their folders, including their "state" files. 
 ```
