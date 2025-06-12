@@ -20,7 +20,7 @@ At the end of this hands-on training, students will be able to;
 
 - A module is a container for multiple resources that are used together.
 
-- The ``.tf`` files in your working directory when you run terraform plan or terraform apply together from the root module. That module may call other modules and connect them together by passing output values from one to input values of another.
+- The ``.tf`` files in your working directory when you run terraform plan or terraform apply together from the root module. That module may call other modules and connect them together by passing output values from one to the input values of another.
 
 - Create folders named `terraform-modules`, `modules`, `dev`, `prod` directories in the home directory and files as below.
 
@@ -79,7 +79,7 @@ resource "aws_subnet" "private_subnet" {
 
 ```go
 variable "environment" {
-  default = "clarusway"
+  default = "mycompany"
 }
 
 variable "vpc_cidr_block" {
@@ -221,20 +221,20 @@ provider "aws" {
 resource "aws_instance" "tf-instances" {
   ami = "ami-04b70fa74e45c3917"
   instance_type = "t2.micro"
-  key_name = "clarusway"            // change here
+  key_name = "mykey"            // change here
   tags = {
     Name = "ubuntu-24.04"
   }
 }
 ```
 
-- Open the terminal within this directory and initialize the Terraform.
+- Open the terminal within this directory and initialize Terraform.
 
 ```bash
 terraform init
 ```
 
-- Import the Ubuntu instance. (Take the ubuntu 24.04 instance-id from the console)
+- Import the Ubuntu instance. (Take the Ubuntu 24.04 instance ID from the console)
 
 ```bash
 $ terraform import "aws_instance.tf-instances" i-092fe70d1cef163c1
@@ -257,7 +257,7 @@ your Terraform state and will henceforth be managed by Terraform.
 terraform state list
 ```
 
-- Go to the terminal and run the command `terraform plan` and `terraform apply`.
+- Go to the terminal and run the commands `terraform plan` and `terraform apply`.
 
 ```bash
 terraform plan
@@ -289,7 +289,7 @@ resource "aws_instance" "example" {
 }
 ```
 
-- Run the command `terraform plan` and `terraform apply`.
+- Run the commands `terraform plan` and `terraform apply`.
 
 ```bash
 terraform plan
@@ -297,7 +297,7 @@ terraform plan
 terraform apply
 ```
 
-- Check the terraform.tfstate. The ec2 instance is now in your Terraform state.
+- Check the terraform.tfstate. The EC2 instance is now in your Terraform state.
 
 ```bash
 terraform state list
@@ -328,7 +328,7 @@ import {
 }
 ```
 
-- Produce configuration file for `terraform-sg` security group.
+- Produce a configuration file for `terraform-sg` security group.
 
 ```bash
 terraform plan -generate-config-out=terraform-sg.tf
@@ -336,7 +336,7 @@ terraform plan -generate-config-out=terraform-sg.tf
 
 - Check the `terraform-sg.tf` file.
 
-- Run the command `terraform plan` and `terraform apply`.
+- Run the commands `terraform plan` and `terraform apply`.
 
 ```bash
 terraform plan
