@@ -1,6 +1,6 @@
-# Hands-on Terragrunt : Terragrunt Basic Operations:
+# Hands-on Terragrunt: Terragrunt Basic Operations:
 
-Purpose of this hands-on training is to give students the knowledge of basic operations in Terragrunt.
+The purpose of this hands-on training is to give students the knowledge of basic operations in Terragrunt.
 
 ## Learning Outcomes
 
@@ -21,10 +21,10 @@ At the end of this hands-on training, students will be able to;
 - Connect to your instance with SSH.
 
 ```bash
-ssh -i .ssh/clarusway.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
+ssh -i .ssh/mykey.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 ```
 
-- Verify that the installations.
+- Verify the installations.
 
 ```bash
 terraform --version
@@ -36,7 +36,7 @@ terragrunt --version
 terragrunt -help
 ```
 
-- Add any subcommand to terragrunt -help to learn more about what it does and available options.
+- Add any subcommand to terragrunt -help to learn more about what it does and the available options.
 
 ```bash
 terragrunt apply -help
@@ -48,29 +48,29 @@ terragrunt apply -help
 
 - An AWS account.
 
-- The AWS CLI installed. 
+- The AWS CLI is installed. 
 
-- Your AWS credentials configured locally. 
+- Your AWS credentials are configured locally. 
 
 ```bash
 aws configure
 ```
 
-- Hard-coding credentials into any Terraform configuration is not recommended, and risks secret leakage should this file ever be committed to a public version control system. Using AWS credentials in EC2 instance is not recommended.
+- Hard-coding credentials into any Terraform configuration is not recommended, and risks secret leakage should this file ever be committed to a public version control system. Using AWS credentials in an EC2 instance is not recommended.
 
-- We attached IAM role (``AdministratorAccess``) for accessing your AWS account by using terraform config file.
+- We attached an IAM role (``AdministratorAccess``) for accessing your AWS account by using terraform config file.
 
 ### Prepare the environment
 
-- Copy the ``terraform-modules`` directory from your github repo to terragrunt server. And inspect the modules files. The purpose of this module is to create AWS VPC for different environments. 
+- Copy the ``terraform-modules`` directory from your GitHub repo to the terragrunt server. And inspect the module's files. The purpose of this module is to create an AWS VPC for different environments. 
 
-- Next, create a directory to create terragrunt files (directories for different environments nad terragrunt.hcl files ).
+- Next, create a directory to create terragrunt files (directories for different environments and terragrunt.hcl files ).
 
 ```bash
 mkdir terragrunt && cd terragrunt && mkdir dev prod qa stage && cd dev && touch terragrunt.hcl && cd ../prod && touch terragrunt.hcl && cd ../qa && touch terragrunt.hcl && cd ../stage && touch terragrunt.hcl
 ```
 
-- In this handson, we will not run terraform modules, instead we use terragrunt to create AWS VPC for different environments (dev prod qa stage). And we keep our configuration files DRY  and see how to create infrastructure simple way at once run. 
+- In this handson, we will not run terraform modules; instead, we use terragrunt to create AWS VPC for different environments (dev, prod, qa, stage). And we keep our configuration files DRY  and see how to create infrastructure simple way at once. 
 
 ### Terragrunt
 
@@ -80,7 +80,7 @@ mkdir terragrunt && cd terragrunt && mkdir dev prod qa stage && cd dev && touch 
 
 ### Prepare the ``terragrunt.hcl`` files
 
-- Copy and paste the following content to the file `./terragrunt/dev/terragrunt.hcl`.
+- Copy and paste the following content into the file `./terragrunt/dev/terragrunt.hcl`.
 
 ```go
 terraform {
@@ -99,7 +99,7 @@ inputs = {
 }
 ```
 
-- Copy and paste the following content to the file `./terragrunt/prod/terragrunt.hcl`.
+- Copy and paste the following content into the file `./terragrunt/prod/terragrunt.hcl`.
 
 ```go
 terraform {
@@ -118,7 +118,7 @@ inputs = {
 }
 ```
 
-- Copy and paste the following content to the file `./terragrunt/qa/terragrunt.hcl`.
+- Copy and paste the following content into the file `./terragrunt/qa/terragrunt.hcl`.
 
 ```go
 terraform {
@@ -137,7 +137,7 @@ inputs = {
 }
 ```
 
-- Copy and paste the following content to the file `./terragrunt/stage/terragrunt.hcl`.
+- Copy and paste the following content into the file `./terragrunt/stage/terragrunt.hcl`.
 
 ```go
 terraform {
@@ -156,7 +156,7 @@ inputs = {
 }
 ```
 
-- Now, check the terraform-modules folder. Using terraform module and terragrunt are similar. But when we use terragrunt, we keep our main configuration dry and we can create all the infrastructure (for all environments) with one command. 
+- Now, check the terraform-modules folder. Using terraform module and terragrunt is similar. But when we use terragrunt, we keep our main configuration dry, and we can create all the infrastructure (for all environments) with one command. 
 
 - First, go to the `/home/ec2-user/terragrunt/dev` folder and run the following commands.
 
@@ -166,17 +166,17 @@ terragrunt plan
 terragrunt apply
 ```
 
-- After running the commands, we will create our dev infrastucture. Go to the AWS console and check the dev resources.
+- After running the commands, we will create our dev infrastructure. Go to the AWS console and check the dev resources.
 
-- Next, go to the `/home/ec2-user/terragrunt` folder and runt the following command.
+- Next, go to the `/home/ec2-user/terragrunt` folder and run the following command.
 
 ```bash
 terragrunt run-all apply
 ```
 
-- Go to the AWS console and check the prod, qa, stage resources. We created all resources with one command. If we were to run the entire infrastructure with terraform, then we would have to go to all the environment directories and run the terraform init command on all of them separately.
+- Go to the AWS console and check the prod, qa, and staging resources. We created all resources with one command. If we were to run the entire infrastructure with terraform, then we would have to go to all the environment directories and run the Terraform init command on all of them separately.
 
-- Check the terragrunt subfolders, all the resulting files (.terraform, terraform.tfstate, terraform.tfstate.backup, .terraform.lock.hcl) and the terragrunt files after running terraform are there. But the main module subfolders are dry.
+- Check the terragrunt subfolders, all the resulting files (.terraform, terraform.tfstate, terraform.tfstate.backup, .terraform.lock.hcl), and the terragrunt files after running terraform are there. But the main module subfolders are dry.
 
 
 - Finally, destroy all the resources with the following command.
