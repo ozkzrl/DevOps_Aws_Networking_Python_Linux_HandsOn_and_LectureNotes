@@ -44,14 +44,14 @@ provider "aws" {
 resource "aws_instance" "tf-ec2" {
   ami           = "ami-01b799c439fd5516a"
   instance_type = "t2.micro"
-  key_nam      = "test"  # write your pem file without .pem extension
+  key_name      = "test"  # write your pem file without .pem extension
   tags = {
     "Name" = "tf-ec2"
   }
 }
 
 resource "aws_s3_bucket" "tf-s3" {
-  bucket = "recep-tf-test-bucket-addwhateveryouwant"
+  bucket = "tf-test-bucket-addwhateveryouwant"
 }
 ```
 
@@ -215,7 +215,7 @@ terraform {
 }
 
 variable "ec2_name" {
-  default = "recep-ec2"
+  default = "my-ec2"
 }
 
 variable "ec2_type" {
@@ -236,7 +236,7 @@ resource "aws_instance" "tf-ec2" {
 }
 
 variable "s3_bucket_name" {
-  default = "recep-s3-bucket-variable-addwhateveryouwant"
+  default = "s3-bucket-variable-addwhateveryouwant"
 }
 
 resource "aws_s3_bucket" "tf-s3" {
@@ -274,7 +274,7 @@ terraform apply
 
 ```go
 variable "s3_bucket_name" {
-#   default     = "recep-new-s3-bucket-addwhateveryouwant"
+#   default     = "new-s3-bucket-addwhateveryouwant"
 }
 ```
 
@@ -295,7 +295,7 @@ terraform plan
 - You can define variables with `-var` command
 
 ```bash
-terraform plan -var="s3_bucket_name=recep-new-s3-bucket-2"
+terraform plan -var="s3_bucket_name=new-s3-bucket-2"
 ```
 
 #### environment variables
@@ -305,7 +305,7 @@ terraform plan -var="s3_bucket_name=recep-new-s3-bucket-2"
 - You can also define a variable with environment variables that begin with `TF_VAR_`.
 
 ```bash
-export TF_VAR_s3_bucket_name=recep-env-varible-bucket
+export TF_VAR_s3_bucket_name=env-varible-bucket
 terraform plan
 ```
 
@@ -323,22 +323,22 @@ s3_bucket_name = "tfvars-bucket"
 terraform plan
 ```
 
-- Create a file named `recep.tfvars`. Add the following.
+- Create a file named `my.tfvars`. Add the following.
 
 ```go
-s3_bucket_name = "recep-tfvar-bucket"
+s3_bucket_name = "tfvar-bucket"
 ```
 
 - Run the command below.
 
 ```bash
-terraform plan --var-file="recep.tfvars"
+terraform plan --var-file="my.tfvars"
 ```
 
-- Create a file named `recep.auto.tfvars`. Add the following.
+- Create a file named `my.auto.tfvars`. Add the following.
 
 ```go
-s3_bucket_name = "recep-auto-tfvar-bucket"
+s3_bucket_name = "my-auto-tfvar-bucket"
 ```
 
 ```bash
@@ -367,13 +367,13 @@ terraform apply
 
 ```go
 locals {
-  mytag = "recep-local-name"
+  mytag = "my-local-name"
 }
 
 resource "aws_instance" "tf-ec2" {
   ami           = var.ec2_ami
   instance_type = var.ec2_type
-  key_name      = "mk"
+  key_name      = "mykey"
   tags = {
     Name = "${local.mytag}-come from locals"
   }
@@ -441,7 +441,7 @@ variable "num_of_buckets" {
 }
 
 variable "s3_bucket" {
-  default     = "recep-new-s3-bucket-addwhateveryouwant"
+  default     = "new-s3-bucket-addwhateveryouwant"
 }
 
 resource "aws_s3_bucket" "tf-s3" {
