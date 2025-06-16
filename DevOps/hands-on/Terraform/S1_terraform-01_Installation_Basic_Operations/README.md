@@ -370,7 +370,7 @@ resource "aws_instance" "tf-ec2" {
 }
 
 resource "aws_s3_bucket" "tf-s3" {
-  bucket = "recep-tf-test-bucket-addwhateveryouwant"
+  bucket = "tf-test-bucket-addwhateveryouwant"
 }
 ```
 
