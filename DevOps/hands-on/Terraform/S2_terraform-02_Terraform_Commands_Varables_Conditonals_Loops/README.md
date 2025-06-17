@@ -42,7 +42,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "tf-ec2" {
-  ami           = "ami-01b799c439fd5516a"
+  ami           = "ami-09e6f87a47903347c"
   instance_type = "t2.micro"
   key_name      = "test"  # write your pem file without .pem extension
   tags = {
@@ -223,7 +223,7 @@ variable "ec2_type" {
 }
 
 variable "ec2_ami" {
-  default = "ami-0d7a109bf30624c99"
+  default = "ami-09e6f87a47903347c"
 }
 
 resource "aws_instance" "tf-ec2" {
