@@ -16,7 +16,7 @@ At the end of this hands-on training, students will be able to;
 
 - Part 3 - Conditionals and Loops
 
-## Part -1: Terraform Commands
+## Part 1: Terraform Commands
 
 -  Create a directory ("terraform-aws") for the new configuration and change into the directory.
 
