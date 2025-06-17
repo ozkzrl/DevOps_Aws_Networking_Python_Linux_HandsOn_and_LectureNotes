@@ -127,7 +127,7 @@ terraform fmt
 
 - Go to the terminal and run `terraform console`.This command provides an interactive command-line console for evaluating and experimenting with expressions. This is useful for testing interpolations before using them in configurations, and for interacting with any values currently saved in state. You can see the attributes of resources in the tfstate file and check built-in functions before you write in your configuration file. 
 
-- Lets create a file under the terraform-aws directory and name it `cloud` and paste `hello devops engineers`.
+- Let's create a file under the terraform-aws directory and name it `cloud` and paste `hello devops engineers`.
 
 ```bash
 echo "hello devops" > cloud
@@ -375,14 +375,14 @@ resource "aws_instance" "tf-ec2" {
   instance_type = var.ec2_type
   key_name      = "mykey"
   tags = {
-    Name = "${local.mytag}-come from locals"
+    Name = "${local.mytag}-from-locals-block"
   }
 }
 
 resource "aws_s3_bucket" "tf-s3" {
   bucket = var.s3_bucket_name
   tags = {
-    Name = "${local.mytag}-come-from-locals"
+    Name = "${local.mytag}-from-locals-block"
   }
 }
 ```
