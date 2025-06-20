@@ -43,7 +43,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "5.72.1"
+      version = "6.0.0"
     }
   }
 }
@@ -135,15 +135,7 @@ resource "aws_s3_bucket_versioning" "versioning_backend_s3" {
   }
 }
 
-resource "aws_dynamodb_table" "tf-remote-state-lock" {
-  hash_key = "LockID"
-  name     = "tf-s3-app-lock"
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-  billing_mode = "PAY_PER_REQUEST"
-}
+
 ```
 
 - Run the commands below.
@@ -160,18 +152,20 @@ terraform apply
 
 ```go
 terraform {
+
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "5.72.1"
+      source = "hashicorp/aws"
+      version = "6.0.0"
     }
   }
+
   backend "s3" {
     bucket = "tf-remote-s3-bucket-changehere"
     key = "env/dev/tf-remote-backend.tfstate"
     region = "us-east-1"
-    dynamodb_table = "tf-s3-app-lock"
     encrypt = true
+    use_lockfile = true
   }
 }
 ```
@@ -269,7 +263,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "~>5.0"
+      version = "~>6.0"
     }
   }
 }
@@ -279,7 +273,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "instance" {
-  ami = "ami-0bb84b8ffd87024d8"
+  ami = "ami-09e6f87a47903347c"
   instance_type = "t2.micro"
   key_name = "mykey"
   vpc_security_group_ids = [ aws_security_group.tf-sec-gr.id ]
