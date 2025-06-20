@@ -96,7 +96,6 @@ terraform destroy
 
 - A `backend` in Terraform determines how the tfstate file is loaded/stored and how an operation such as apply is executed. This abstraction enables non-local file state storage, remote execution, etc. By default, Terraform uses the "local" backend, which is the normal behavior of Terraform you're used to.
 
-- Go to the AWS console and attach ``DynamoDBFullAccess`` policy to the existing role.
 
 ![state-locking](state-locking.png)
 
