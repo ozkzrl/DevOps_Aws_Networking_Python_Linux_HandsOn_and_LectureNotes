@@ -1,0 +1,28 @@
+services:
+    database:
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: R1234r
+            MYSQL_DATABASE: todo_db
+            MYSQL_USER: myuser
+            MYSQL_PASSWORD: Password_1
+        networks:
+            - mynet
+        volumes:
+        - mysql-data:/var/lib/mysql
+    myapp:
+        build: .
+        restart: always
+        depends_on:
+            - database
+        ports:
+            - "80:80"
+        networks:
+            - mynet
+
+networks:
+    mynet:
+        driver: bridge
+
+volumes:
+  mysql-data:
