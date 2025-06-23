@@ -366,6 +366,18 @@ variable "myami" {
     prod    = "ami-04b70fa74e45c3917"   # Ubuntu Server 22.04 LTS
   }
 }
+
+output "ami" {
+  value = aws_instance.tfmyec2.*.ami
+}
+
+output "type" {
+  value = aws_instance.tfmyec2.*.instance_type
+}
+
+output "tags" {
+  value = aws_instance.tfmyec2.*.tags
+}
 ```
 
 - Workspaces are managed with the ``terraform workspace`` set of commands. We can see the command options with `--help` flag.
