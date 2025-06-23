@@ -30,7 +30,7 @@ At the end of this hands-on training, students will be able to;
 
 * ``GitHub``. The module must be on GitHub and must be a ``public`` repo. This is only a requirement for the public registry. If you're using a private registry, you may ignore this requirement.
 
-* ``Named`` terraform-[PROVIDER]-[NAME]. Module repositories must use this three-part name format, where <NAME> reflects the type of infrastructure the module manages and <PROVIDER> is the main provider where it creates that infrastructure. The <NAME> segment can contain additional hyphens. Examples: terraform-google-vault or terraform-aws-ec2-instance.
+* ``Named`` terraform-[PROVIDER]-[NAME]. Module repositories must use this three-part name format, where <NAME> reflects the type of infrastructure the module manages and [PROVIDER] is the main provider where it creates that infrastructure. The [NAME] segment can contain additional hyphens. Examples: terraform-google-vault or terraform-aws-ec2-instance.
 
 * ``Repository description``. The GitHub repository description is used to populate the short description of the module. This should be a simple one sentence description of the module.
 
