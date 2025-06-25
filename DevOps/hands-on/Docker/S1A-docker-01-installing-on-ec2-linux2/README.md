@@ -1,26 +1,26 @@
-# Hands-on Docker-01: Installing Docker on Amazon Linux 2 AWS EC2 Instance
+# Hands-on Docker-01: Installing Docker on Amazon Linux 2023 AWS EC2 Instance
 
-The purpose of this hands-on training is to teach the students how to install Docker on an Amazon Linux 2 EC2 instance.
+The purpose of this hands-on training is to teach the students how to install Docker on an Amazon Linux 2023 EC2 instance.
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- Install Docker on an Amazon Linux 2 EC2 instance
+- Install Docker on an Amazon Linux 2023023 EC2 instance
 
 - Configure a Cloudformation template for creating a Docker machine
 
 ## Outline
 
-- Part 1 - Launch Amazon Linux 2 EC2 Instance and Connect with SSH
+- Part 1 - Launch Amazon Linux 2023 EC2 Instance and Connect with SSH
 
-- Part 2 - Install Docker on Amazon Linux 2 EC2 Instance
+- Part 2 - Install Docker on Amazon Linux 2023 EC2 Instance
 
 - Part 3 - Configure a Cloudformation Template for a Docker machine
 
-## Part 1 - Launch Amazon Linux 2 EC2 Instance and Connect with SSH
+## Part 1 - Launch Amazon Linux 2023 EC2 Instance and Connect with SSH
 
-- Launch an EC2 instance using the Amazon Linux 2 AMI with a security group allowing SSH connections.
+- Launch an EC2 instance using the Amazon Linux 2023 AMI with a security group allowing SSH connections.
 
 - Connect to your instance with SSH.
 
@@ -28,7 +28,7 @@ At the end of this hands-on training, students will be able to;
 ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 ```
 
-## Part 2 - Install Docker on Amazon Linux 2 EC2 Instance
+## Part 2 - Install Docker on Amazon Linux 2023 EC2 Instance
 
 - Update the installed packages and package cache on your instance.
 
@@ -169,14 +169,14 @@ Server:
 
 ## Part 3 - Configure a Cloudformation Template for a Docker machine
 
-- Write and configure a CloudFormation template to have a Docker machine ready on an Amazon Linux 2 EC2 Instance with a security group allowing SSH connections from anywhere.
+- Write and configure a CloudFormation template to have a Docker machine ready on an Amazon Linux 2023 EC2 Instance with a security group allowing SSH connections from anywhere.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
   This Cloudformation Template creates a Docker machine on EC2 Instance.
-  Docker Machine will run on Amazon Linux 2 (ami-026dea5602e368e96) EC2 Instance with
+  Docker Machine will run on Amazon Linux 2023 (ami-026dea5602e368e96) EC2 Instance with
   custom security group allowing SSH connections from anywhere on port 22.
 
 Parameters:
