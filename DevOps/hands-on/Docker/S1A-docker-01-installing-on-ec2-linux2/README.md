@@ -1,14 +1,14 @@
-# Hands-on Docker-01 : Installing Docker on Amazon Linux 2 AWS EC2 Instance
+# Hands-on Docker-01: Installing Docker on Amazon Linux 2 AWS EC2 Instance
 
-Purpose of the this hands-on training is to teach the students how to install Docker on on Amazon Linux 2 EC2 instance.
+The purpose of this hands-on training is to teach the students how to install Docker on an Amazon Linux 2 EC2 instance.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- install Docker on Amazon Linux 2 EC2 instance
+- Install Docker on an Amazon Linux 2 EC2 instance
 
-- configure a Cloudformation template for creating a Docker machine
+- Configure a Cloudformation template for creating a Docker machine
 
 ## Outline
 
@@ -20,7 +20,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launch Amazon Linux 2 EC2 Instance and Connect with SSH
 
-- Launch an EC2 instance using the Amazon Linux 2 AMI with security group allowing SSH connections.
+- Launch an EC2 instance using the Amazon Linux 2 AMI with a security group allowing SSH connections.
 
 - Connect to your instance with SSH.
 
@@ -68,7 +68,7 @@ sudo systemctl status docker
 sudo usermod -a -G docker ec2-user
 ```
 
-- Normally, the user needs to re-login into bash shell for the group `docker` to be effective, but `newgrp` command can be used activate `docker` group for `ec2-user`, not to re-login into bash shell.
+- Normally, the user needs to re-login into the bash shell for the group `docker` to be effective, but `newgrp` command can be used to activate `docker` group for `ec2-user`, without re-login into the bash shell.
 
 ```bash
 newgrp docker
@@ -169,7 +169,7 @@ Server:
 
 ## Part 3 - Configure a Cloudformation Template for a Docker machine
 
-- Write and configure a Cloudformation Template to have a Docker machine ready on Amazon Linux 2 EC2 Instance with security group allowing SSH connections from anywhere.
+- Write and configure a CloudFormation template to have a Docker machine ready on an Amazon Linux 2 EC2 Instance with a security group allowing SSH connections from anywhere.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
