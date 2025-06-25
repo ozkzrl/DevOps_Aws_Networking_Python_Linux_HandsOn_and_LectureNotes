@@ -6,21 +6,21 @@ This hands-on training aims to teach students how to handle volumes in Docker co
 
 At the end of this hands-on training, students will be able to;
 
-- explain what the Alpine container is and why it is widely used.
+- Explain what the Alpine container is and why it is widely used.
 
-- list available volumes in Docker.
+- List available volumes in Docker.
 
-- create a volume in Docker.
+- Create a volume in Docker.
 
-- inspect properties of a volume in Docker.
+- Inspect properties of a volume in Docker.
 
-- locate the Docker volume mount point.
+- Locate the Docker volume mount point.
 
-- attach a volume to a Docker container.
+- Attach a volume to a Docker container.
 
-- attach the same volume to different containers.
+- Attach the same volume to different containers.
 
-- delete Docker volumes.
+- Delete Docker volumes.
 
 ## Outline
 
@@ -50,19 +50,19 @@ ssh -i .ssh/mykey.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 
 ## Part 2 - Data Persistence in Docker Containers
 
-- Check if the docker service is up and running.
+- Check if the Docker service is up and running.
 
 ```bash
 systemctl status docker
 ```
 
-- Run an `alpine` container with an interactive shell open, and add a command to run the alpine shell. Here, explain explain what the alpine container is and why it is so popular. (Small size, Secure, Simple, Fast boot)
+- Run an `alpine` container with an interactive shell open, and add a command to run the Alpine shell. Here, explain what the Alpine container is and why it is so popular. (Small size, Secure, Simple, Fast boot)
 
 ```bash
 docker run -it alpine ash
 ```
 
-- Display the os-release of the alpine container.
+- Display the os-release of the Alpine container.
 
 ```bash
 cat /etc/os-release
@@ -104,7 +104,7 @@ ls /home
 exit
 ```
 
-- Remove the alpine container.
+- Remove the Alpine container.
 
 ```bash
 docker rm -f 737
@@ -126,49 +126,49 @@ docker ps -a
 docker volume ls
 ```
 
-- Create a volume named `cw-vol`.
+- Create a volume named `my-vol`.
 
 ```bash
-docker volume create cw-vol
+docker volume create my-vol
 ```
 
-- List the volumes available in Docker, should see local volume `cw-vol` in the list.
+- List the volumes available in Docker, should see the local volume `my-vol` in the list.
 
 ```bash
 docker volume ls
 ```
 
-- Show details and explain the volume `cw-vol`. Note the mount point: `/var/lib/docker/volumes/cw-vol/_data`.
+- Show details and explain the volume `my-vol`. Note the mount point: `/var/lib/docker/volumes/my-vol/_data`.
 
 ```bash
-docker volume inspect cw-vol
+docker volume inspect my-vol
 ```
 
-- List all files/folders under the mount point of the volume `cw-vol`, should see nothing listed.
+- List all files/folders under the mount point of the volume `my-vol`, should see nothing listed.
 
 ```bash
-sudo ls -al  /var/lib/docker/volumes/cw-vol/_data
+sudo ls -al  /var/lib/docker/volumes/my-vol/_data
 ```
 
-- Run an `alpine` container with an interactive shell open, name the container as `mycont`, attach the volume `cw-vol` to `/cw` mount point in the container, and add a command to run the alpine shell. Here, explain `--volume` and `v` flags.
+- Run an `alpine` container with an interactive shell open, name the container as `mycont`, attach the volume `my-vol` to `/my` mount point in the container, and add a command to run the alpine shell. Here, explain `--volume` and `v` flags.
 
 ```bash
-docker run -it --name mycont -v cw-vol:/cw alpine ash
+docker run -it --name mycont -v my-vol:/my alpine ash
 ```
 
-- List files/folder in `mycont` container, show mounting point `/cw`, and explain the mounted volume `cw-vol`.
+- List files/folders in `mycont` container, show mounting point `/test`, and explain the mounted volume `my-vol`.
 
 ```bash
 ls
 ```
 
-- Create a file in `mycont` container under `/cw` folder.
+- Create a file in `mycont` container under `/test` folder.
 
 ```bash
-cd cw && echo "This file is created in the container mycont" > i-will-persist.txt
+cd my && echo "This file is created in the container mycont" > i-will-persist.txt
 ```
 
-- List the files in the`/cw` folder, and show the content of `i-will-persist.txt`.
+- List the files in the`/test` folder, and show the content of `i-will-persist.txt`.
 
 ```bash
 ls && cat i-will-persist.txt
@@ -198,33 +198,33 @@ docker rm mycont
 docker ps -a
 ```
 
-- List all files/folders under the volume `cw-vol`, and show that the file `i-will-persist.txt` is there.
+- List all files/folders under the volume `my-vol`, and show that the file `i-will-persist.txt` is there.
 
 ```bash
-sudo ls -al  /var/lib/docker/volumes/cw-vol/_data && sudo cat /var/lib/docker/volumes/cw-vol/_data/i-will-persist.txt
+sudo ls -al  /var/lib/docker/volumes/my-vol/_data && sudo cat /var/lib/docker/volumes/my-vol/_data/i-will-persist.txt
 ```
 
 ## Part 4 - Using Same Volume with Different Containers
 
-- Run an `alpine` container with an interactive shell open, name the container as `mycont2nd`, attach the volume `cw-vol` to `/cw2nd` mount point in the container, and add command to run alpine shell.
+- Run an `alpine` container with an interactive shell open, name the container as `mycont2nd`, attach the volume `my-vol` to `/my2nd` mount point in the container, and add a command to run Alpine shell.
 
 ```bash
-docker run -it --name mycont2nd -v cw-vol:/cw2nd alpine ash
+docker run -it --name mycont2nd -v my-vol:/my2nd alpine ash
 ```
 
-- List the files in `/cw2nd` folder, and show that we can reach the file `i-will-persist.txt`.
+- List the files in `/my2nd` folder, and show that we can reach the file `i-will-persist.txt`.
 
 ```bash
-ls -l /cw2nd && cat /cw2nd/i-will-persist.txt
+ls -l /my2nd && cat /my2nd/i-will-persist.txt
 ```
 
-- Create another file in `mycont2nd` container under the `/cw2nd` folder.
+- Create another file in `mycont2nd` container under the `/my2nd` folder.
 
 ```bash
-cd cw2nd && echo "This is a file of the container mycont2nd" > loadmore.txt
+cd my2nd && echo "This is a file of the container mycont2nd" > loadmore.txt
 ```
 
-- List the files in `/cw2nd` folder, and show the content of `loadmore.txt`.
+- List the files in `/my2nd` folder, and show the content of `loadmore.txt`.
 
 ```bash
 ls && cat loadmore.txt
@@ -236,22 +236,22 @@ ls && cat loadmore.txt
 exit
 ```
 
-- Run a `ubuntu` container with interactive shell open, name the container as `mycont3rd`, attach the volume `cw-vol` to `/cw3rd` mount point in the container, and add command to run bash shell.
+- Run a `ubuntu` container with an interactive shell open, name the container as `mycont3rd`, attach the volume `my-vol` to `/my3rd` mount point in the container, and add a command to run a bash shell.
 
 ```bash
-docker run -it --name mycont3rd -v cw-vol:/cw3rd ubuntu bash
+docker run -it --name mycont3rd -v my-vol:/my3rd ubuntu bash
 ```
 
-- List the files in `/cw3rd` folder, and show that we can reach all the files created earlier.
+- List the files in `/my3rd` folder, and show that we can reach all the files created earlier.
 
 ```bash
-ls -l /cw3rd
+ls -l /my3rd
 ```
 
-- Create another file in `mycont3rd` container under `/cw3rd` folder.
+- Create another file in `mycont3rd` container under `/my3rd` folder.
 
 ```bash
-cd cw3rd && touch file-from-3rd.txt && ls
+cd my3rd && touch file-from-3rd.txt && ls
 ```
 
 - Exit the `mycont3rd` container and return to the ec2-user bash shell.
@@ -260,22 +260,22 @@ cd cw3rd && touch file-from-3rd.txt && ls
 exit
 ```
 
-- Run another `ubuntu` container with interactive shell open, name the container as `mycont4th`, attach the volume `cw-vol` as read-only to `/cw4th` mount point in the container, and add command to run bash shell.
+- Run another `ubuntu` container with an interactive shell open, name the container as `mycont4th`, attach the volume `my-vol` as read-only to `/my4th` mount point in the container, and add a command to run a bash shell.
 
 ```bash
-docker run -it --name mycont4th -v cw-vol:/cw4th:ro ubuntu bash
+docker run -it --name mycont4th -v my-vol:/my4th:ro ubuntu bash
 ```
 
-- List the files in `/cw4th` folder, and show that we can reach all the files created earlier.
+- List the files in `/my4th` folder, and show that we can reach all the files created earlier.
 
 ```bash
-ls -l /cw4th
+ls -l /my4th
 ```
 
-- Try to create another file under `/cw4th` folder. Should see the error `read-only file system`
+- Try to create another file under `/my4th` folder. Should see the error `read-only file system`
 
 ```bash
-cd cw4th && touch file-from-4th.txt
+cd my4th && touch file-from-4th.txt
 ```
 
 - Exit the `mycont4th` container and return to the ec2-user bash shell.
@@ -296,20 +296,20 @@ docker ps -a
 docker rm mycont2nd mycont3rd mycont4th
 ```
 
-- Delete `cw-vol` volume.
+- Delete `my-vol` volume.
 
 ```bash
-docker volume rm cw-vol
+docker volume rm my-vol
 ```
 
-## Part 5 - docker volume behaviors
+## Part 5 - Docker Volume Behaviors
 
 |No | Situation   | Behaviour |
 | ---- | ----------- | ------------ |
-| 1    | If there is no target directory. | The target directory is created and files inside the volume are copied to this directory. |
+| 1    | If there is no target directory. | The target directory is created, and files inside the volume are copied to this directory. |
 | 2    | If there is a target directory, but it is empty. | The files in the volume are copied to the target directory.  |
 | 3    | If there is a target directory and it is not empty, but the volume is empty. | The files in the target directory are copied to volumes. |
-| 4    | If the volume is not empty. | There will be just the files inside the volume regardless of whether the target directory is full or empty. |
+| 4    | If the volume is not empty. | There will be just the files inside the volume, regardless of whether the target directory is full or empty. |
 
 - Create `empty-vol` and `full-vol` volumes.
 
@@ -318,16 +318,16 @@ docker volume create empty-vol
 docker volume create full-vol
 ```
 
-- Run an `alpine` container with interactive shell open, name the container as `vol-lesson`, attach the volume `full-vol` to `/cw` mount point in the container, and add a command to run alpine shell. 
+- Run an `alpine` container with an interactive shell open, name the container as `vol-lesson`, attach the volume `full-vol` to `/test` mount point in the container, and add a command to run Alpine shell. 
 
 ```bash
-docker run -it --name vol-lesson -v full-vol:/cw alpine ash
+docker run -it --name vol-lesson -v full-vol:/test alpine ash
 ```
 
-- Create a file in `full-vol` container under `/cw` folder.
+- Create a file in `full-vol` container under `/test` folder.
 
 ```bash
-cd cw && echo "This file is created in the full-vol volume" > full.txt
+cd my && echo "This file is created in the full-vol volume" > full.txt
 ```
 
 - Exit the `vol-lesson` container and return to the ec2-user bash shell.
@@ -342,36 +342,36 @@ exit
 sudo ls /var/lib/docker/volumes/full-vol/_data
 ```
 
-- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `mycont`, and show the inside of `hello-clarus` directory.
+- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `mycont`, and show the inside of `hello-ondia` directory.
 
 ```bash
-docker run -it --name mycont clarusway/hello-clarus sh
+docker run -it --name mycont ondiacademy/hello-ondia sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
-dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
-/ # cd hello-clarus && ls
+dev           hello-ondia  lib           mnt           proc          run           srv           tmp           var
+/ # cd hello-ondia && ls
 app.py
 ```
 
 - `exit` the container
 
-### Situation-1 and 2:
+### Situation 1 and 2:
 
 |No | Situation   | Behaviour |
 | ---- | ----------- | ------------ |
-| 1    | If there is no target directory. | The target directory is created and files inside the volume are copied to this directory. |
+| 1    | If there is no target directory. | The target directory is created, and files inside the volume are copied to this directory. |
 | 2    | If there is a target directory, but it is empty. | The files in the volume are copied to the target directory.  |
 
 ![situation 1 and 2](situation-1-and-2.png)
 
-- Run the `clarusways/hello-clarus` container with interactive shell open, name the container as `try1`, attach the volume `full-vol` to `/cw` mount point in the container, and show that `/cw` directory is created and files inside volume are copied to this directory.
+- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `try1`, attach the volume `full-vol` to `/test` mount point in the container, and show that `/test` directory is created and files inside the volume are copied to this directory.
 
 ```bash
-docker run -it --name try1 -v full-vol:/cw clarusway/hello-clarus sh
+docker run -it --name try1 -v full-vol:/test ondiacademy/hello-ondia sh
 / # ls
-bin           dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
-cw            etc           home          media         opt           root          sbin          sys           usr
-/ # cd cw && ls
+bin           dev           hello-ondia  lib           mnt           proc          run           srv           tmp           var
+my            etc           home          media         opt           root          sbin          sys           usr
+/ # cd my && ls
 full.txt
 ```
 
@@ -392,14 +392,14 @@ full.txt
 sudo ls /var/lib/docker/volumes/empty-vol/_data
 ```
 
-- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `try2`, and attach the volume `empty-vol` to `/hello-clarus` mount point in the container.
+- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `try2`, and attach the volume `empty-vol` to `/hello-ondia` mount point in the container.
 
 ```bash
-docker run -it --name try2 -v empty-vol:/hello-clarus clarusway/hello-clarus sh
+docker run -it --name try2 -v empty-vol:/hello-ondia ondiacademy/hello-ondia sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
-dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
-/ # cd hello-clarus/ && ls
+dev           hello-ondia  lib           mnt           proc          run           srv           tmp           var
+/ # cd hello-ondia/ && ls
 app.py
 ```
 
@@ -416,7 +416,7 @@ app.py
 
 |No    | Situation   | Behaviour |
 | ---- | ----------- | ------------ |
-| 4    | If the volume is not empty. | There will be just the files inside the volume regardless of whether the target directory is full or empty. |
+| 4    | If the volume is not empty. | There will be just the files inside the volume, regardless of whether the target directory is full or empty. |
 
 ![situation 4](situation-4.png)
 
@@ -427,14 +427,14 @@ sudo ls /var/lib/docker/volumes/full-vol/_data
 full.txt
 ```
 
-- Run the `clarusway/hello-clarus` container with interactive shell open, name the container as `try3`, attach the volume `full-vol` to `/hello-clarus` mount point in the container, and show that we just see the files inside the volume regardless of  the target directory is full or empty.
+- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `try3`, attach the volume `full-vol` to `/hello-ondia` mount point in the container, and show that we just see the files inside the volume regardless of  the target directory is full or empty.
 
 ```bash
-docker run -it --name try3 -v full-vol:/hello-clarus clarusway/hello-clarus sh
+docker run -it --name try3 -v full-vol:/hello-ondia ondiacademy/hello-ondia sh
 / # ls
 bin           etc           home          media         opt           root          sbin          sys           usr
-dev           hello-clarus  lib           mnt           proc          run           srv           tmp           var
-/ # cd hello-clarus/ && ls
+dev           hello-ondia  lib           mnt           proc          run           srv           tmp           var
+/ # cd hello-ondia/ && ls
 full.txt
 ```
 
@@ -451,7 +451,7 @@ docker container ls
 
 ## Part 6 - Bind Mounts
 
-- Run the `nginx` container in the detached mode, name the container as `nginx-default`, and open <public-ip> on the browser and show the nginx default page.
+- Run the `nginx` container in detached mode, name the container as `nginx-default`, and open <public-ip> in the browser and show the nginx default page.
 
 ```bash
 docker run -d --name nginx-default -p 80:80  nginx
@@ -482,13 +482,13 @@ mkdir webpage && cd webpage
 echo "<h1>Welcome to Ondia</h1>" > index.html
 ```
 
-- Run the `nginx` container at the detached mod, name the container as `nginx-new`, attach the directory `/home/ec2-user/webpage` to `/usr/share/nginx/html` mount point in the container, and open <public-ip> on browser and show the web page.
+- Run the `nginx` container in detached mode, name the container as `nginx-new`, attach the directory `/home/ec2-user/webpage` to `/usr/share/nginx/html` mount point in the container, and open <public-ip> in the browser and show the web page.
 
 ```bash
 docker run -d --name nginx-new -p 8080:80 -v /home/ec2-user/webpage:/usr/share/nginx/html nginx
 ```
 
-- Add a security rule for protocol HTTP port 8080 and show Nginx Web Server is running on a Docker Machine.
+- Add a security rule for protocol HTTP port 8080 and show that Nginx Web Server is running on a Docker Machine.
 
 ```text
 http://<public-ip>:8080
@@ -532,7 +532,7 @@ docker rm -f nginx-default nginx-new
 
 > Anonymous volumes are given a random name that's guaranteed to be unique within a given Docker host. Just like named volumes, anonymous volumes persist even if you remove the container that uses them, except if you use the `--rm` flag when creating the container, in which case the anonymous volume associated with the container is destroyed.
 
-> Why we need anonymous volumes:
+> Why do we need anonymous volumes?
 > - **Avoiding Container Layer Bloat:** The container’s writable layer is part of the storage driver, and constantly writing large or temporary files there can slow things down or lead to performance issues.
 > - **Write-Heavy Applications in Read-Only Containers:** When running containers with read-only root filesystems (--read-only), some applications still need write access to temporary directories (e.g., /tmp). Instead of making the whole container writable, an anonymous volume provides a temporary write location.
 > - **Sharing Data Between Container Restarts (Short-Lived Persistence):** If a container restarts, the writable layer is wiped, but anonymous volumes can persist across restarts within the same container lifecycle.
@@ -546,7 +546,7 @@ docker rm -f nginx-default nginx-new
 docker run -dit -v /data --name cont1 busybox sh
 ```
 
-- Check the available volumes and see there is a random named volume is created. 
+- Check the available volumes and see there is a random-named volume is created. 
 
 ```bash
 docker volume ls
@@ -596,7 +596,7 @@ DRIVER    VOLUME NAME
 local     7cbbc785f43581c3300f0ad0bc0dccb61506582df2e56076eee34ab9d3a9bb63
 ```
 
-- We still see the volume because anonymous volumes persist even if you remove the container that uses them, however, if you use ```--rm``` flag when you create the container, the anonymous volume is also deleted when the container stops.
+- We still see the volume because anonymous volumes persist even if you remove the container that uses them; however, if you use ```--rm``` flag when you create the container, the anonymous volume is also deleted when the container stops.
 
 - Create another container that uses an anonymous volume.
 
