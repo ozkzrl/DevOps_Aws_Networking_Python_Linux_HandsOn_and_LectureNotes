@@ -1,18 +1,18 @@
-# Hands-on Docker-02 : Docker Container Basic Operations
+# Hands-on Docker-02: Docker Container Basic Operations
 
-Purpose of the this hands-on training is to give students the knowledge of basic operation on Docker containers.
+The purpose of this hands-on training is to give students the knowledge of basic operations on Docker containers.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- list the help about the Docker commands.
+- List the help about the Docker commands.
 
-- run a Docker container on EC2 instance.
+- Run a Docker container on an EC2 instance.
 
-- list the running and stopped Docker containers.
+- List the running and stopped Docker containers.
 
-- explain the properties of Docker containers.
+- Explain the properties of Docker containers.
 
 - start, stop, and remove Docker containers.
 
@@ -24,7 +24,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launch a Docker Machine Instance and Connect with SSH
 
-- Launch a Docker machine on Amazon Linux 2 AMI with security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
+- Launch a Docker machine on Amazon Linux 2 AMI with a security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
 
 - Connect to your instance with SSH.
 
@@ -46,13 +46,13 @@ sudo systemctl status docker
 docker help | less
 ```
 
-- Run `docker COMMAND --help` to see more information about specific command.
+- Run `docker COMMAND --help` to see more information about a specific command.
 
 ```bash
 docker run --help | less
 ```
 
-- Download and run `ubuntu` os with interactive shell open.
+- Download and run `ubuntu` os with an interactive shell open.
 
 ```bash
 docker run -i -t ubuntu bash
@@ -78,7 +78,7 @@ apt-get update && apt-get upgrade -y
 
 - Show that `ubuntu` container is like any other Ubuntu system but limited.
 
-  - Go to the home folder and create a file named as `myfile.txt`
+  - Go to the home folder and create a file named `myfile.txt`
 
     ```bash
     cd ~ && touch myfile.txt && ls
@@ -102,13 +102,13 @@ apt-get update && apt-get upgrade -y
     vim myfile.txt
     ```
 
-- Exit the `ubuntu` container and return to ec2-user bash shell.
+- Exit the `ubuntu` container and return to the ec2-user bash shell.
 
 ```bash
 exit
 ```
 
-- Show the list of all containers available on Docker machine and explain container properties.
+- Show the list of all containers available on the Docker machine and explain container properties.
 
 ```bash
 docker ps -a
@@ -120,13 +120,13 @@ or
 docker container ls -a
 ```
 
-- Run the second `ubuntu` os with interactive shell open and name container as `mycont` and show that this `ubuntu` container is different from the previous one.
+- Run the second `ubuntu` os with an interactive shell open and name the container as `mycont` and show that this `ubuntu` container is different from the previous one.
 
 ```bash
 docker run -i -t --name mycont ubuntu bash
 ```
 
-- Exit the `ubuntu` container and return to ec2-user bash shell.
+- Exit the `ubuntu` container and return to the ec2-user bash shell.
 
 ```bash
 exit
@@ -162,7 +162,7 @@ docker stop 4e6 && docker container ls -a
 docker start mycont && docker container ls
 ```
 
-- Connect to the interactive shell of running `mycont` container and `exit` afterwards.
+- Connect to the interactive shell of the running `mycont` container and `exit` afterwards.
 
 ```bash
 docker exec -it mycont bash
@@ -174,7 +174,7 @@ docker exec -it mycont bash
 docker container ls -a
 ```
 
-- Restart the first container by its `ID` again and exec -it to it to show that the file we have created is still there under the home folder, and exit afterwards.
+- Restart the first container by its `ID` again and exec -it to show that the file we have created is still there under the home folder, and exit afterwards.
 
 ```bash
 docker start 4e6 && docker exec -it 4e6 bash
@@ -198,7 +198,7 @@ docker rm 4e6
 docker rm mycont
 ```
 
-- Show that both of containers are not listed anymore.
+- Show that both containers are not listed anymore.
 
 ```bash
 docker container ls -a
