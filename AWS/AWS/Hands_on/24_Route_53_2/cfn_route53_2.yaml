@@ -1,0 +1,197 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Purpose of the this hands-on training is to creating a DNS record sets and implement Route 53 routing policies.
+Parameters:
+
+  LatestAmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64'
+
+  LatestWinAmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-windows-latest/Windows_Server-2022-English-Full-Base"
+
+  # LatestWinAmiId:
+  #   Description: windows
+  #   Type: AWS::EC2::Image::Id
+  #   Default: ami-0c798d4b81e585f36 #you need to update regularly.
+
+  defaultSubnetId:
+    Description: Choose your subnetId from default vpc
+    Type: AWS::EC2::Subnet::Id
+
+  myWindowsSubnetId:
+    Description: Choose your PUBLIC subnetId from ondiavpc
+    Type: AWS::EC2::Subnet::Id
+
+  myLocalServerSubnetId:
+    Description: Choose your PUBLIC subnetId from ondiavpc
+    Type: AWS::EC2::Subnet::Id
+
+  myKeyPair:
+    Description: Choose your keypair
+    Type: AWS::EC2::KeyPair::KeyName
+
+  defaultVPC:
+    Description: Choose your default VPC
+    Type: AWS::EC2::VPC::Id
+
+  myondiaVpc:
+    Description: Choose your ondiavpc
+    Type: AWS::EC2::VPC::Id
+
+  myInstanceType:
+    Description: Choose your ec2-type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.micro
+
+Resources:
+  InstanceNVirgina:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref myInstanceType
+      KeyName: !Ref myKeyPair
+      SubnetId: !Ref defaultSubnetId
+      SecurityGroupIds: 
+        - !Ref mySecGrpDefaultVPC
+      Tags:
+        - Key: Name
+          Value: N.virginia_1
+      UserData: !Base64 |
+        #!/bin/bash
+        dnf update -y
+        dnf install -y httpd
+        dnf install -y git
+        cd /home/ec2-user
+        git clone https://github.com/paul-clarusway/preschool-website.git
+        cd /var/www/html
+        cp -R /home/ec2-user/preschool-website/* .
+        systemctl start httpd
+        systemctl enable httpd
+
+
+  InstanceJapan:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref myInstanceType
+      KeyName: !Ref myKeyPair
+      SubnetId: !Ref defaultSubnetId
+      SecurityGroupIds: 
+        - !Ref mySecGrpDefaultVPC
+      Tags:
+        - Key: Name
+          Value: Geo-Japan
+      UserData: !Base64 |
+        #!/bin/bash
+        dnf update -y
+        dnf install -y httpd
+        dnf install -y wget
+        cd /var/www/html
+        wget https://raw.githubusercontent.com/paul-clarusway/route53/refs/heads/main/geo-japan/index.html
+        systemctl start httpd
+        systemctl enable httpd
+
+  InstanceEurope:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref myInstanceType
+      KeyName: !Ref myKeyPair
+      SubnetId: !Ref defaultSubnetId
+      SecurityGroupIds: 
+        - !Ref mySecGrpDefaultVPC 
+      Tags:
+        - Key: Name
+          Value: Geo-Europe
+      UserData: !Base64 |
+        #!/bin/bash
+        dnf update -y
+        dnf install -y httpd
+        dnf install -y wget
+        cd /var/www/html
+        wget https://raw.githubusercontent.com/paul-clarusway/route53/refs/heads/main/frankfurt/index.html
+        systemctl start httpd
+        systemctl enable httpd
+
+  InstanceLocalondiaVPC:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref myInstanceType
+      KeyName: !Ref myKeyPair
+      SubnetId: !Ref myLocalServerSubnetId
+      SecurityGroupIds: 
+        - !Ref mySecGrpondiaVpc
+      Tags:
+        - Key: Name
+          Value: Local
+      UserData: !Base64 |
+        #!/bin/bash
+        dnf update -y
+        dnf install -y httpd
+        dnf install -y git
+        cd /home/ec2-user
+        git clone https://github.com/paul-clarusway/brainwave-website.git
+        cd /var/www/html
+        cp -R /home/ec2-user/brainwave-website/* .
+        systemctl start httpd
+        systemctl enable httpd
+
+  InstanceWindows:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestWinAmiId
+      InstanceType: !Ref myInstanceType
+      KeyName: !Ref myKeyPair
+      SubnetId: !Ref myWindowsSubnetId
+      SecurityGroupIds: 
+        - !Ref mySecGrpondiaVpcWin
+      Tags:
+        - Key: Name
+          Value: Windows
+
+  mySecGrpDefaultVPC:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: HTTP and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref defaultVPC
+
+  mySecGrpondiaVpc:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: HTTP and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref myondiaVpc
+
+  mySecGrpondiaVpcWin:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDP # Required
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref myondiaVpc
