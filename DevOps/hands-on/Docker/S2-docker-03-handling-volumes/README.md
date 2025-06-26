@@ -120,7 +120,7 @@ docker ps -a
 
 - Explain why we need volumes in Docker.
 
-- List the volumes available in Docker, since no volumes were added before the list should be empty.
+List the volumes available in Docker, as no volumes were added before, so the list should be empty.
 
 ```bash
 docker volume ls
@@ -132,7 +132,7 @@ docker volume ls
 docker volume create my-vol
 ```
 
-- List the volumes available in Docker, should see the local volume `my-vol` in the list.
+- List the volumes available in Docker, and you should see the local volume `my-vol` in the list.
 
 ```bash
 docker volume ls
@@ -150,10 +150,10 @@ docker volume inspect my-vol
 sudo ls -al  /var/lib/docker/volumes/my-vol/_data
 ```
 
-- Run an `alpine` container with an interactive shell open, name the container as `mycont`, attach the volume `my-vol` to `/my` mount point in the container, and add a command to run the alpine shell. Here, explain `--volume` and `v` flags.
+- Run an `alpine` container with an interactive shell open, name the container as `mycont`, attach the volume `my-vol` to `/test` mount point in the container, and add a command to run the Alpine shell. Here, explain `--volume` and `v` flags.
 
 ```bash
-docker run -it --name mycont -v my-vol:/my alpine ash
+docker run -it --name mycont -v my-vol:/test alpine ash
 ```
 
 - List files/folders in `mycont` container, show mounting point `/test`, and explain the mounted volume `my-vol`.
@@ -168,7 +168,7 @@ ls
 cd my && echo "This file is created in the container mycont" > i-will-persist.txt
 ```
 
-- List the files in the`/test` folder, and show the content of `i-will-persist.txt`.
+- List the files in the `/test` folder, and show the content of `i-will-persist.txt`.
 
 ```bash
 ls && cat i-will-persist.txt
@@ -192,7 +192,7 @@ docker ps -a
 docker rm mycont
 ```
 
-- Show the list of all containers, and the `mycont` container is gone.
+- Show the list of all containers, and the `mycont` container is removed.
 
 ```bash
 docker ps -a
@@ -206,79 +206,79 @@ sudo ls -al  /var/lib/docker/volumes/my-vol/_data && sudo cat /var/lib/docker/vo
 
 ## Part 4 - Using Same Volume with Different Containers
 
-- Run an `alpine` container with an interactive shell open, name the container as `mycont2nd`, attach the volume `my-vol` to `/my2nd` mount point in the container, and add a command to run Alpine shell.
+- Run an `alpine` container with an interactive shell open, name the container as `mycont2`, attach the volume `my-vol` to `/test2` mount point in the container, and add a command to run Alpine shell.
 
 ```bash
-docker run -it --name mycont2nd -v my-vol:/my2nd alpine ash
+docker run -it --name mycont2 -v my-vol:/test2 alpine ash
 ```
 
-- List the files in `/my2nd` folder, and show that we can reach the file `i-will-persist.txt`.
+- List the files in `/test2` folder, and show that we can reach the file `i-will-persist.txt`.
 
 ```bash
-ls -l /my2nd && cat /my2nd/i-will-persist.txt
+ls -l /test2 && cat /test2/i-will-persist.txt
 ```
 
-- Create another file in `mycont2nd` container under the `/my2nd` folder.
+- Create another file in `mycont2` container under the `/test2` folder.
 
 ```bash
-cd my2nd && echo "This is a file of the container mycont2nd" > loadmore.txt
+cd test2 && echo "This is a file of the container mycont2" > loadmore.txt
 ```
 
-- List the files in `/my2nd` folder, and show the content of `loadmore.txt`.
+- List the files in `/test2` folder, and show the content of `loadmore.txt`.
 
 ```bash
 ls && cat loadmore.txt
 ```
 
-- Exit the `mycont2nd` container and return to the ec2-user bash shell.
+- Exit the `mycont2` container and return to the ec2-user bash shell.
 
 ```bash
 exit
 ```
 
-- Run a `ubuntu` container with an interactive shell open, name the container as `mycont3rd`, attach the volume `my-vol` to `/my3rd` mount point in the container, and add a command to run a bash shell.
+- Run a `ubuntu` container with an interactive shell open, name the container as `mycont3`, attach the volume `my-vol` to `/test3` mount point in the container, and add a command to run a bash shell.
 
 ```bash
-docker run -it --name mycont3rd -v my-vol:/my3rd ubuntu bash
+docker run -it --name mycont3 -v my-vol:/test3 ubuntu bash
 ```
 
-- List the files in `/my3rd` folder, and show that we can reach all the files created earlier.
+- List the files in `/test3` folder, and show that we can reach all the files created earlier.
 
 ```bash
-ls -l /my3rd
+ls -l /test3
 ```
 
-- Create another file in `mycont3rd` container under `/my3rd` folder.
+- Create another file in `mycont3` container under `/test3` folder.
 
 ```bash
-cd my3rd && touch file-from-3rd.txt && ls
+cd test3 && touch file-from-3rd.txt && ls
 ```
 
-- Exit the `mycont3rd` container and return to the ec2-user bash shell.
+- Exit the `mycont3` container and return to the ec2-user bash shell.
 
 ```bash
 exit
 ```
 
-- Run another `ubuntu` container with an interactive shell open, name the container as `mycont4th`, attach the volume `my-vol` as read-only to `/my4th` mount point in the container, and add a command to run a bash shell.
+- Run another `ubuntu` container with an interactive shell open, name the container as `mycont4`, attach the volume `my-vol` as read-only to the `/test4` mount point in the container, and add a command to run a bash shell.
 
 ```bash
-docker run -it --name mycont4th -v my-vol:/my4th:ro ubuntu bash
+docker run -it --name mycont4 -v my-vol:/test4:ro ubuntu bash
 ```
 
-- List the files in `/my4th` folder, and show that we can reach all the files created earlier.
+- List the files in `/test4` folder, and show that we can reach all the files created earlier.
 
 ```bash
-ls -l /my4th
+ls -l /test4
 ```
 
-- Try to create another file under `/my4th` folder. Should see the error `read-only file system`
+- Try to create another file under `/test4` folder. Should see the error `read-only file system`
 
 ```bash
-cd my4th && touch file-from-4th.txt
+cd test4 && touch file-from-4th.txt
 ```
 
-- Exit the `mycont4th` container and return to the ec2-user bash shell.
+- Exit the `mycont4` container and return to the ec2-user bash shell.
 
 ```bash
 exit
@@ -290,10 +290,10 @@ exit
 docker ps -a
 ```
 
-- Delete `mycont2nd`, `mycont3rd` and `mycont4th` containers.
+- Delete `mycont2`, `mycont3` and `mycont4` containers.
 
 ```bash
-docker rm mycont2nd mycont3rd mycont4th
+docker rm mycont2 mycont3 mycont4
 ```
 
 - Delete `my-vol` volume.
@@ -327,7 +327,7 @@ docker run -it --name vol-lesson -v full-vol:/test alpine ash
 - Create a file in `full-vol` container under `/test` folder.
 
 ```bash
-cd my && echo "This file is created in the full-vol volume" > full.txt
+cd test && echo "This file is created in the full-vol volume" > full.txt
 ```
 
 - Exit the `vol-lesson` container and return to the ec2-user bash shell.
@@ -342,7 +342,7 @@ exit
 sudo ls /var/lib/docker/volumes/full-vol/_data
 ```
 
-- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `mycont`, and show the inside of `hello-ondia` directory.
+- Run the `ondiacademy/hello-ondia` container with interactive shell open, name the container as `mycont`, and show the contents of `hello-ondia` directory.
 
 ```bash
 docker run -it --name mycont ondiacademy/hello-ondia sh
@@ -370,8 +370,8 @@ app.py
 docker run -it --name try1 -v full-vol:/test ondiacademy/hello-ondia sh
 / # ls
 bin           dev           hello-ondia  lib           mnt           proc          run           srv           tmp           var
-my            etc           home          media         opt           root          sbin          sys           usr
-/ # cd my && ls
+my            etc           home          media         opt          test          root          sbin          sys           usr
+/ # cd test && ls
 full.txt
 ```
 
@@ -538,7 +538,7 @@ docker rm -f nginx-default nginx-new
 > - **Sharing Data Between Container Restarts (Short-Lived Persistence):** If a container restarts, the writable layer is wiped, but anonymous volumes can persist across restarts within the same container lifecycle.
 > - **Ensuring Data Isn't Stored in the Container Image:** If an application writes logs or temp files, you might accidentally include them in the image when committing changes. Using an anonymous volume ensures these files never get stored inside the image layer.
 
-- If you create multiple containers consecutively that each use anonymous volumes, each container creates its volume. Anonymous volumes aren't reused or shared between containers automatically. To share an anonymous volume between two or more containers, you must mount the anonymous volume using the random volume ID.
+- If you create multiple containers consecutively that each use anonymous volumes, each container creates its own volume. Anonymous volumes aren't reused or shared between containers automatically. To share an anonymous volume between two or more containers, you must mount the anonymous volume using the random volume ID.
 
 - Run the following command to start a **BusyBox** container with an anonymous volume:  
 
@@ -556,7 +556,7 @@ DRIVER    VOLUME NAME
 local     7cbbc785f43581c3300f0ad0bc0dccb61506582df2e56076eee34ab9d3a9bb63
 ```
 
-- Attach to the running container and create a file in ```/data:```
+- Attach to the running container and create a file in ```/data```
 
 ```bash
 docker exec -it cont1 sh
