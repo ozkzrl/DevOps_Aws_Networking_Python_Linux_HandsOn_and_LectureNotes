@@ -1,1 +1,0 @@
-# ondia-aws-devops-11-tr
