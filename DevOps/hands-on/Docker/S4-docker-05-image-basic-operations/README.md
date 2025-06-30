@@ -154,14 +154,14 @@ CMD python3 ./welcome.py
 - Build Docker image from Dockerfile locally, tag it as `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>:<Tag>` and explain steps of building. Note that repo name is the combination of `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>`.
 
 ```bash
-docker build -t "clarusway/flask-app:1.0" .
+docker build -t "ondiacademy/flask-app:1.0" .
 docker image ls
 ```
 
 - Run the newly built image as container in detached mode, connect host `port 80` to container `port 80`, and name container as `welcome`. Then list running containers and connect to EC2 instance from the browser to show the Flask app is running.
 
 ```bash
-docker run -d --name welcome -p 80:80 clarusway/flask-app:1.0
+docker run -d --name welcome -p 80:80 ondiacademy/flask-app:1.0
 docker container ls
 ```
 
@@ -174,10 +174,10 @@ docker login
 - Push newly built image to Docker Hub, and show the updated repo on Docker Hub.
 
 ```bash
-docker push clarusway/flask-app:1.0
+docker push ondiacademy/flask-app:1.0
 ```
 
-- This time, we reduce the size of image.
+- This time, we reduce the size of the image.
 
 - Create a Dockerfile listing necessary packages and modules, and name it `Dockerfile-alpine`
   
@@ -190,19 +190,19 @@ EXPOSE 80
 CMD python ./welcome.py
 ```
 
-- Build Docker image from Dockerfile locally, tag it as `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>:<Tag>` and explain steps of building. Note that repo name is the combination of `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>`.
+- Build Docker image from Dockerfile locally, tag it as `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>:<Tag>` and explain steps of building. Note that the repo name is the combination of `<Your_Docker_Hub_Account_Name>/<Your_Image_Name>`.
 
 ```bash
-docker build -t "clarusway/flask-app:2.0" -f ./Dockerfile-alpine . 
+docker build -t "ondiacademy/flask-app:2.0" -f ./Dockerfile-alpine . 
 docker image ls
 ```
 
 - Note that while the size of `clarusway/flask-app:1.0` is approximately 473MB, the size of `clarusway/flask-app:2.0` is 67MB.
 
-- Run the newly built image as container in detached mode, connect host `port 80` to container `port 80`, and name container as `welcome`. Then list running containers and connect to EC2 instance from the browser to show the Flask app is running.
+- Run the newly built image as a container in detached mode, connect host's `port 80` to container's `port 80`, and name the container as `welcome`. Then list running containers and connect to the EC2 instance from the browser to show the Flask app is running.
 
 ```bash
-docker run -d --name welcome -p 8080:80 clarusway/flask-app:2.0
+docker run -d --name welcome -p 8080:80 ondiacademy/flask-app:2.0
 docker ps
 ```
 
@@ -212,19 +212,19 @@ docker ps
 docker stop welcome && docker rm welcome
 ```
 
-- Push newly built image to Docker Hub, and show the updated repo on Docker Hub.
+- Push the newly built image to Docker Hub, and show the updated repo on Docker Hub.
 
 ```bash
-docker push clarusway/flask-app:2.0
+docker push ondiacademy/flask-app:2.0
 ```
 
 - We can also tag the same image with different tags.
 
 ```bash
-docker image tag clarusway/flask-app:2.0 clarusway/flask-app:latest
+docker image tag clarusway/flask-app:2.0 ondiacademy/flask-app:latest
 ```
 
-- Delete image with `image id` locally.
+- Delete the image with `image id` locally.
 
 ```bash
 docker image rm 497
