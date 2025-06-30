@@ -197,7 +197,7 @@ docker build -t "ondiacademy/flask-app:2.0" -f ./Dockerfile-alpine .
 docker image ls
 ```
 
-- Note that while the size of `clarusway/flask-app:1.0` is approximately 473MB, the size of `clarusway/flask-app:2.0` is 67MB.
+- Note that while the size of `ondiacademy/flask-app:1.0` is approximately 473MB, the size of `ondiacademy/flask-app:2.0` is 67MB.
 
 - Run the newly built image as a container in detached mode, connect host's `port 80` to container's `port 80`, and name the container as `welcome`. Then list running containers and connect to the EC2 instance from the browser to show the Flask app is running.
 
@@ -221,7 +221,7 @@ docker push ondiacademy/flask-app:2.0
 - We can also tag the same image with different tags.
 
 ```bash
-docker image tag clarusway/flask-app:2.0 ondiacademy/flask-app:latest
+docker image tag ondiacademy/flask-app:2.0 ondiacademy/flask-app:latest
 ```
 
 - Delete the image with `image id` locally.
