@@ -158,26 +158,26 @@ docker build -t "ondiacademy/flask-app:1.0" .
 docker image ls
 ```
 
-- Run the newly built image as container in detached mode, connect host `port 80` to container `port 80`, and name container as `welcome`. Then list running containers and connect to EC2 instance from the browser to show the Flask app is running.
+- Run the newly built image as a container in detached mode, connect host `port 80` to container `port 80`, and name container as `welcome`. Then list running containers and connect to EC2 instance from the browser to show the Flask app is running.
 
 ```bash
 docker run -d --name welcome -p 80:80 ondiacademy/flask-app:1.0
 docker container ls
 ```
 
-- Login in to Docker with credentials.
+- Log in to Docker with credentials.
 
 ```bash
 docker login
 ```
 
-- Push newly built image to Docker Hub, and show the updated repo on Docker Hub.
+- Push the newly built image to Docker Hub, and show the updated repo on Docker Hub.
 
 ```bash
 docker push ondiacademy/flask-app:1.0
 ```
 
-- This time, we reduce the size of the image.
+- This time, we'll reduce the size of the image.
 
 - Create a Dockerfile listing necessary packages and modules, and name it `Dockerfile-alpine`
   
