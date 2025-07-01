@@ -1,20 +1,20 @@
 # Hands-on Docker-07: Dockerize To-Do Web API Developed in Python Flask
 
-Purpose of the this hands-on training is to dockerize a Python Flask application with Dockerfile and Docker compose.
+The purpose of this hands-on training is to dockerize a Python Flask application with Dockerfile and Docker Compose.
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- build Docker images.
+- Build Docker images.
 
-- configure Docker Compose to run the Python Flask app.
+- Configure Docker Compose to run the Python Flask app.
 
 ## Outline
 
 - Part 1 - Launch a Docker Machine Instance and Connect with SSH
 
-- Part 2 - Configuring Multi Containers (Python Flask App and MySQL) with Docker Compose
+- Part 2 - Configuring Multi-Containers (Python Flask App and MySQL) with Docker Compose
 
 ## Part 1 - Launch a Docker Machine Instance and Connect with SSH
 
@@ -26,7 +26,7 @@ At the end of this hands-on training, students will be able to;
 ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 ```
 
-## Part 2 - Configuring Multi Containers (Python Flask App and MySQL) with Docker Compose
+## Part 2 - Configuring Multi-Containers (Python Flask App and MySQL) with Docker Compose
 
 - Create a folder for the project and change into your project directory:
   
@@ -35,7 +35,7 @@ mkdir to-do-api
 cd to-do-api
 ```
 
-- Create a `to-do-api.py` with the following coding. 
+- Create a `to-do-api.py` with the following code. 
 
 ```bash
 # Import Flask modules
@@ -65,7 +65,7 @@ def init_todo_db():
     cursor.execute("SHOW TABLES LIKE 'todos';")
     result = cursor.fetchone()
 
-    # If the 'todos' table does not exist, create it and populate with sample data
+    # If the 'todos' table does not exist, create it and populate it with sample data
     if not result:
         todos_table = """
         CREATE TABLE todo_db.todos(
@@ -87,7 +87,7 @@ def init_todo_db():
         cursor.execute(data)
 
 # Write a function named `get_all_tasks` which gets all tasks from the todos table in the db,
-# and return the result as a list of dictionary 
+# and return the result as a list of dictionaries 
 # `[{'task_id': 1, 'title':'XXXX', 'description': 'XXXXXX', 'is_done': 'Yes' or 'No'} ]`.
 def get_all_tasks():
     query = """
@@ -325,7 +325,7 @@ docker network ls
   curl http://<ec2-host-name>/todos/3
   ```
 
-  - Create new task the `To Do List` using `/todos` path and HTTP `POST` method with `curl` command.
+  - Create a new task in the `To Do List` using `/todos` path and the HTTP `POST` method with `curl` command.
 
   ```bash
   curl -H "Content-Type: application/json" -X POST -d '{"title":"Get some REST", "description":"REST in Peace"}' http://<ec2-host-name>/todos
