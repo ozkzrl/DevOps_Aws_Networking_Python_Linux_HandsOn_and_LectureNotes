@@ -6,13 +6,13 @@ The purpose of this hands-on training is to give the students an understanding o
 
 At the end of this hands-on training, students will be able to;
 
-- explain what Docker Compose is.
+- Explain what Docker Compose is.
 
-- install docker-compose
+- Install Docker Compose
 
-- explain what the `compose.yml` is.
+- Explain what the `compose.yml` is.
 
-- build a simple Python web application running on Docker Compose.
+- Build a simple Python web application running on Docker Compose.
 
 ## Outline
 
@@ -34,7 +34,7 @@ ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazon
 
 ## Part 2 - Installing Docker Compose
 
-- For Linux systems, after installing Docker, you need to install Docker Compose separately. But, the Docker Desktop App for Mac and Windows includes `Docker Compose` as a part of those desktop installs.
+- For Linux systems, after installing Docker, you need to install Docker Compose separately. However, the Docker Desktop App for Mac and Windows includes `Docker Compose` as a part of those desktop installs.
 
 - Download the current stable release of `Docker Compose` executable.
 
@@ -93,7 +93,7 @@ def hello():
     return 'Hello World! I have been seen {} times.\n'.format(count)
 ```
 
-- Create another file called `requirements.txt` in your project folder, and add `flask` and `redis` as package list.
+- Create another file called `requirements.txt` in your project folder, and add `flask` and `redis` to the package list.
 
 ```bash
 flask
@@ -158,7 +158,7 @@ and starts the services defined. In this case, the code is statically copied int
 docker-compose up
 ```
 
-- Add a rule within the security group of Docker Instance allowing TCP connections through port `5000` from anywhere in the AWS Management Console.
+- Add a rule within the security group of the Docker Instance allowing TCP connections through port `5000` from anywhere in the AWS Management Console.
 
 ```text
 Type        : Custom TCP
@@ -234,7 +234,7 @@ def hello():
 ```bash
 docker-compose up
 ```
-- Enter http://`ec2-host-name`:5000/ in a browser, and check if the app updated. Show that the changes do not take place on the browser. Explain that it needs `docker-compose up --build` command to refresh the image. 
+- Enter http://`ec2-host-name`:5000/ in a browser, and check if the app has updated. Show that the changes do not take place on the browser. Explain that it needs `docker-compose up --build` command to refresh the image. 
 
 - Press `Ctrl+C` to stop containers. Run `docker-compose down` command and remove the containers.
 
@@ -248,7 +248,7 @@ docker-compose down
 docker-compose up --build
 ```
 
-- Enter http://`ec2-host-name`:5000/ in a browser, and check if the app updated. Show that the changes took place on the browser. 
+- Enter http://`ec2-host-name`:5000/ in a browser, and check if the app has updated. Show that the changes took place on the browser. 
 
 
 - Press `Ctrl+C` to stop containers. Run `docker-compose down` command and remove the containers.
