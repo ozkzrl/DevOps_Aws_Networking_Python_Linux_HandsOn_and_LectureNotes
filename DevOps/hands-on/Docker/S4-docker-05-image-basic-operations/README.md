@@ -47,7 +47,7 @@ At the end of the this hands-on training, students will be able to;
 - Connect to your instance with SSH.
 
 ```bash
-ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
+ssh -i .ssh/mykey.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 ```
 
 ## Part 2 - Using Docker Image Commands and Docker Hub
