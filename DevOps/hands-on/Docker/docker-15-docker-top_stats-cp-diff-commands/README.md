@@ -1,12 +1,12 @@
-# Hands-on Docker-15 : docker top, stats,cp and diff commands
+# Hands-on Docker-15: docker top, stats, cp, and diff commands
 
-Purpose of the this hands-on training is to teach students how to use docker logs, top, stats and cp commands.
+The purpose of this hands-on training is to teach students how to use Docker logs, top, stats, and cp commands.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- use docker logs, top, stats and diff commands.
+- use docker logs, top, stats, and diff commands.
 
 ## Outline
 
@@ -20,7 +20,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launch a Docker Machine Instance and Connect with SSH
 
-- Launch a Docker machine on Amazon Linux 2 AMI with security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
+- Launch a Docker machine on Amazon Linux 2023 AMI with a security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
 
 - Connect to your instance with SSH.
 
@@ -47,24 +47,24 @@ docker stats
 docker stats ng
 ```
 
-- We can limit the memory and cpu usage of containers. Create a new nginx container.
+- We can limit the memory and CPU usage of containers. Create a new nginx container.
 
 ```bash
 docker container run --name ng-2 --memory=200m -d nginx
 ```
 
-- Display the resource usage statistic of containers and pay attention to the limited memory usage of containers. 
+- Display the resource usage statistics of containers and pay attention to the limited memory usage of containers. 
 
 ```bash
 docker stats
 ```
-- Display the information about the CPU of system.
+- Display the information about the CPU of the system.
 
 ```bash
 lscpu
 ```
 
-- Create a new nginx container and limit the cpu usage.
+- Create a new nginx container and limit the CPU usage.
 
 ```bash
 docker container run --name ng-3 --cpus=2 -d nginx
@@ -84,7 +84,7 @@ mkdir myfolder
 docker container run --name ng-4 -d nginx
 ```
 
-- Copy `myfolder` to container.
+- Copy `myfolder` to the container.
 
 ```bash
 docker cp myfolder ng-4:/
@@ -98,7 +98,7 @@ docker exec -it ng-4 bash
 exit
 ```
 
-- Copy a folder from container to the host.
+- Copy a folder from the container to the host.
 
 ```bash
 docker cp ng-4:/docker-entrypoint.sh . 
@@ -120,7 +120,7 @@ docker container rm -f ng ng-1 ng-2 ng-3
 | D	     | A file or directory was deleted |
 | C	     | A file or directory was changed |
 
-- Run an ubuntu container.
+- Run an Ubuntu container.
 
 ```bash
 $ docker run -it --name mycontainer ubuntu bash
