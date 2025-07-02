@@ -1,6 +1,6 @@
-# Hands-on Docker-10 : `exec` form and `shell` form, `CMD` and `ENTRYPOINT` instructions, and `ARG` instruction
+# Hands-on Docker-10: `exec` form and `shell` form, `CMD` and `ENTRYPOINT` instructions, and `ARG` instruction
 
-Purpose of the this hands-on training is to give the students understanding to difference between:
+The purpose of this hands-on training is to give the students an understanding of the difference between:
 
 - `exec` form and `shell` form  
 
@@ -10,15 +10,15 @@ Purpose of the this hands-on training is to give the students understanding to d
 
 ## Learning Outcomes
 
-- At the end of the this hands-on training, students will be able to;
+- At the end of this hands-on training, students will be able to;
 
 - Learn `exec` form and `shell` form. 
 
-- Explain difference between `exec` form and `shell` form.
+- Explain the difference between `exec` form and `shell` form.
 
 - Learn `CMD` instruction and `ENTRYPOINT` instruction.
 
-- Explain difference between `CMD` instruction and `ENTRYPOINT` instruction.
+- Explain the difference between `CMD` instruction and `ENTRYPOINT` instruction.
 
 - Use `CMD` instruction as a parameter of `ENTRYPOINT` instruction
 
@@ -43,7 +43,7 @@ mkdir shell-exec-cmd-entrypoint
 cd shell-exec-cmd-entrypoint
 ```
 
-- create a Dockerfile and input following statements.
+- Create a Dockerfile and input the following statements.
 
 ```txt
 FROM ubuntu
@@ -56,14 +56,14 @@ CMD echo "hello"
 docker build -t cmd-shell:v1 .
 ```
 
-- Run cmd-shell image.
+- Run the cmd-shell image.
 
 ```bash
 docker run cmd-shell:v1
 hello
 ```
 
-- Change the CMD line to exec form. For exec form, we change to shell script to JSON array form.
+- Change the CMD line to exec form. For the exec form, we change to a shell script to JSON array form.
 
 ```txt
 FROM ubuntu
@@ -77,7 +77,7 @@ CMD ["echo", "hello"]
 docker build -t cmd-exec:v1 .
 ```
 
-- Run cmd-exec image.
+- Run the cmd-exec image.
 
 ```bash
 docker run cmd-exec:v1
@@ -135,11 +135,11 @@ $HOME
 ```
 
 - This time, the output is changed. We couldn't learn `$HOME` environment variable. The reason is that: <br>
-Unlike the shell form, the exec form does not invoke a command shell. This means that normal shell processing does not happen. So we couldn't reach environment variables.
+Unlike the shell form, the exec form does not invoke a command shell. This means that normal shell processing does not happen. So we couldn't reach the environment variables.
 
 ## Part 2 - Difference between `CMD` instruction and `ENTRYPOINT` instruction
 
-- First, run the cmd-shell:v1 image with ls command.
+- First, run the cmd-shell:v1 image with the ls command.
 
 ```bash
 docker run cmd-shell:v1 ls
@@ -166,16 +166,16 @@ ENTRYPOINT echo hello
 docker build -t entrypoint:v1 .
 ```
 
-- Run `entrypoint:v1` image with ls command.
+- Run `entrypoint:v1` image with the ls command.
 
 ```bash
 docker run entrypoint:v1 ls
 hello
 ```
 
-- Notice that we couldn't execute ls command. Because, unlike `CMD`, we can't override `ENTRYPOINT`.
+- Notice that we couldn't execute the ls command. Because, unlike `CMD`, we can't override `ENTRYPOINT`.
 
-> Not: `ENTRYPOINT` instruction can be overrided with `--entrypoint` option as below.
+> Not: `ENTRYPOINT` instruction can be overridden with `--entrypoint` option as below.
 
 ```bash
 docker run --entrypoint ls  entrypoint:v1
@@ -212,14 +212,14 @@ docker run entrypoint-cmd
 hello Joe
 ```
 
-- Now, run the `entrypoint-cmd` image as Below.
+- Now, run the `entrypoint-cmd` image as below.
 
 ```bash
 docker run entrypoint-cmd Osvaldo
 hello Osvaldo
 ```
 
-- Notice that we can override `CMD` instruction but we can not override `ENTRYPOINT` instruction.
+- Notice that we can override `CMD` instruction, but we can not override `ENTRYPOINT` instruction.
 
 ## Part 4 - `ARG` instruction
 
@@ -234,7 +234,7 @@ mkdir arg-instruction
 cd arg-instruction
 ```
 
-- create a `Dockerfile` and input the following statements.
+- Create a `Dockerfile` and input the following statements.
 
 ```Dockerfile
 FROM alpine
@@ -243,7 +243,7 @@ RUN tar -xvf version.tar
 CMD cat /version/version
 ```
 
-- Build the docker image.
+- Build the Docker image.
 
 ```bash
 docker build -t argtest1 .
@@ -277,13 +277,13 @@ docker build -t argtest2 .
 docker run argtest2
 ```
 
-- This time the output will be version 2.
+- This time, the output will be version 2.
 
 ```bash
 this is version 2
 ```
 
-- Updating the version with this method is not practical. For this, we will use `ARG` instruction. With `ARG` instructions we will update our image at `build-time`. Update the `Dockerfile` as below.
+- Updating the version with this method is not practical. For this, we will use `ARG` instruction. With `ARG` instructions, we will update our image at `build-time`. Update the `Dockerfile` as below.
 
 ```Dockerfile
 FROM alpine
@@ -300,13 +300,13 @@ docker build -t argtest3 .
 docker run argtest3
 ```
 
-- This time the output will be version 1 again.
+- This time, the output will be version 1 again.
 
 ```bash
 this is version 1
 ```
 
-- Finally, we don't update the Dockerfile but we update the image with `--build-arg <varname>=<value>` flag.
+- Finally, we don't update the Dockerfile, but we update the image with `--build-arg <varname>=<value>` flag.
 
 ```bash
 docker build --build-arg VERSION=2  -t argtest4 .
