@@ -1,12 +1,12 @@
-# Hands-on Docker-16 : docker commit, export, import, save and load commands
+# Hands-on Docker-16: docker commit, export, import, save, and load commands
 
-Purpose of the this hands-on training is to teach students how to use docker logs, top, stats and cp commands.
+Purpose of the this hands-on training is to teach students how to use docker logs, top, stats, and cp commands.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- use docker logs, top, stats and diff commands.
+- use docker logs, top, stats, and diff commands.
 
 ## Outline
 
@@ -20,7 +20,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launch a Docker Machine Instance and Connect with SSH
 
-- Launch a Docker machine on Amazon Linux 2 AMI with security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
+- Launch a Docker machine on Amazon Linux 2023 AMI with a security group allowing SSH connections using the [Cloudformation Template for Docker Machine Installation](../S1A-docker-01-installing-on-ec2-linux2/docker-installation-template.yml).
 
 - Connect to your instance with SSH.
 
@@ -53,7 +53,7 @@ docker commit commit-con commit-image
 docker image ls
 ```
 
-- Run new container from `commit-image` and check that there is `myfile` file.
+- Run a new container from `commit-image` and check that there is `myfile` file.
 
 ```bash
 docker run --name newcommit-con -it commit-image
@@ -155,13 +155,13 @@ docker container prune
 
 - Save one or more images to a tar archive.
 
-- pull busybox image.
+- Pull busybox image.
 
 ```bash
 docker pull busybox
 ```
 
-- Save the busybox image as tar file.
+- Save the busybox image as a tar file.
 
 ```bash
 docker save busybox > busybox.tar
@@ -175,7 +175,7 @@ docker save busybox:latest | gzip > busybox.tar.gz
 ls -sh busybox.tar.gz
 ```
 
-- We can copy this archive files to any environment and create our images again. We will use same environment. So, firstly we will delete `busybox` image.
+- We can copy these archive files to any environment and create our images again. We will use the same environment. So, firstly, we will delete `busybox` image.
 
 ```bash
 docker image rm busybox
