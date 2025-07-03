@@ -3,10 +3,10 @@ apt-get update -y
 apt-get upgrade -y
 hostnamectl set-hostname kube-worker
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg unzip
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 apt-get update
-apt-get install -y kubelet=1.30.0-1.1 kubeadm=1.30.0-1.1 kubectl=1.30.0-1.1 kubernetes-cni docker.io
+apt-get install -y kubectl kubeadm kubelet kubernetes-cni docker.io
 apt-mark hold kubelet kubeadm kubectl
 systemctl start docker
 systemctl enable docker
@@ -19,9 +19,7 @@ EOF
 modprobe overlay
 modprobe br_netfilter
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables  = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward                 = 1
+net.ipv4.ip_forward = 1
 EOF
 sysctl --system
 mkdir /etc/containerd

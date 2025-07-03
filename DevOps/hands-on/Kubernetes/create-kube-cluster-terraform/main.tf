@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 }
@@ -17,10 +17,10 @@ data "aws_region" "current" {}
 
 locals {
   # change here, optional
-  name = "clarus"
-  keyname = "clarusway"
+  name = "oliver"
+  keyname = "oliver"
   instancetype = "t3a.medium"
-  ami = "ami-0a0e5d9c7acc336f1"
+  ami = "ami-0a7d80731ae1b2435"
 }
 
 resource "aws_instance" "master" {
@@ -41,7 +41,7 @@ resource "aws_instance" "worker" {
   key_name             = local.keyname
   iam_instance_profile = aws_iam_instance_profile.ec2connectprofile.name
   vpc_security_group_ids = [aws_security_group.tf-k8s-master-sec-gr.id]
-  user_data            = templatefile("worker.sh", { region = data.aws_region.current.name, master-id = aws_instance.master.id, master-zone =  aws_instance.master.availability_zone, master-private = aws_instance.master.private_ip} )
+  user_data            = templatefile("worker.sh", { region = data.aws_region.current.region, master-id = aws_instance.master.id, master-zone =  aws_instance.master.availability_zone, master-private = aws_instance.master.private_ip} )
   tags = {
     Name = "kube-worker"
   }
@@ -68,34 +68,35 @@ resource "aws_iam_role" "ec2connectcli" {
       },
     ]
   })
+}
 
-  inline_policy {
-    name = "my_inline_policy"
+resource "aws_iam_role_policy" "ec2connectcli_policy" {
+  name = "my_inline_policy"
+  role = aws_iam_role.ec2connectcli.id
 
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          "Effect" : "Allow",
-          "Action" : "ec2-instance-connect:SendSSHPublicKey",
-          "Resource" : "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*",
-          "Condition" : {
-            "StringEquals" : {
-              "ec2:osuser" : "ubuntu"
-            }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : "ec2-instance-connect:SendSSHPublicKey",
+        "Resource" : "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:instance/*",
+        "Condition" : {
+          "StringEquals" : {
+            "ec2:osuser" : "ubuntu"
           }
-        },
-        {
-          "Effect" : "Allow",
-          "Action" : [
-            "ec2:DescribeInstances",
-            "ec2:DescribeInstanceStatus"
-          ],
-          "Resource" : "*"
         }
-      ]
-    })
-  }
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceStatus"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  })
 }
 
 resource "aws_security_group" "tf-k8s-master-sec-gr" {

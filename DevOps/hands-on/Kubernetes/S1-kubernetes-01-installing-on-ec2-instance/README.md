@@ -31,7 +31,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Setting Up Kubernetes Environment on All Nodes
 
-- In this hands-on, we will prepare two nodes for Kubernetes on `Ubuntu 22.04`. One of the node will be configured as the Master node, the other will be the worker node. Following steps should be executed on all nodes. *Note: It is recommended to install Kubernetes on machines with `2 CPU Core` and `2GB RAM` at minimum to get it working efficiently. For this reason, we will select `t2.medium` as EC2 instance type, which has `2 CPU Core` and `4 GB RAM`.*
+- In this hands-on, we will prepare two nodes for Kubernetes on `Ubuntu 22.04`. One of the node will be configured as the Master node, the other will be the worker node. Following steps should be executed on all nodes. *Note: It is recommended to install Kubernetes on machines with `2 CPU Core` and `2GB RAM` at minimum to get it working efficiently. For this reason, we will select `t3a.medium` as EC2 instance type, which has `2 CPU Core` and `4 GB RAM`.*
 
 - Explain briefly [required ports](https://kubernetes.io/docs/reference/networking/ports-and-protocols/)  for Kubernetes. 
 
@@ -105,10 +105,9 @@ sudo modprobe overlay
 sudo modprobe br_netfilter
 
 # sysctl params required by setup, params persist across reboots
+
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables  = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward                 = 1
+net.ipv4.ip_forward = 1
 EOF
 
 # Apply sysctl params without reboot
@@ -232,11 +231,11 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
 # Download the Google Cloud public signing key:
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 # Add the Kubernetes apt repository:
 
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
 - Update apt package index, install kubelet, kubeadm and kubectl, and pin their version:
