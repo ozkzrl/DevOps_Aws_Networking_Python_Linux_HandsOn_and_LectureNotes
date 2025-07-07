@@ -1,10 +1,10 @@
-# Hands-on Kubernetes-03 : Kubernetes Networking and Service Discovery
+# Hands-on Kubernetes-03: Kubernetes Networking and Service Discovery
 
-Purpose of this hands-on training is to give students the knowledge of Kubernetes Services.
+The purpose of this hands-on training is to give students the knowledge of Kubernetes Services.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
 - Explain the benefits of logically grouping `Pods` with `Services` to access an application.
 
@@ -20,9 +20,9 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Setting up the Kubernetes Cluster
 
-- Launch a Kubernetes Cluster of Ubuntu 22.04 with two nodes (one master, one worker) using the [Cloudformation Template to Create Kubernetes Cluster](../S2-kubernetes-02-basic-operations/cfn-template-to-create-k8s-cluster.yml). *Note: Once the master node up and running, worker node automatically joins the cluster.*
+- Launch a Kubernetes Cluster of Ubuntu 22.04 with two nodes (one master, one worker) using the [Cloudformation Template to Create Kubernetes Cluster](../S2-kubernetes-02-basic-operations/cfn-template-to-create-k8s-cluster.yml). *Note: Once the master node is up and running, the worker node automatically joins the cluster.*
 
->*Note: If you have problem with kubernetes cluster, you can use this link for lesson.*
+>*Note: If you have a problem with kubernetes cluster, you can use this link for the lesson.*
 >https://killercoda.com/playgrounds
 
 - Check if Kubernetes is running and nodes are ready.
@@ -48,21 +48,21 @@ Kubernetes networking addresses four concerns:
 
 An abstract way to expose an application running on a set of Pods as a network service.
 
-With Kubernetes you don't need to modify your application to use an unfamiliar service discovery mechanism.
+With Kubernetes, you don't need to modify your application to use an unfamiliar service discovery mechanism.
 
 Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them.
 
 ### Motivation
 
-Kubernetes Pods are mortal. They are born and when they die, they are not resurrected. If you use a Deployment to run your app, it can create and destroy Pods dynamically.
+Kubernetes Pods are mortal. They are born, and when they die, they are not resurrected. If you use a Deployment to run your app, it can create and destroy Pods dynamically.
 
-Each Pod gets its own IP address, however in a Deployment, the set of Pods running in one moment in time could be different from the set of Pods running that application a moment later.
+Each Pod gets its own IP address; however, in a Deployment, the set of Pods running currently could be different from the set of Pods running that application a moment later.
 
 ### Service Discovery
 
 The basic building block starts with the Pod, which is just a resource that can be created and destroyed on demand. Because a Pod can be moved or rescheduled to another Node, any internal IPs that this Pod is assigned can change over time.
 
-If we were to connect to this Pod to access our application, it would not work on the next re-deployment. To make a Pod reachable to external networks or clusters without relying on any internal IPs, we need another layer of abstraction. K8s offers that abstraction with what we call a `Service Deployment`.
+If we were to connect to this Pod to access our application, it would not work on the next redeployment. To make a Pod reachable to external networks or clusters without relying on any internal IPs, we need another layer of abstraction. K8s offers that abstraction with what we call a `Service Deployment`.
 
 `Services` provide network connectivity to Pods that work uniformly across clusters.
 K8s services provide discovery and load balancing. `Service Discovery` is the process of figuring out how to connect to a service.
@@ -73,15 +73,15 @@ K8s services provide discovery and load balancing. `Service Discovery` is the pr
 
 - DNS Service is used within PODs to find other services running on the same Cluster.
 
-- Multiple containers running with-in same POD don’t need DNS service, as they can contact each other.
+- Multiple containers running with-in the same POD don’t need DNS service, as they can contact each other.
 
-- Containers within same POD can connect to other container using `PORT` on `localhost`.
+- Containers within the same POD can connect to other containers using `PORT` on `localhost`.
 
-- To make DNS work POD always need `Service Definition`.
+- To make DNS work, POD always need `Service Definition`.
 
 - Kube-DNS is a database containing key-value pairs for lookup.
 
-- Keys are names of services and values are IP addresses on which those services are running.
+- Keys are names of services, and values are IP addresses on which those services are running.
 
 ### Defining and Deploying Services
 
@@ -94,7 +94,7 @@ mkdir service-lessons
 cd service-lessons
 ```
 
-- Create `yaml` file named `web-flask.yaml` and explain fields of it.
+- Create `yaml` file named `web-flask.yaml` and explain its fields.
 
 ```yaml
 apiVersion: apps/v1 
@@ -115,7 +115,7 @@ spec:
     spec:
       containers:
       - name: web-flask-pod
-        image: clarusway/cw_web_flask1
+        image: ondiacademy/web-flask1
         ports:
         - containerPort: 5000
 ```
@@ -141,9 +141,9 @@ web-flask-deploy-5b59bc685f-b92fr   1/1     Running   0          78s   10.244.1.
 web-flask-deploy-5b59bc685f-r2tb9   1/1     Running   0          78s   10.244.1.3   kube-worker   <none>           <none>
 ```
 
-In the output above, for each Pod the IPs are internal and specific to each instance. If we were to redeploy the application, then each time a new IP will be allocated.
+In the output above, for each Pod, the IPs are internal and specific to each instance. If we were to redeploy the application, then each time a new IP will be allocated.
 
-We now check we can ping a Pod inside the cluster.
+We now check that we can ping a Pod inside the cluster.
 
 - Create a `forcurl.yaml` file to create a Pod that pings a Pod inside the cluster.
 
@@ -155,7 +155,7 @@ metadata:
 spec:
   containers:
   - name: forcurl
-    image: clarusway/forping
+    image: ondiacademy/forping
     imagePullPolicy: IfNotPresent
   restartPolicy: Always
 ```
@@ -166,7 +166,7 @@ spec:
 kubectl get pods
 kubectl apply -f forcurl.yaml
 kubectl exec -it forcurl -- sh
-/ # ping 10.244.1.3
+/ # ping -c 4 10.244.1.3
 ```
 
 - Show the Pods detailed information and learn their IP addresses again.
@@ -205,7 +205,7 @@ kubectl get pods -o wide
 kubectl explain svc
 ```
 
-- Create a `web-svc.yaml` file with following content and explain fields of it.
+- Create a `web-svc.yaml` file with the following content and explain the fields in it.
 
 ```yaml
 apiVersion: v1
@@ -262,7 +262,7 @@ Endpoints:         10.244.1.7:5000,10.244.1.8:5000,10.244.1.9:5000
 Session Affinity:  None
 Events:            <none>
 ```
-- Go to the pod and ping the deployment which has service with ClusterIP and see the ip address of service. 
+- Go to the pod and ping the deployment that has a service with ClusterIP and see the IP address of the service. 
 
 ```bash
 kubectl exec -it forcurl -- sh
@@ -271,11 +271,11 @@ kubectl exec -it forcurl -- sh
 / # curl web-flask-svc:3000
 ```
 
-- As we see kubernetes services provide DNS resolution.
+- As we see, Kubernetes services provide DNS resolution.
 
 ### NodePort
 
-- Change the service type of web-flask-svc service to NodePort to use the Node IP and a static port to expose the service outside the cluster. So we get the yaml file below.
+- Change the service type of the web-flask-svc service to NodePort to use the Node IP and a static port to expose the service outside the cluster. So we get the yaml file below.
 
 ```yaml
 apiVersion: v1
@@ -293,7 +293,7 @@ spec:
     app: web-flask
 ```
 
-- Configure the web-flask-svc service via apply command.
+- Configure the web-flask-svc service via the apply command.
 
 ```bash
 kubectl apply -f web-svc.yaml
@@ -315,7 +315,7 @@ kubectl exec -it forcurl -- sh
 - We can visit `http://<public-node-ip>:<node-port>` and access the application. Pay attention to load balancing. 
 Note: Do not forget to open the Port `<node-port>` in the security group of your node instance.
 
-- We can also define NodePort via adding nodePort number to service yaml file. Check the below. 
+- We can also define NodePort by adding a nodePort number to the service YAML file. Check the below. 
 
 ```yaml
 apiVersion: v1
@@ -334,13 +334,13 @@ spec:
     app: web-flask
 ```
 
-- Configure the web-flask-svc service  again via apply command.
+- Configure the web-flask-svc service again via the apply command.
 
 ```bash
 kubectl apply -f web-svc.yaml
 ```
 
-- List the services and notice that nodeport number is 30036.
+- List the services and notice that the nodeport number is 30036.
 
 ```bash
 kubectl get svc -o wide
@@ -380,14 +380,14 @@ kubectl scale deploy web-flask-deploy --replicas=10
 kubectl get ep -o wide 
 ```
 
-> Open a browser on any node and explain the `loadbalancing` via browser. (Pay attention to the host ip and node name and note that `host ips` and `endpoints` are same)
+> Open a browser on any node and explain the `loadbalancing` via the browser. (Pay attention to the host IP and node name, and note that `host ips` and `endpoints` are the same)
 >
 > http://[public-node-ip]:[node-port]
 
 
-### To connect a service from different namespace
+### To connect a service from a different namespace
 
-- Kubernetes has an add-on for DNS, which creates a DNS record for each Service and its format is:
+- Kubernetes has an add-on for DNS, which creates a DNS record for each Service, and its format is:
 
 `web-svc.my-namespace.svc.cluster.local`
 
@@ -395,7 +395,7 @@ kubectl get ep -o wide
 
 - Let's understand this issue with an example.
 
-- First of all remove whole deployment and service into the default namespace
+- First of all, removethe  whole deployment and service from the default namespace
 
 ```bash
 kubectl delete -f .
@@ -454,18 +454,18 @@ spec:
     app: web-flask
 ```
 
-- create deployment and service
+- Create a deployment and service
 
 ```bash
 kubectl apply -f .
 ```
 
-- show all namespaces
+- Show all namespaces
 ```bash
 kubectl get ns
 ```
 
-- Lets see the all objects within demo namespace and default namespace
+- Let's see all the objects within the demo namespace and the default namespace
 ```bash
 kubectl get deploy -n demo
 kubectl get pod -n demo
@@ -474,7 +474,7 @@ kubectl get pod
 kubectl get svc
 ```
 
-- log into the container and curl the `web-flask-svc` inside `demo` namespace.
+- Log into the container and curl the `web-flask-svc` inside `demo` namespace.
 
 ```bash
 kubectl exec -it forcurl -- sh
