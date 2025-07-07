@@ -308,7 +308,7 @@ kubectl get svc -o wide
 ```
 kubectl exec -it forcurl -- sh
 / # curl <IP of service web-flask-svc>:3000
-/ # ping web-flask-svc 
+/ # ping -c 4 web-flask-svc 
 / # curl web-flask-svc:3000
 ```
 
