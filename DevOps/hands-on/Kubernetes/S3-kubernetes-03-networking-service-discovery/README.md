@@ -1,6 +1,6 @@
 # Hands-on Kubernetes-03: Kubernetes Networking and Service Discovery
 
-The purpose of this hands-on training is to give students the knowledge of Kubernetes Services.
+The purpose of this hands-on training is to provide students with an understanding of Kubernetes Services.
 
 ## Learning Outcomes
 
@@ -40,7 +40,7 @@ Kubernetes networking addresses four concerns:
 
 - Cluster networking provides communication between different Pods.
 
-- The Service resource lets you expose an application running in Pods to be reachable from outside your cluster.
+- The Service resource enables you to expose an application running in Pods so that it is reachable from outside your cluster.
 
 - You can also use Services to publish services only for consumption inside your cluster.
 
@@ -50,7 +50,7 @@ An abstract way to expose an application running on a set of Pods as a network s
 
 With Kubernetes, you don't need to modify your application to use an unfamiliar service discovery mechanism.
 
-Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them.
+Kubernetes gives Pods their IP addresses and a single DNS name for a set of Pods, and can load-balance across them.
 
 ### Motivation
 
@@ -73,7 +73,7 @@ K8s services provide discovery and load balancing. `Service Discovery` is the pr
 
 - DNS Service is used within PODs to find other services running on the same Cluster.
 
-- Multiple containers running with-in the same POD don’t need DNS service, as they can contact each other.
+- Multiple containers running within the same POD don’t need DNS service, as they can communicate with each other.
 
 - Containers within the same POD can connect to other containers using `PORT` on `localhost`.
 
