@@ -395,7 +395,7 @@ kubectl get ep -o wide
 
 - Let's understand this issue with an example.
 
-- First of all, removethe  whole deployment and service from the default namespace
+- First of all, remove the  whole deployment and service from the default namespace
 
 ```bash
 kubectl delete -f .
@@ -429,7 +429,7 @@ spec:
     spec:
       containers:
       - name: web-flask-pod
-        image: clarusway/cw_web_flask1
+        image: ondiacademy/web-flask1
         ports:
         - containerPort: 5000
 ```
