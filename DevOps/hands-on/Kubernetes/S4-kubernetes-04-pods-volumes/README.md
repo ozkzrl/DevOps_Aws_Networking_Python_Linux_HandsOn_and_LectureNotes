@@ -1,10 +1,10 @@
-# Hands-on Kubernetes-04 : Kubernetes Volumes
+# Hands-on Kubernetes-04: Kubernetes Volumes
 
 Purpose of this hands-on training is to give students the knowledge of Kubernetes Volumes.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
 - Explain the need for persistent data management.
 
@@ -24,9 +24,9 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Setting up the Kubernetes Cluster
 
-- Launch a Kubernetes Cluster of Ubuntu 22.04 with two nodes (one master, one worker) using the [Cloudformation Template to Create Kubernetes Cluster](../S2-kubernetes-02-basic-operations/cfn-template-to-create-k8s-cluster.yml). *Note: Once the master node up and running, worker node automatically joins the cluster.*
+- Launch a Kubernetes Cluster of Ubuntu 22.04 with two nodes (one master, one worker) using the [Cloudformation Template to Create Kubernetes Cluster](../S2-kubernetes-02-basic-operations/cfn-template-to-create-k8s-cluster.yml). *Note: Once the master node is up and running, the worker node automatically joins the cluster.*
 
->*Note: If you have problem with kubernetes cluster, you can use this link for lesson.*
+>*Note: If you have a problem with kubernetes cluster, you can use this link for the lesson.*
 >https://killercoda.com/playgrounds
 
 - Check if Kubernetes is running and nodes are ready.
@@ -38,13 +38,13 @@ kubectl get no
 
 ## Part 2 - Kubernetes Volume Persistence
 
-- Get the documentation of `PersistentVolume` and its fields. Explain the volumes, types of volumes in Kubernetes and how it differs from the Docker volumes. [Volumes in Kubernetes](https://kubernetes.io/docs/concepts/storage/volumes/)
+- Get the documentation of `PersistentVolume` and its fields. Explain the volumes, types of volumes in Kubernetes, and how they differ from Docker volumes. [Volumes in Kubernetes](https://kubernetes.io/docs/concepts/storage/volumes/)
 
 ```bash
 kubectl explain pv
 ```
 
-- Log into the `kube-worker-1` node, create a `pv-data` directory under home folder, also create an `index.html` file with `Welcome to Kubernetes persistence volume lesson` text and note down path of the `pv-data` folder.
+- Log into the `kube-worker-1` node, create a `pv-data` directory under the home folder, also create an `index.html` file with `Welcome to Kubernetes persistence volume lesson` text, and note down the path of the `pv-data` folder.
 
 ```bash
 mkdir pv-data && cd pv-data
@@ -60,13 +60,13 @@ pwd
 mkdir volume-lessons && cd volume-lessons
 ```
 
-- Create a `clarus-pv.yaml` file using the following content with the volume type of `hostPath` to build a `PersistentVolume` and explain fields.
+- Create a `my-pv.yaml` file using the following content with the volume type of `hostPath` to build a `PersistentVolume` and explain fields.
 
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: clarus-pv-vol
+  name: my-pv-vol
   labels:
     type: local
 spec:
@@ -79,16 +79,16 @@ spec:
     path: "/home/ubuntu/pv-data"
 ```
 
-- Create the PersistentVolume `clarus-pv-vol`.
+- Create the PersistentVolume `my-pv-vol`.
 
 ```bash
-kubectl apply -f clarus-pv.yaml
+kubectl apply -f my-pv.yaml
 ```
 
-- View information about the `PersistentVolume` and notice that the `PersistentVolume` has a `STATUS` of available which means it has not been bound yet to a `PersistentVolumeClaim`.
+- View information about the `PersistentVolume` and notice that the `PersistentVolume` has a `STATUS` of available, which means it has not been bound yet to a `PersistentVolumeClaim`.
 
 ```bash
-kubectl get pv clarus-pv-vol
+kubectl get pv my-pv-vol
 ```
 
 - Get the documentation of `PersistentVolumeClaim` and its fields.
@@ -97,13 +97,13 @@ kubectl get pv clarus-pv-vol
 kubectl explain pvc
 ```
 
-- Create a `clarus-pv-claim.yaml` file using the following content to create a `PersistentVolumeClaim` and explain fields.
+- Create a `my-pv-claim.yaml` file using the following content to create a `PersistentVolumeClaim` and explain the fields.
 
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: clarus-pv-claim
+  name: my-pv-claim
 spec:
   storageClassName: manual
   accessModes:
@@ -113,67 +113,67 @@ spec:
       storage: 5Gi
 ```
 
-- Create the PersistentVolumeClaim `clarus-pv-claim`.
+- Create the PersistentVolumeClaim `my-pv-claim`.
 
 ```bash
-kubectl apply -f clarus-pv-claim.yaml
+kubectl apply -f my-pv-claim.yaml
 ```
 
 > After we create the PersistentVolumeClaim, the Kubernetes control plane looks for a PersistentVolume that satisfies the claim's requirements. If the control plane finds a suitable `PersistentVolume` with the same `StorageClass`, it binds the claim to the volume. Look for details at [Persistent Volumes and Claims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#introduction)
 
-- View information about the `PersistentVolumeClaim` and show that the `PersistentVolumeClaim` is bound to your PersistentVolume `clarus-pv-vol`.
+- View information about the `PersistentVolumeClaim` and show that the `PersistentVolumeClaim` is bound to your PersistentVolume `my-pv-vol`.
 
 ```bash
-kubectl get pvc clarus-pv-claim
+kubectl get pvc my-pv-claim
 ```
 
 - View information about the `PersistentVolume` and show that the PersistentVolume `STATUS` changed from Available to `Bound`.
 
 ```bash
-kubectl get pv clarus-pv-vol
+kubectl get pv my-pv-vol
 ```
 
-- Create a `clarus-pod.yaml` file that uses your PersistentVolumeClaim as a volume using the following content.
+- Create a `my-pod.yaml` file that uses your PersistentVolumeClaim as a volume using the following content.
 
 ```yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: clarus-pod
+  name: my-pod
   labels:
-    app: clarus-web 
+    app: my-web 
 spec:
   volumes:
-    - name: clarus-pv-storage
+    - name: my-pv-storage
       persistentVolumeClaim:
-        claimName: clarus-pv-claim
+        claimName: my-pv-claim
   containers:
-    - name: clarus-pv-container
+    - name: my-pv-container
       image: nginx
       ports:
         - containerPort: 80
           name: "http-server"
       volumeMounts:
         - mountPath: "/usr/share/nginx/html"
-          name: clarus-pv-storage
+          name: my-pv-storage
 ```
 
-- Create the Pod `clarus-pod`.
+- Create the Pod `my-pod`.
 
 ```bash
-kubectl apply -f clarus-pod.yaml
+kubectl apply -f my-pod.yaml
 ```
 
 - Verify that the Pod is running.
 
 ```bash
-kubectl get pod clarus-pod
+kubectl get pod my-pod
 ```
 
 - Open a shell to the container running in your Pod.
 
 ```bash
-kubectl exec -it clarus-pod -- /bin/bash
+kubectl exec -it my-pod -- /bin/bash
 ```
 
 - Verify that `nginx` is serving the `index.html` file from the `hostPath` volume.
@@ -192,14 +192,14 @@ echo "Kubernetes Rocks!!!!" > index.html
 - Log into the `kube-master` node, check if the change is in effect.
 
 ```bash
-kubectl exec -it clarus-pod -- /bin/bash
+kubectl exec -it my-pod -- /bin/bash
 curl http://localhost/
 ```
 
-- Expose the clarus-pod pod as a new Kubernetes service on master.
+- Expose the my-pod pod as a new Kubernetes service on master.
 
 ```bash
-kubectl expose pod clarus-pod --port=80 --type=NodePort
+kubectl expose pod my-pod --port=80 --type=NodePort
 ```
 
 - List the services.
@@ -208,14 +208,14 @@ kubectl expose pod clarus-pod --port=80 --type=NodePort
 kubectl get svc
 ```
 
-- Check the browser (`http://<public-workerNode-ip>:<node-port>`) that clarus-pod is running.
+- Check the browser (`http://<public-workerNode-ip>:<node-port>`) that my-pod is running.
 
-- Delete the `Pod`, the `PersistentVolumeClaim` and the `PersistentVolume`.
+- Delete the `Pod`, the `PersistentVolumeClaim`, and the `PersistentVolume`.
 
 ```bash
-kubectl delete pod clarus-pod
-kubectl delete pvc clarus-pv-claim
-kubectl delete pv clarus-pv-vol
+kubectl delete pod my-pod
+kubectl delete pvc my-pv-claim
+kubectl delete pv my-pv-vol
 ```
 
 ## Part 3 - Binding PV to PVC
@@ -276,7 +276,7 @@ spec:
 kubectl apply -f pv-6g.yaml
 ```
 
-- List to PersistentVolume's.
+- List the PersistentVolumes.
 
 ```bash
 kubectl get pv
@@ -350,7 +350,7 @@ kubectl delete -f .
 - As the name says, the emptyDir volume is initially empty. 
 - When a Pod is removed from a node for any reason, the data in the emptyDir is deleted permanently.
 
-> Note : A container crashing does not remove a Pod from a node. The data in an emptyDir volume is safe across container crashes.
+> Note: A container crashing does not remove a Pod from a node. The data in an emptyDir volume is safe across container crashes.
 
 - Create a folder name it emptydir.
 
@@ -381,13 +381,13 @@ spec:
     emptyDir: {}
 ```
 
-- create the nginx-pod.
+- Create the nginx-pod.
 
 ```bash
 kubectl apply -f nginx.yaml 
 ```
 
-- Log in the nginx-pod and notice that there is a test folder.
+- Log in to the nginx-pod and notice that there is a test folder.
 
 ```bash
 kubectl exec -it nginx-pod -- bash
@@ -396,7 +396,7 @@ bin   dev                  docker-entrypoint.sh  home  lib64  mnt  proc  run   s
 boot  docker-entrypoint.d  etc                   lib   media  opt  root  sbin  sys  tmp   var
 ```
 
-- Create a text file in test folder.
+- Create a text file in the test folder.
 
 ```bash
 root@nginx-pod:/# cd test
@@ -405,7 +405,7 @@ root@nginx-pod:/test# cat hello.txt
 Hello World
 ```
 
-- Log in the `kube-worker-1 ec2-instance` and remove the `nginx container`. Note that container is changed.
+- Log in to the `kube-worker-1 ec2-instance` and remove the `nginx container`. Note that the container has changed.
 
 - See the running containers
 ```bash
@@ -420,7 +420,7 @@ sudo ctr --namespace k8s.io tasks rm -f <container-id>
 sudo ctr --namespace k8s.io containers delete <container-id>  
 ```
 
-- Log in the kube-master ec2-instance again and connect the nginx-pod. See that test folder and content are there.
+- Log in to the kube-master ec2-instance again and connect the nginx pod. See that the test folder and content are there.
 
 ```bash
 kubectl exec -it nginx-pod -- bash
