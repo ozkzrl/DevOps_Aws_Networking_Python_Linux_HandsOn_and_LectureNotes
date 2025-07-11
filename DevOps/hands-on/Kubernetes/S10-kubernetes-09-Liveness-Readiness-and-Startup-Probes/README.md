@@ -367,6 +367,8 @@ spec:
             port: 80
           initialDelaySeconds: 3
           periodSeconds: 3
+          successThreshold: 10
+          failureThreshold: 5
 ---
 apiVersion: v1
 kind: Service
@@ -381,6 +383,10 @@ spec:
     test: readiness
   type: NodePort
 ```
+
+> **successThreshold:** Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1.
+
+> **failureThreshold:** After a probe fails failureThreshold times in a row, Kubernetes considers that the overall check has failed: the container is not ready/healthy/live. Defaults to 3. Minimum value is 1.
 
 - In this image (clarusway/readinessprobe), for the `first 45 seconds` the container returns a status of 500. Than the container will return a status of `200`. 
 

@@ -542,7 +542,7 @@ kubectl taint nodes node-name key=value:taint-effect
 - Let's add a taint to the kube-worker using `kubectl taint` command.
 
 ```bash
-kubectl taint nodes kube-worker clarus=way:NoSchedule
+kubectl taint nodes kube-worker color=blue:NoSchedule
 ```
 
 - This command places a taint on node kube-worker. The taint has key clarus, value way, and taint effect NoSchedule. This means that no pod will be able to schedule onto kube-worker unless it has matching toleration.
@@ -595,9 +595,9 @@ kubectl get po -o wide
 
 ```yaml
 tolerations:
-- key: "clarus"
+- key: "color"
   operator: "Equal"
-  value: "way"
+  value: "blue"
   effect: "NoSchedule"
 ```
 
@@ -605,7 +605,7 @@ or
 
 ```yaml
 tolerations:
-- key: "clarus"
+- key: "color"
   operator: "Exists"
   effect: "NoSchedule"
 ```
@@ -620,7 +620,7 @@ metadata:
   labels:
     environment: dev
 spec:
-  replicas: 15
+  replicas: 10
   selector:
     matchLabels:
       app: nginx
@@ -635,7 +635,7 @@ spec:
         ports:
         - containerPort: 80
       tolerations:
-      - key: "clarus"
+      - key: "color"
         operator: "Exists"
         effect: "NoSchedule"
 ```
@@ -670,5 +670,5 @@ kubectl delete -f clarus-deploy.yaml
 - Remove taint from the kube-worker node.
 
 ```bash
-kubectl taint nodes kube-worker clarus=way:NoSchedule-
+kubectl taint nodes kube-worker color=blue:NoSchedule-
 ```
