@@ -1,12 +1,12 @@
-# Hands-on EKS-01 : Creating and Managing Kubernetes Cluster with AWS EKS
+# Hands-on EKS-01: Creating and Managing a Kubernetes Cluster with AWS EKS
 
-Purpose of this hands-on training is to give students the knowledge of how to use AWS Elastic Kubernetes Service
+The purpose of this hands-on training is to give students the knowledge of how to use AWS Elastic Kubernetes Service
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- Learn to Create and Manage EKS Cluster with Worker Nodes
+- Learn to Create and Manage an EKS Cluster with Worker Nodes
 
 ## Outline
 
@@ -32,7 +32,7 @@ At the end of this hands-on training, students will be able to;
 sudo dnf update -y
 ```
 
-- Download the Amazon EKS vendor's kubectl binary that is compatible with kubernetes cluster version. For instructions, see [Installing or updating kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html).
+- Download the Amazon EKS vendor's kubectl binary that is compatible with Kubernetes cluster version. For instructions, see [Installing or updating kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html).
 
 ```bash
 curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.32.0/2024-12-20/bin/linux/amd64/kubectl
@@ -44,7 +44,7 @@ curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.32.0/2024-12-20/bin/linu
 chmod +x ./kubectl
 ```
 
-- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then it's recommended creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
+- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then it's recommended to create a $HOME/bin/kubectl and ensure that $HOME/bin comes first in your $PATH.
 
 ```bash
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
@@ -89,13 +89,13 @@ aws eks list-clusters
 
 ## Part 1 - Creating the Kubernetes Cluster on EKS
 
-1. Direct the students to AWS EKS Service webpage. 
+1. Direct the students to the AWS EKS Service webpage. 
 
 2. Give a general description of the page and *****the pricing***** of the services.
 
 - https://aws.amazon.com/eks/pricing/
 
-3. Select ```Cluster``` on the left-hand menu and click on "Create cluster" button. You will be directed to the ```Configure cluster``` page:
+3. Select ```Cluster``` on the left-hand menu and click on the "Create cluster" button. You will be directed to the ```Configure cluster``` page:
 
     - Give general descriptions of the page and the steps of creating the cluster.
 
@@ -114,8 +114,8 @@ aws eks list-clusters
            - permissions: ```AmazonEKSClusterPolicy```.
 
         - Role details:
-          - Role Name : give a name for role ```eks-cluster-role```
-          - Description : keep it as it is
+          - Role Name: give a name for role ```eks-cluster-role```
+          - Description: keep it as it is
           - Click on ```Create Role```
 
     - Select the recently created role, back on the ```Cluster IAM role``` field.
@@ -138,7 +138,7 @@ aws eks list-clusters
 
   - Activate the field, give a general description about ```KMS Service```, and describe where we use those keys and give an example about a possible key.
     
-  - Deactivate back the ```Secrets encryption``` field and keep it as is.
+  - Deactivate the ```Secrets encryption``` field and keep it as is.
 
 7.  On the ```ARC Zonal shift ``` page's:
 
@@ -156,7 +156,7 @@ aws eks list-clusters
 
         <i>Explain the necessity of using a dedicated VPC for the cluster.</i>
 
-    - Security groups: Select ```default VPC security group``` (it must have ssh and https rules) or create one with SSH connection and https. 
+    - Security groups: Select ```default VPC security group``` (it must have SSH and HTTPS rules) or create one with SSH connection and HTTPS. 
 
         <i>Explain the necessity of using a dedicated SecurityGroup for the cluster.</i>
 
@@ -243,7 +243,7 @@ svc/kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   1m
 ```bash
 kubectl get node
 ```
-8. Show again the content of the $HOME directory including hidden files and folders. Find the ```config``` file inside ```.kube``` directory. Then show the content of the file.
+8. Show again the content of the $HOME directory, including hidden files and folders. Find the ```config``` file inside ```.kube``` directory. Then show the content of the file.
 
 
 ## Part 3 - Adding Worker Nodes to the Cluster
@@ -323,13 +323,13 @@ aws eks describe-cluster --name <cluster-name> --query cluster.status
 kubectl get nodes --watch
 ```
 
-9. Show the EC2 instances newly created.
+9. Show the newly created EC2 instances.
 
 ## Part 4 - Configuring Cluster Autoscaler
 
 1. Explain what ```Cluster Autoscaler``` is and why we need it.
 
-2. Create a policy with following content. You can name it as ClusterAutoscalerPolicy.
+2. Create a policy with the following content. You can name it as ClusterAutoscalerPolicy.
 
 ```json
 {
@@ -371,7 +371,7 @@ kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autos
 kubectl -n kube-system edit deployment.apps/cluster-autoscaler
 ```
 
-This command will open the YAML file for your editing. Replace <CLUSTER NAME> value with your own cluster name, and add the following command option ```--skip-nodes-with-system-pods=false``` to the command section under ```containers``` under ```spec```. Save and exit the file by pressing ```:wq```. The changes will be applied.
+This command will open the YAML file for your editing. Replace <CLUSTER NAME> value with your cluster name, and add the following command option ```--skip-nodes-with-system-pods=false``` to the command section under ```containers``` under ```spec```. Save and exit the file by pressing ```:wq```. The changes will be applied.
 
 7. Find an appropriate version of your cluster autoscaler in the [link](https://github.com/kubernetes/autoscaler/releases). The version number should start with the version number of the cluster Kubernetes version. For example, if you have selected the Kubernetes version 1.31, you should find something like ```1.31.2```.
 
@@ -465,7 +465,7 @@ Show the warning: "Error creating load balancer (will retry): failed to ensure l
 - Key: kubernetes.io/cluster/<cluster-name>
 - Value: shared
 
-6. Go to the VPC service on the AWS console and select "subnets". On the ```Subnets``` page, select "Tags" tab and add this tag:
+6. Go to the VPC service on the AWS console and select "subnets". On the ```Subnets``` page, select the "Tags" tab and add this tag:
 
 - Key: kubernetes.io/cluster/<cluster-name>
 - Value: shared
@@ -476,7 +476,7 @@ Show the warning: "Error creating load balancer (will retry): failed to ensure l
 kubectl describe service container-info-svc -n my-namespace
 ```
 
-8. Get the ```External IP``` value from the previous command's output and visit that ip.
+8. Get the ```External IP``` value from the previous command's output and visit that IP.
 
 9. For scale-up, edit the deployment. Change "replicas=30" in `myapp.yaml` file. Save the file.
 
@@ -484,13 +484,13 @@ kubectl describe service container-info-svc -n my-namespace
 kubectl edit deploy container-info-deploy -n my-namespace
 ```
 
-10. Watch the pods while creating. Show that some pods are pending state.
+10. Watch the pods while creating. Show that some pods are in the pending state.
 
 ```bash
 kubectl get po -n my-namespace -w
 ```
 
-11. Describe one of the pending pods. Show that there is no resource to run pods. So cluster-autoscaler scales out and create one more node.
+11. Describe one of the pending pods. Show that there is no resource to run pods. So cluster-autoscaler scales out and creates one more node.
 
 ```bash
 kubectl describe pod container-info-deploy-xxxxxx -n my-namespace
