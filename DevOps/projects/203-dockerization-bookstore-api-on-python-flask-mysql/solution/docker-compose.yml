@@ -1,0 +1,39 @@
+
+name: bookstore-api-app
+
+services:
+  bookstore:
+    image: bookstore-api:latest
+    networks:
+      - books-net
+    ports:
+      - 80:80
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: always
+
+  database:
+    image: mysql:5.7
+    networks:
+      - books-net
+    volumes:
+      - mysql-vol:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Pl123456
+      MYSQL_USER: myuser 
+      MYSQL_PASSWORD: Password_1 
+      MYSQL_DATABASE: bookstore_db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pPl123456"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    
+networks:
+    books-net:
+      driver: bridge
+
+volumes:
+  mysql-vol:
