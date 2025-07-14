@@ -116,16 +116,16 @@ aws configure
 - Create an EKS cluster via `eksctl`. It will take a while.
 
 ```bash
-eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name cw-cluster
+eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name my-cluster
 ```
 
 ### Alternative way (including SSH connection to the worker nodes)
 
-- If needed, create ssh-key withthe  command `ssh-keygen -f ~/.ssh/id_rsa`.
+- If needed, create ssh-key with the  command `ssh-keygen -f ~/.ssh/id_rsa`.
 
 ```bash
 eksctl create cluster \
- --name cw-cluster \
+ --name my-cluster \
  --region us-east-1 \
  --version 1.30 \
  --zones us-east-1a,us-east-1b,us-east-1c \
@@ -157,39 +157,39 @@ mkdir ingress-lesson
 cd ingress-lesson
 ```
 
-- Create a file named `clarusshop.yaml` forthe  clarusshop deployment object.
+- Create a file named `myshop.yaml` for the  myshop deployment object.
 
 ```yaml
 apiVersion: apps/v1 
 kind: Deployment 
 metadata:
-  name: clarusshop-deploy
+  name: myshop-deploy
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: clarusshop 
+      app: myshop 
   template: 
     metadata:
       labels:
-        app: clarusshop
+        app: myshop
     spec:
       containers:
-      - name: clarusshop-pod
-        image: clarusway/clarusshop
+      - name: myshop-pod
+        image: clarusway/myshop
         ports:
         - containerPort: 80
 ```
 
-- Create a file named `clarusshop-svc.yaml` for the clarusshop service object.
+- Create a file named `myshop-svc.yaml` for the myshop service object.
 
 ```yaml
 apiVersion: v1
 kind: Service   
 metadata:
-  name: clarusshop-svc
+  name: myshop-svc
   labels:
-    app: clarusshop
+    app: myshop
 spec:
   type: NodePort  
   ports:
@@ -197,7 +197,7 @@ spec:
     targetPort: 80
     nodePort: 30001
   selector:
-    app: clarusshop
+    app: myshop
 ```
 
 - Create a file named `account.yaml` for the account deployment object.
@@ -219,7 +219,7 @@ spec:
     spec:
       containers:
       - name: account-pod
-        image: clarusway/clarusshop:account
+        image: clarusway/myshop:account
         ports:
         - containerPort: 80
 ```
@@ -267,7 +267,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: clarusshop-ingress
+  name: myshop-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -279,7 +279,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: clarusshop-svc
+                name: myshop-svc
                 port: 
                   number: 80
           - path: /account
@@ -300,7 +300,7 @@ kubectl apply -f ing.yaml
 > We can also create an ingress with the following command.
 
 ```bash
-kubectl create ingress clarusshop-ingress --rule="/account*=account-svc:80" --rule="/*=clarusshop-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
+kubectl create ingress myshop-ingress --rule="/account*=account-svc:80" --rule="/*=myshop-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
 ```
 
 - Check the ingress object.
@@ -313,14 +313,14 @@ kubectl get ingress
 
 ```bash
 NAME                 CLASS   HOSTS   ADDRESS                                                                         PORTS   AGE
-clarusshop-ingress   nginx   *       afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      12s
+myshop-ingress   nginx   *       afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      12s
 ```
 
 - Use the address to reach the services.
 
 ```bash
 $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com
-<h1>WELCOME TO THE CLARUSSHOP</h1><h2>For account service:<br>/account</h2>
+<h1>WELCOME TO THE mySHOP</h1><h2>For account service:<br>/account</h2>
 $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com/account
 <h1>ACCOUNT SERVICE</h1>
 ```
@@ -333,20 +333,20 @@ $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: clarusshop-ingress
+  name: myshop-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: "clarusshop.clarusway.us"
+    - host: "myshop.clarusway.us"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: clarusshop-svc
+                name: myshop-svc
                 port: 
                   number: 80
           - path: /account
@@ -367,7 +367,7 @@ kubectl apply -f ing.yaml
 > We can also create an ingress with the following command.
 
 ```bash
-kubectl create ingress clarusshop-ingress --rule="clarusshop.clarusway.us/*=clarusshop-svc:80" --rule="clarusshop.clarusway.us/account/*=account-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
+kubectl create ingress myshop-ingress --rule="myshop.clarusway.us/*=myshop-svc:80" --rule="myshop.clarusway.us/account/*=account-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
 ```
 
 - Check the ingress object.
@@ -381,15 +381,15 @@ kubectl get ingress
 ```bash
 kubectl get ingress
 NAME                 CLASS   HOSTS                     ADDRESS                                                                         PORTS   AGE
-clarusshop-ingress   nginx   clarusshop.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      70s
+myshop-ingress   nginx   myshop.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      70s
 ```
 
-- To reach the application with `host` name, create `clarusshop.clarusway.us` record for address (network load balancer) in `route53` service.
+- To reach the application with `host` name, create `myshop.clarusway.us` record for address (network load balancer) in `route53` service.
 
 - You can reach the application using the curl command.
 
 ```bash
-curl clarusshop.clarusway.us
+curl myshop.clarusway.us
 ```
 
 - Delete all objects.
@@ -398,7 +398,7 @@ curl clarusshop.clarusway.us
 kubectl delete -f .
 ```
 
-#### Name based virtual hosting
+#### Name-based virtual hosting
 
 - Create a folder named `virtual-hosting`.
 
@@ -406,7 +406,7 @@ kubectl delete -f .
 mkdir virtual-hosting && cd virtual-hosting
 ```
 
-- Create two pods and services for nginx and apache.
+- Create two pods and services for nginx and Apache.
 
 ```bash
 kubectl run mynginx --image=nginx --port=80 --expose
@@ -414,7 +414,7 @@ kubectl run myapache --image=httpd --port=80 --expose
 kubectl get po,svc
 ```
 
-- Create ingress file named `mying.yaml` and use name based virtual hosting.
+- Create an ingress file named `mying.yaml` and use name-based virtual hosting.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -454,7 +454,7 @@ spec:
 kubectl apply -f mying.yaml
 ```
 
-> We can also create ingress with the following command.
+> We can also create an ingress with the following command.
 
 ```bash
 kubectl create ingress myingress \
@@ -493,7 +493,7 @@ curl apache.clarusway.us
 kubectl delete -f mying.yaml
 ```
 
-## Part 4 - Dynamic Volume Provisionining
+## Part 4 - Dynamic Volume Provisioning
 
 ### The Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver
 
@@ -510,7 +510,7 @@ kubectl delete -f mying.yaml
 - Determine whether you have an existing IAM OIDC provider for your cluster. Retrieve your cluster's OIDC provider ID and store it in a variable.
 
 ```bash
-oidc_id=$(aws eks describe-cluster --name cw-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+oidc_id=$(aws eks describe-cluster --name my-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 ```
 
 - Determine whether an IAM OIDC provider with your cluster's ID is already in your account.
@@ -518,12 +518,12 @@ oidc_id=$(aws eks describe-cluster --name cw-cluster --query "cluster.identity.o
 ```bash
 aws iam list-open-id-connect-providers | grep $oidc_id
 ```
-If output is returned from the previous command, then you already have a provider for your cluster and you can skip the next step. If no output is returned, then you must create an IAM OIDC provider for your cluster.
+If output is returned from the previous command, then you already have a provider for your cluster, and you can skip the next step. If no output is returned, then you must create an IAM OIDC provider for your cluster.
 
-- Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your own value.
+- Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your value.
 
 ```bash
-eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=cw-cluster --approve
+eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=my-cluster --approve
 ```
 
 ### Creating the Amazon EBS CSI driver IAM role for service accounts
@@ -534,13 +534,13 @@ eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=cw-cluster
 
 #### To create your Amazon EBS CSI plugin IAM role with eksctl
 
-- Create an IAM role and attach the required AWS managed policy with the following command. Replace cw-cluster with the name of your cluster. The command deploys an AWS CloudFormation stack that creates an IAM role, attaches the IAM policy to it, and annotates the existing ebs-csi-controller-sa service account with the Amazon Resource Name (ARN) of the IAM role.
+- Create an IAM role and attach the required AWS managed policy with the following command. Replace my-cluster with the name of your cluster. The command deploys an AWS CloudFormation stack that creates an IAM role, attaches the IAM policy to it, and annotates the existing ebs-csi-controller-sa service account with the Amazon Resource Name (ARN) of the IAM role.
 
 ```bash
 eksctl create iamserviceaccount \
     --name ebs-csi-controller-sa \
     --namespace kube-system \
-    --cluster cw-cluster \
+    --cluster my-cluster \
     --role-name AmazonEKS_EBS_CSI_DriverRole \
     --role-only \
     --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
@@ -551,10 +551,10 @@ eksctl create iamserviceaccount \
 
 #### To add the Amazon EBS CSI add-on using eksctl
 
-- Run the following command. Replace cw-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
+- Run the following command. Replace my-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
 
 ```bash
-eksctl create addon --name aws-ebs-csi-driver --cluster cw-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
+eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
 ```
 
 - Firstly, check the StorageClass object in the cluster. 
@@ -604,16 +604,16 @@ gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   f
 myaws-sc        ebs.csi.aws.com         Delete          WaitForFirstConsumer   false                  7s
 ```
 
-- Create a persistentvolumeclaim with the following settings and show that new volume is created on aws management console.
+- Create a persistentvolumeclaim with the following settings and show that a new volume is created on aws management console.
 
 ```bash
-vi clarus-pv-claim.yaml
+vi my-pv-claim.yaml
 ```
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: clarus-pv-claim
+  name: my-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
@@ -624,7 +624,7 @@ spec:
 ```
 
 ```bash
-kubectl apply -f clarus-pv-claim.yaml
+kubectl apply -f my-pv-claim.yaml
 ```
 
 - List the pv and pvc and explain the connections.
@@ -636,7 +636,7 @@ kubectl get pv,pvc
 
 ```text
 NAME                                    STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-persistentvolumeclaim/clarus-pv-claim   Pending                                      myaws-sc       <unset>                 10s
+persistentvolumeclaim/my-pv-claim   Pending                                      myaws-sc       <unset>                 10s
 ```
 
 - Create a pod with the following settings.
@@ -663,14 +663,14 @@ spec:
   volumes:
   - name: aws-pd
     persistentVolumeClaim:
-      claimName: clarus-pv-claim
+      claimName: my-pv-claim
 ```
 
 ```bash
 kubectl apply -f pod-with-dynamic-storage.yaml
 ```
 
-- Enter the pod and see that ebs is mounted to  /usr/share/nginx/html path.
+- Enter the pod and see that EBS is mounted to  /usr/share/nginx/html path.
 
 ```bash
 kubectl exec -it test-aws -- bash
@@ -692,7 +692,7 @@ tmpfs           2.0G     0  2.0G   0% /sys/firmware
 root@test-aws:/#
 ```
 
-- Delete the storageclass that we create.
+- Delete the storageclass that we created.
 
 ```bash
 kubectl get storageclass
@@ -724,7 +724,7 @@ gp2 (default)            kubernetes.io/aws-ebs   Delete          WaitForFirstCon
 
 ```bash
 kubectl delete -f pod-with-dynamic-storage.yaml
-kubectl delete -f clarus-pv-claim.yaml
+kubectl delete -f my-pv-claim.yaml
 ```
 
 - Delete the cluster
@@ -736,10 +736,10 @@ eksctl get cluster --region us-east-1
 
 ```text
 NAME            REGION
-cw-cluster      us-east-1
+my-cluster      us-east-1
 ```
 ```bash
-eksctl delete cluster cw-cluster --region us-east-1
+eksctl delete cluster my-cluster --region us-east-1
 ```
 
-- Do no forget to delete related ebs volumes.
+- Do not forget to delete related EBS volumes.
