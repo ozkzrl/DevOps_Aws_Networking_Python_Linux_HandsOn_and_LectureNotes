@@ -1,43 +1,26 @@
-# Hands-on EKS-02: Ingress and Dynamic Volume Provisioning
+# Hands-on EKS-01: Creating and Managing a Kubernetes Cluster with AWS EKS
 
-The purpose of this hands-on training is to give students the knowledge of  Dynamic Volume Provisioning and Ingress.
+The purpose of this hands-on training is to give students the knowledge of how to use AWS Elastic Kubernetes Service
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- Learn to Create and Manage an EKS Cluster with eksctl.
-
-- Explain the need for persistent data management
-
-- Learn PersistentVolumes and PersistentVolumeClaims
-
-- Understand the Ingress and Ingress Controller Usage
+- Learn to Create and Manage an EKS Cluster with Worker Nodes
 
 ## Outline
 
-- Part 1 - Installing kubectl and eksctl on Amazon Linux 2023
+- Part 1 - Creating the Kubernetes Cluster on EKS
 
-- Part 2 - Creating the Kubernetes Cluster on EKS
+- Part 2 - Creating a kubeconfig file
 
-- Part 3 - Ingress
+- Part 3 - Adding Worker Nodes to the Cluster
 
-- Part 4 - Dynamic Volume Provisioning
+- Part 4 - Configuring Cluster Autoscaler
 
+- Part 5 - Deploying a Sample Application
 
 ## Prerequisites
-
-1. AWS CLI with Configured Credentials
-
-2. kubectl installed
-
-3. eksctl installed
-
-For information on installing or upgrading eksctl, see [Installing or upgrading eksctl.](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html#installing-eksctl)
-
-## Part 1 - Installing kubectl and eksctl on Amazon Linux 2023
-
-### Install kubectl
 
 - Launch an AWS EC2 instance of Amazon Linux 2023 AMI with a security group allowing SSH.
 
@@ -49,37 +32,7 @@ For information on installing or upgrading eksctl, see [Installing or upgrading 
 sudo dnf update -y
 ```
 
-- Download the Amazon EKS vendor's kubectl binary.
-
-```bash
-curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.0/2024-09-12/bin/linux/amd64/kubectl
-```
-
-- Apply execute permissions to the binary.
-
-```bash
-chmod +x ./kubectl
-```
-
-- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then we recommend creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
-
-```bash
-mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
-```
-
-- (Optional) Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell.
-
-```bash
-echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-```
-
-- After you install kubectl, you can verify its version with the following command:
-
-```bash
-kubectl version --client
-```
-
-### Install eksctl
+- Install eksctl
 
 - Download and extract the latest release of eksctl with the following command.
 
@@ -99,647 +52,434 @@ tar -xzf eksctl_$(uname -s)_amd64.tar.gz -C /tmp && rm eksctl_$(uname -s)_amd64.
 sudo mv /tmp/eksctl /usr/local/bin
 ```
 
-- Test that your installation was successful with the following command.
+- Test if your installation was successful with the following command.
 
 ```bash
 eksctl version
 ```
 
-## Part 2 - Creating the Kubernetes Cluster on EKS
+- Install kubectl
 
-- Configure AWS credentials. Or you can attach `AWS IAM Role` to your EC2 instance.
+*** Download the Amazon EKS vendor's kubectl binary that is compatible with the Kubernetes cluster version. For instructions, see [Installing or updating kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html).
+
+```bash
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
+```
+
+- Apply execute permissions to the binary.
+
+```bash
+chmod +x ./kubectl
+```
+
+- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then we recommend creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
+
+```bash
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+```
+
+- (Optional) Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell.
+
+```bash
+echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+```
+
+- After installing ```kubectl```, you can verify its version with the following command:
+
+```bash
+kubectl version --client
+```
+
+- Configure AWS credentials.
 
 ```bash
 aws configure
 ```
 
-- Create an EKS cluster via `eksctl`. It will take a while.
+- AWS cli configuration
 
 ```bash
-eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name my-cluster
+  aws configure
+  AWS Access Key ID [None]: xxxxxxx
+  AWS Secret Access Key [None]: xxxxxxxx
+  Default region name [None]: us-east-1
+  Default output format [None]: json
 ```
 
-### Alternative way (including SSH connection to the worker nodes)
-
-- If needed, create ssh-key with the  command `ssh-keygen -f ~/.ssh/id_rsa`.
+- Verify that you can see your cluster listed when authenticated
 
 ```bash
-eksctl create cluster \
- --name my-cluster \
- --region us-east-1 \
- --version 1.30 \
- --zones us-east-1a,us-east-1b,us-east-1c \
- --nodegroup-name my-nodes \
- --node-type t3a.medium \
- --nodes 2 \
- --nodes-min 2 \
- --nodes-max 3 \
- --ssh-access \
- --ssh-public-key  ~/.ssh/id_rsa.pub \
- --managed
+aws eks list-clusters
+{
+  "clusters": []
+}
 ```
 
-- Explain the default values. 
+## Part 1 - Creating the Kubernetes Cluster on EKS
 
-```bash
-eksctl create cluster --help
-```
+1. Direct the students to the AWS EKS Service webpage. 
 
-- Show the AWS `eks service` on aws management console and explain `eksctl-my-cluster-cluster` stack on `cloudformation service`.
+2. Give a general description of the page and *****the pricing***** of the services.
 
+- https://aws.amazon.com/eks/pricing/
 
-## Part 3 - Ingress
+3. Select ```Cluster``` on the left-hand menu and click on the "Create cluster" button. You will be directed to the ```Configure cluster``` page:
 
-- Create a folder and name it ingress-lesson.
+    - Give general descriptions about the page and the steps of creating the cluster.
 
-```bash
-mkdir ingress-lesson
-cd ingress-lesson
-```
+    - Fill the ```Name``` and ```Kubernetes version``` fields. (Ex: MyCluster, 1.29)
 
-- Create a file named `myshop.yaml` for the  myshop deployment object.
+        <i>Mention the durations for minor version support and the approximate release frequency.</i>
 
-```yaml
-apiVersion: apps/v1 
-kind: Deployment 
-metadata:
-  name: myshop-deploy
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: myshop 
-  template: 
-    metadata:
-      labels:
-        app: myshop
-    spec:
-      containers:
-      - name: myshop-pod
-        image: clarusway/myshop
-        ports:
-        - containerPort: 80
-```
+    - On the ```Cluster Service Role``` field, give a general description about why we need this role. 
 
-- Create a file named `myshop-svc.yaml` for the myshop service object.
+    - Create EKS Cluster Role with ```EKS - Cluster``` use case and ```AmazonEKSClusterPolicy```.
 
-```yaml
-apiVersion: v1
-kind: Service   
-metadata:
-  name: myshop-svc
-  labels:
-    app: myshop
-spec:
-  type: NodePort  
-  ports:
-  - port: 80  
-    targetPort: 80
-    nodePort: 30001
-  selector:
-    app: myshop
-```
+        - EKS Cluster Role:
+           - use case   :  ```EKS - Cluster``` 
+           - permissions: ```AmazonEKSClusterPolicy```.
 
-- Create a file named `account.yaml` for the account deployment object.
+    - Select the recently created role, back on the ```Cluster Service Role``` field.
 
-```yaml
-apiVersion: apps/v1 
-kind: Deployment 
-metadata:
-  name: account-deploy
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: account
-  template: 
-    metadata:
-      labels:
-        app: account
-    spec:
-      containers:
-      - name: account-pod
-        image: clarusway/myshop:account
-        ports:
-        - containerPort: 80
-```
-
-- Create a file named `account-svc.yaml` for the account service object.
-
-```yaml
-apiVersion: v1
-kind: Service   
-metadata:
-  name: account-svc
-  labels:
-    app: account
-spec:
-  type: NodePort  
-  ports:
-  - port: 80  
-    targetPort: 80
-    nodePort: 30002
-  selector:
-    app: account
-```
-
-- Create the objects.
-
-```bash
-kubectl apply -f .
-```
-
-### Ingress
-
-- Briefly explain ingress and ingress controller. For additional information, a few portals can be visited, like;
-
-- https://kubernetes.io/docs/concepts/services-networking/ingress/
+    - Proceed to the ```Secrets Encryption``` field. 
     
-- Open the official [ingress-nginx]( https://kubernetes.github.io/ingress-nginx/deploy/ ), explain the `ingress-controller` installation steps for different architectures. We install an ingress for bare metal.
+    - Activate the field, give a general description about ```KMS Service```, and describe where we use those keys and give an example about a possible key.
+
+    - Deactivate the ```Secrets Encryption``` field and keep it as is.
+
+    - Proceed to the next step (Specify Networking).
+
+4. On the ```Specify Networking``` page's ```Networking field```:
+
+    - Select the default VPC and all public subnets.
+
+        <i>Explain the necessity of using a dedicated VPC for the cluster.</i>
+
+    - Select the default VPC security group (SSH and HTTPS must be allowed) or create one with SSH connection and HTTPS. 
+
+        <i>Explain the necessity of using a dedicated securitygroup for the cluster.</i>
+
+    - Proceed to ```Cluster Endpoint Access``` field.
+
+    - Give a general description of the options in the field.
+
+    - Explain ```Advanced Settings```.
+
+    - Select ```Public and Private``` option on the field.
+
+    - Proceed to the next step (Configure Logging).
+
+5. On the ```Configure Logging``` page:
+
+    - Give general descriptions about the logging options.
+
+    - Proceed to the final step (Review and create).
+
+6. On the ```Review and create``` page:
+
+    - Create the cluster.
+
+
+## Part 2 - Creating a kubeconfig file
+
+1. Give general descriptions about what ```config file``` is.
+
+2. Verify that you can see your cluster listed when authenticated
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/cloud/deploy.yaml
+aws eks list-clusters
+{
+  "clusters": [
+    "my-cluster"
+  ]
+}
 ```
 
-- Create a file named `ing.yaml` for the ingress object.
+3. Show the content of the $HOME directory, including hidden files and folders. If there is a ```.kube``` directory, show what it has inside.  
+
+4. Run the command
+```bash
+aws eks --region us-east-1 update-kubeconfig --name <cluster-name>
+``` 
+
+5. Explain what the above command does.
+
+6. Then run the command on your terminal
+```bash
+kubectl get svc
+```
+You should see the output below
+```bash
+NAME             TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+svc/kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   1m
+```
+7. Run the command below to show that there is no node for now.
+```bash
+kubectl get node
+```
+8. Show again the content of the $HOME directory, including hidden files and folders. Find the ```config``` file inside ```.kube``` directory. Then show the content of the file.
+
+
+## Part 3 - Adding Worker Nodes to the Cluster
+
+1. Get to the cluster page that was recently created.
+
+2. Wait until seeing the ```ACTIVE``` status for the cluster.
+
+```bash
+aws eks describe-cluster --name <cluster-name> --query cluster.status
+  "ACTIVE"
+```
+
+3. On the cluster page, click on ```Compute``` tab and ```Add Node Group``` button.
+
+4. On the ```Configure node group``` page:
+
+    - Give a unique name for the managed node group.
+
+    - For the node's IAM Role, go to the IAM console and create a new role with ```EC2 - Common``` use case having the policies of ```AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy```.
+    
+        - ```Use case:    EC2 ```
+        - ```Policies: AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy```
+    
+        <i>Give a short description of why we need these policies.</i>
+        <i>Explain the necessity of using a dedicated IAM Role.</i>
+
+    -  Proceed to the next page.
+
+5. On the ```Set compute and scaling configuration``` page:
+ 
+    - Choose the appropriate AMI type for non-GPU instances. (Amazon Linux 2 (AL2_x86_64))
+
+    - Choose ```t3.medium``` as the instance type.
+
+        <i>Explain why we can't use</i> ```t2.micro```.
+    - Choose appropriate options for other fields. (3 nodes are enough for maximum, 2 nodes for minimum, and desired sizes.)
+
+    - Proceed to the next step.
+
+6. On the ```Specify networking``` page:
+
+    - Choose the subnets to launch your nodes.
+    
+    - Allow remote access to your nodes.
+    <i>Mention that if we don't allow remote access, it's not possible to enable it after the node group is created.</i>
+    
+    - Select your SSH Key for the connection to your nodes.
+    
+    - You can also limit the IPs for the connection.
+
+    - Proceed to the next step. Review and create the ```Node Group```.
+
+7. Run the command below on your local.
+```bash
+kubectl get nodes --watch
+```
+
+8. Show the newly created EC2 instances.
+
+
+## Part 4 - Configuring Cluster Autoscaler
+
+1. Explain what ```Cluster Autoscaler``` is and why we need it.
+
+2. Create a policy with the following content. You can name it as ClusterAutoscalerPolicy.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}
+```
+
+3. Attach this policy to the IAM Worker Node Role, which is already in use.
+
+4. Download the "cluster-autoscaler" components and update.
+
+```bash
+cd && mkdir cluster-autoscaler && cd cluster-autoscaler
+
+curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+```
+Replace <CLUSTER NAME> value with your cluster name, update the image version `registry.k8s.io/autoscaling/cluster-autoscaler:v1.xx.y` (e.g.:v1.33.0) and add the following command option ```--skip-nodes-with-system-pods=false``` to the command section under ```spec.containers```.
+
+**** Find an appropriate version of your cluster autoscaler in the [link](https://github.com/kubernetes/autoscaler/releases). The version number should start with version number of the cluster Kubernetes version. For example, if you have selected the Kubernetes version 1.29, you should find something like ```1.29.0```.
+
+5. IRSA Setup for Autoscaler
+
+To enable secure AWS access for the Cluster Autoscaler, we use IAM Roles for Service Accounts (IRSA). This allows the autoscaler pod to assume an IAM role without storing AWS credentials inside the container.
+
+- Associate an OIDC provider with your EKS cluster (one-time setup):
+```bash
+    eksctl utils associate-iam-oidc-provider \
+      --region <region> \
+      --cluster <cluster-name> \
+      --approve
+```
+
+- Create the service account with attached IAM policy:
+```bash
+    ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    eksctl create iamserviceaccount \
+      --cluster <cluster-name> \
+      --namespace kube-system \
+      --name cluster-autoscaler \
+      --attach-policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/ClusterAutoscalerPolicy \
+      --approve
+```
+
+- Check that the service account file is already in your Cluster Autoscaler in the Deployment:
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: myshop-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: myshop-svc
-                port: 
-                  number: 80
-          - path: /account
-            pathType: Prefix
-            backend:
-              service:
-                name: account-svc
-                port: 
-                  number: 80
+    spec:
+      template:
+        spec:
+          serviceAccountName: cluster-autoscaler
 ```
 
-- Create the ingress object.
+*** Once deployed, the Cluster Autoscaler will assume the IAM role automatically using IRSA!
 
-```bash
-kubectl apply -f ing.yaml
-```
-
-> We can also create an ingress with the following command.
-
-```bash
-kubectl create ingress myshop-ingress --rule="/account*=account-svc:80" --rule="/*=myshop-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
-```
-
-- Check the ingress object.
-
-```bash
-kubectl get ingress
-```
-
-- You will get an output like the one below.
-
-```bash
-NAME                 CLASS   HOSTS   ADDRESS                                                                         PORTS   AGE
-myshop-ingress   nginx   *       afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      12s
-```
-
-- Use the address to reach the services.
-
-```bash
-$ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com
-<h1>WELCOME TO THE mySHOP</h1><h2>For account service:<br>/account</h2>
-$ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com/account
-<h1>ACCOUNT SERVICE</h1>
-```
-
-#### Host
-
-- We can define a host name for ingress. Update the `ing.yaml` file as below.
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: myshop-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: "myshop.clarusway.us"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: myshop-svc
-                port: 
-                  number: 80
-          - path: /account
-            pathType: Prefix
-            backend:
-              service:
-                name: account-svc
-                port: 
-                  number: 80
-```
-
-- Apply the ingress object.
-
-```bash
-kubectl apply -f ing.yaml
-```
-
-> We can also create an ingress with the following command.
-
-```bash
-kubectl create ingress myshop-ingress --rule="myshop.clarusway.us/*=myshop-svc:80" --rule="myshop.clarusway.us/account/*=account-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
-```
-
-- Check the ingress object.
-
-```bash
-kubectl get ingress
-```
-
-- You will get an output like the one below.
-
-```bash
-kubectl get ingress
-NAME                 CLASS   HOSTS                     ADDRESS                                                                         PORTS   AGE
-myshop-ingress   nginx   myshop.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      70s
-```
-
-- To reach the application with `host` name, create `myshop.clarusway.us` record for address (network load balancer) in `route53` service.
-
-- You can reach the application using the curl command.
-
-```bash
-curl myshop.clarusway.us
-```
-
-- Delete all objects.
-
-```bash
-kubectl delete -f .
-```
-
-#### Name-based virtual hosting
-
-- Create a folder named `virtual-hosting`.
-
-```bash
-mkdir virtual-hosting && cd virtual-hosting
-```
-
-- Create two pods and services for nginx and Apache.
-
-```bash
-kubectl run mynginx --image=nginx --port=80 --expose
-kubectl run myapache --image=httpd --port=80 --expose
-kubectl get po,svc
-```
-
-- Create an ingress file named `mying.yaml` and use name-based virtual hosting.
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: myingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: "nginx.clarusway.us"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: mynginx
-                port: 
-                  number: 80
-    - host: "apache.clarusway.us"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: myapache
-                port: 
-                  number: 80
-```
-
-- Create the ingress object.
-
-```bash
-kubectl apply -f mying.yaml
-```
-
-> We can also create an ingress with the following command.
-
-```bash
-kubectl create ingress myingress \
-  --rule="nginx.clarusway.us/*=mynginx:80" \
-  --rule="apache.clarusway.us/*=myapache:80" \
-  --class=nginx \
-  --annotation=nginx.ingress.kubernetes.io/rewrite-target=/
-```
-
-- Check the ingress object.
-
-```bash
-kubectl get ingress
-```
-
-- You will get an output like below.
-
-```bash
-NAME        CLASS   HOSTS                                    ADDRESS                                                                         PORTS   AGE
-myingress   nginx   nginx.clarusway.us,apache.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      6s
-```
-
-- To reach the application with `host` name, create `nginx.clarusway.us,apache.clarusway.us` records for address (network load balancer) in `route53` service.
-
-
-- Check the host address.
-
-```bash
-curl nginx.clarusway.us
-curl apache.clarusway.us
-```
-
-- Delete the ingress object.
-
-```bash
-kubectl delete -f mying.yaml
-```
-
-## Part 4 - Dynamic Volume Provisioning
-
-### The Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver
-
-- The Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver allows Amazon Elastic Kubernetes Service (Amazon EKS) clusters to manage the lifecycle of Amazon EBS volumes for persistent volumes.
-
-- The Amazon EBS CSI driver isn't installed when you first create a cluster. To use the driver, you must add it as an Amazon EKS add-on or as a self-managed add-on. 
-
-- Install the Amazon EBS CSI driver. For instructions on how to add it as an Amazon EKS add-on, see Managing the [Amazon EBS CSI driver as an Amazon EKS add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html).
-
-### Creating an IAM OIDC provider for your cluster
-
-- To use AWS EBS CSI, it is required to have an AWS Identity and Access Management (IAM) OpenID Connect (OIDC) provider for your cluster. 
-
-- Determine whether you have an existing IAM OIDC provider for your cluster. Retrieve your cluster's OIDC provider ID and store it in a variable.
-
-```bash
-oidc_id=$(aws eks describe-cluster --name my-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
-```
-
-- Determine whether an IAM OIDC provider with your cluster's ID is already in your account.
-
-```bash
-aws iam list-open-id-connect-providers | grep $oidc_id
-```
-If output is returned from the previous command, then you already have a provider for your cluster, and you can skip the next step. If no output is returned, then you must create an IAM OIDC provider for your cluster.
-
-- Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your value.
-
-```bash
-eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=my-cluster --approve
-```
-
-### Creating the Amazon EBS CSI driver IAM role for service accounts
-
-- The Amazon EBS CSI plugin requires IAM permissions to make calls to AWS APIs on your behalf. 
-
-- When the plugin is deployed, it creates and is configured to use a service account that's named ebs-csi-controller-sa. The service account is bound to a Kubernetes clusterrole that's assigned the required Kubernetes permissions.
-
-#### To create your Amazon EBS CSI plugin IAM role with eksctl
-
-- Create an IAM role and attach the required AWS managed policy with the following command. Replace my-cluster with the name of your cluster. The command deploys an AWS CloudFormation stack that creates an IAM role, attaches the IAM policy to it, and annotates the existing ebs-csi-controller-sa service account with the Amazon Resource Name (ARN) of the IAM role.
-
-```bash
-eksctl create iamserviceaccount \
-    --name ebs-csi-controller-sa \
-    --namespace kube-system \
-    --cluster my-cluster \
-    --role-name AmazonEKS_EBS_CSI_DriverRole \
-    --role-only \
-    --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
-    --approve
-```
-
-### Adding the Amazon EBS CSI add-on
-
-#### To add the Amazon EBS CSI add-on using eksctl
-
-- Run the following command. Replace my-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
-
-```bash
-eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
-```
-
-- Firstly, check the StorageClass object in the cluster. 
-
-```bash
-kubectl get sc
-
-kubectl describe sc/gp2
-```
-
-- Create a `storage-class` directory and change directory.
+6. Apply and annotate the deployment with the following commands.
 
 
 ```bash
-mkdir storage-class && cd storage-class
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+```
+*** Monitor created resources!
+
+
+*** `safe-to-evict="false"` well-known annotation marks the pod as critical to autoscaling — Kubernetes should avoid evicting it. 
+```bash
+kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false"
 ```
 
-- Create a StorageClass with the following settings.
+
+## Part 5 - Deploying a Sample Application
+
+1. Create a `myapp.yml` file in your local environment with the following content.
 
 ```bash
-vi storage-class.yaml
+cd && mkdir test-cluster-autoscaler && cd test-cluster-autoscaler
 ```
 
 ```yaml
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: myaws-sc
-provisioner: ebs.csi.aws.com
-volumeBindingMode: WaitForFirstConsumer
-parameters:
-  type: gp2
-  fsType: ext4           
-```
-
-
-```bash
-kubectl apply -f storage-class.yaml
-```
-
-- Explain the default storageclass
-
-```bash
-kubectl get storageclass
-NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  75m
-myaws-sc        ebs.csi.aws.com         Delete          WaitForFirstConsumer   false                  7s
-```
-
-- Create a persistentvolumeclaim with the following settings and show that a new volume is created on aws management console.
-
-```bash
-vi my-pv-claim.yaml
-```
-```yaml
+kind: Namespace
 apiVersion: v1
-kind: PersistentVolumeClaim
 metadata:
-  name: my-pv-claim
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: myaws-sc
-```
-
-```bash
-kubectl apply -f my-pv-claim.yaml
-```
-
-- List the pv and pvc and explain the connections.
-
-```bash
-kubectl get pv,pvc
-```
-- You will see an output like this
-
-```text
-NAME                                    STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-persistentvolumeclaim/my-pv-claim   Pending                                      myaws-sc       <unset>                 10s
-```
-
-- Create a pod with the following settings.
-
-```bash
-vi pod-with-dynamic-storage.yaml
-```
-```yaml
+   name: my-namespace
+   labels:
+      app: container-info
+---
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
-  name: test-aws
+   name: container-info-svc
+   namespace: my-namespace
+   labels:
+      app: container-info
+spec:
+   type: LoadBalancer
+   ports:
+      - protocol: TCP
+        port: 80
+        nodePort: 30300
+        targetPort: 80
+   selector:
+      app: container-info
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container-info-deploy
+  namespace: my-namespace
   labels:
-    app : web-nginx
+    app: container-info
 spec:
-  containers:
-  - image: nginx:latest
-    ports:
-    - containerPort: 80
-    name: test-aws
-    volumeMounts:
-    - mountPath: /usr/share/nginx/html
-      name: aws-pd
-  volumes:
-  - name: aws-pd
-    persistentVolumeClaim:
-      claimName: my-pv-claim
+  replicas: 3
+  selector:
+    matchLabels:
+      app: container-info
+  template:
+    metadata:
+      labels:
+        app: container-info
+    spec:
+      containers:
+      - name: container-info
+        image: ondiacademy/container-info:1.0
+        ports:
+        - containerPort: 80
 ```
+
+2. Deploy the application with the following command.
 
 ```bash
-kubectl apply -f pod-with-dynamic-storage.yaml
+kubectl apply -f myapp.yml
 ```
 
-- Enter the pod and see that EBS is mounted to  /usr/share/nginx/html path.
+3. Run the command below.
 
 ```bash
-kubectl exec -it test-aws -- bash
-```
-- You will see an output like this
-```bash
-root@test-aws:/# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-overlay          80G  3.5G   77G   5% /
-tmpfs            64M     0   64M   0% /dev
-tmpfs           2.0G     0  2.0G   0% /sys/fs/cgroup
-/dev/xvda1       80G  3.5G   77G   5% /etc/hosts
-shm              64M     0   64M   0% /dev/shm
-/dev/xvdcj      2.9G  9.1M  2.9G   1% /usr/share/nginx/html
-tmpfs           2.0G   12K  2.0G   1% /run/secrets/kubernetes.io/serviceaccount
-tmpfs           2.0G     0  2.0G   0% /proc/acpi
-tmpfs           2.0G     0  2.0G   0% /proc/scsi
-tmpfs           2.0G     0  2.0G   0% /sys/firmware
-root@test-aws:/#
+kubectl -n my-namespace get svc
 ```
 
-- Delete the storageclass that we created.
+4. In case the service remains pending, then analyze it. 
 
 ```bash
-kubectl get storageclass
+kubectl describe service container-info-svc -n my-namespace
 ```
-- You will see an output like this
 
-```text
-NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-aws-standard    kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  71m
-gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  4h10m
-```
+Show the warning: "Error creating load balancer (will retry): failed to ensure load balancer for service default/guestbook: could not find any suitable subnets for creating the ELB"
+
+5. Go to this [link](https://aws.amazon.com/tr/premiumsupport/knowledge-center/eks-vpc-subnet-discovery/). Explain that it is necessary to tag selected subnets as follows:
+
+- Key: kubernetes.io/cluster/<cluster-name>
+- Value: shared
+
+6. Go to the VPC service on the AWS console and select "subnets". On the ```Subnets``` page, select the "Tags" tab and add this tag:
+
+- Key: kubernetes.io/cluster/<cluster-name>
+- Value: shared
+
+7. Describe the service object and analyze it.
 
 ```bash
-kubectl delete storageclass myaws-sc
+kubectl describe service container-info-svc -n my-namespace
 ```
+
+8. Get the ```External IP``` value from the previous command's output and visit that IP.
+
+9. For scale-up, edit the deployment. Change "replicas=30" in `myapp.yaml` file. Save the file.
 
 ```bash
-kubectl get storageclass
+kubectl edit deploy container-info-deploy -n my-namespace
 ```
 
-- You will see an output like this
-
-```text
-NAME                     PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE     ALLOWVOLUMEEXPANSION   AGE
-gp2 (default)            kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer  false                  52m
-```
-
-- Delete the pod
+10. Watch the pods while creating. Show that some pods are pending state.
 
 ```bash
-kubectl delete -f pod-with-dynamic-storage.yaml
-kubectl delete -f my-pv-claim.yaml
+kubectl get po -n my-namespace -w
 ```
 
-- Delete the cluster
+11. Describe one of the pending pods. Show that there is no resource to run pods. So cluster-autoscaler scales out and create one more node.
 
 ```bash
-eksctl get cluster --region us-east-1
-```
-- You will see an output like this
-
-```text
-NAME            REGION
-my-cluster      us-east-1
-```
-```bash
-eksctl delete cluster my-cluster --region us-east-1
+kubectl describe pod container-info-deploy-xxxxxx -n my-namespace
+kubectl get nodes
 ```
 
-- Do not forget to delete related EBS volumes.
+12. After cleaning up `worker nodes` and `cluster`, delete the `LoadBalancer` manually.
