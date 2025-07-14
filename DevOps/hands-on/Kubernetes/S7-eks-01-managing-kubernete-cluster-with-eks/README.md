@@ -32,10 +32,31 @@ At the end of this hands-on training, students will be able to;
 sudo dnf update -y
 ```
 
-- Download the Amazon EKS vendor's kubectl binary that is compatible with Kubernetes cluster version. For instructions, see [Installing or updating kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html).
+- Install eksctl
+
+*** You can check from this page: https://eksctl.io/installation/
 
 ```bash
-curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.32.0/2024-12-20/bin/linux/amd64/kubectl
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+# (Optional) Verify checksum
+curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+
+sudo install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl
+```
+
+- Install kubectl
+
+*** Download the Amazon EKS vendor's kubectl binary that is compatible with the Kubernetes cluster version. For instructions, see [Installing or updating kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html).
+
+```bash
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
 ```
 
 - Apply execute permissions to the binary.
@@ -44,19 +65,19 @@ curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.32.0/2024-12-20/bin/linu
 chmod +x ./kubectl
 ```
 
-- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then it's recommended to create a $HOME/bin/kubectl and ensure that $HOME/bin comes first in your $PATH.
+- Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then we recommend creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
 
 ```bash
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 ```
 
-- Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell.
+- (Optional) Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell.
 
 ```bash
 echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
 ```
 
-- After you install kubectl, you can verify its version with the following command:
+- After installing ```kubectl```, you can verify its version with the following command:
 
 ```bash
 kubectl version --client
@@ -68,7 +89,7 @@ kubectl version --client
 aws configure
 ```
 
-- aws configuration
+- AWS cli configuration
 
 ```bash
   aws configure
@@ -97,15 +118,13 @@ aws eks list-clusters
 
 3. Select ```Cluster``` on the left-hand menu and click on the "Create cluster" button. You will be directed to the ```Configure cluster``` page:
 
-    - Give general descriptions of the page and the steps of creating the cluster.
+    - Give general descriptions about the page and the steps of creating the cluster.
 
-    - Fill the ```Name``` and ```Cluster IAM role``` fields. (Ex: mycluster, eks-cluster-role)
+    - Fill the ```Name``` and ```Kubernetes version``` fields. (Ex: MyCluster, 1.29)
 
-      - Give a name for your cluster ```mycluster```
+        <i>Mention the durations for minor version support and the approximate release frequency.</i>
 
-    - On the ```Cluster IAM role ``` field, give a general description about why we need this role.
-    
-    - Click ```Create recommended role```
+    - On the ```Cluster Service Role``` field, give a general description about why we need this role. 
 
     - Create EKS Cluster Role with ```EKS - Cluster``` use case and ```AmazonEKSClusterPolicy```.
 
@@ -113,91 +132,43 @@ aws eks list-clusters
            - use case   :  ```EKS - Cluster``` 
            - permissions: ```AmazonEKSClusterPolicy```.
 
-        - Role details:
-          - Role Name: give a name for role ```eks-cluster-role```
-          - Description: keep it as it is
-          - Click on ```Create Role```
+    - Select the recently created role, back on the ```Cluster Service Role``` field.
 
-    - Select the recently created role, back on the ```Cluster IAM role``` field.
-
-4. On the ```Kubernetes version settings``` page's ```Kubernetes version```:
-
-<i>Mention the durations for minor version support and the approximate release frequency.</i>
-
-  - Select Kubernetes version for this cluster: ```1.31```
-
-  - Upgrade policy : ```Standard```
-
-5. On the ```Cluster access``` page's:
-
-  - Bootstrap cluster administrator access: ```Allow cluster administrator access```
-
-  - Cluster authentication mode : ```EKS API and ConfigMap```
-
-6. On the ```Secrets encryption ``` page's:
-
-  - Activate the field, give a general description about ```KMS Service```, and describe where we use those keys and give an example about a possible key.
+    - Proceed to the ```Secrets Encryption``` field. 
     
-  - Deactivate the ```Secrets encryption``` field and keep it as is.
+    - Activate the field, give a general description about ```KMS Service```, and describe where we use those keys and give an example about a possible key.
 
-7.  On the ```ARC Zonal shift ``` page's:
+    - Deactivate the ```Secrets Encryption``` field and keep it as is.
 
-  - Click on ```Disabled```
+    - Proceed to the next step (Specify Networking).
 
-8.  On the ```Tags``` page's:
+4. On the ```Specify Networking``` page's ```Networking field```:
 
-  - No need to tag, keep it as it is
-
-  - Click on ```Next```.
-
-9. On the ```Specify Networking``` page's ```Networking field```:
-
-    - Subnets: Select the default VPC and all public subnets.
+    - Select the default VPC and all public subnets.
 
         <i>Explain the necessity of using a dedicated VPC for the cluster.</i>
 
-    - Security groups: Select ```default VPC security group``` (it must have SSH and HTTPS rules) or create one with SSH connection and HTTPS. 
+    - Select the default VPC security group (SSH and HTTPS must be allowed) or create one with SSH connection and HTTPS. 
 
-        <i>Explain the necessity of using a dedicated SecurityGroup for the cluster.</i>
+        <i>Explain the necessity of using a dedicated securitygroup for the cluster.</i>
 
-    - Choose cluster IP address family: IPv4
+    - Proceed to ```Cluster Endpoint Access``` field.
 
-    - Configure Kubernetes service IP address block: keep it as it is
+    - Give a general description of the options in the field.
 
-10. On the  ```Cluster Endpoint Access``` field.
+    - Explain ```Advanced Settings```.
 
     - Select ```Public and Private``` option on the field.
 
-      - Give a general description of the options in the field.
+    - Proceed to the next step (Configure Logging).
 
-      - Explain ```Advanced Settings```.
-
-  - Proceed to the ```Next``` step.
-
-11. On the ```Configure observability``` page:
+5. On the ```Configure Logging``` page:
 
     - Give general descriptions about the logging options.
-    
-    - Metrics: ```keep it as it is.```
-    
-      (You can send metrics to the Amazon Managed Service for Prometheus but ```no need right now```. And if you want, you can enable Cloudwatch with Cloudwatch Observability add-on.)
 
-    - Control plane logging:
+    - Proceed to the final step (Review and create).
 
-      (You can send logs from AWS EKS to CloudWatch logs, ```no need right now```)
-
-12. On the ```Select add-ons``` page:
-
-  - Amazon EKS add-ons: ```keep it as it is.```
-
-  - Proceed to the final step (Review and create).
-
-13. On the ```Configure selected add-ons settings``` page:
-
-  - keep it as it is.
-
-
-14. On the ```Review and create``` page:
+6. On the ```Review and create``` page:
 
     - Create the cluster.
 
@@ -221,25 +192,21 @@ aws eks list-clusters
 
 4. Run the command
 ```bash
-aws eks --region us-east-1 update-kubeconfig --name <cluster_name>
+aws eks --region us-east-1 update-kubeconfig --name <cluster-name>
 ``` 
 
 5. Explain what the above command does.
 
 6. Then run the command on your terminal
-
 ```bash
 kubectl get svc
 ```
-
 You should see the output below
-
 ```bash
 NAME             TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 svc/kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   1m
 ```
 7. Run the command below to show that there is no node for now.
-
 ```bash
 kubectl get node
 ```
@@ -256,6 +223,7 @@ kubectl get node
 aws eks describe-cluster --name <cluster-name> --query cluster.status
   "ACTIVE"
 ```
+
 3. On the cluster page, click on ```Compute``` tab and ```Add Node Group``` button.
 
 4. On the ```Configure node group``` page:
@@ -263,42 +231,25 @@ aws eks describe-cluster --name <cluster-name> --query cluster.status
     - Give a unique name for the managed node group.
 
     - For the node's IAM Role, go to the IAM console and create a new role with ```EC2 - Common``` use case having the policies of ```AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy```.
-
-      - ```Use case:    EC2 ```
-      - ```Policies: AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy```
+    
+        - ```Use case:    EC2 ```
+        - ```Policies: AmazonEKSWorkerNodePolicy, AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy```
     
         <i>Give a short description of why we need these policies.</i>
-
         <i>Explain the necessity of using a dedicated IAM Role.</i>
-    
-    - Launch template: ```keep it as it is```
 
-    - Kubernetes labels: ```keep it as it is```
-
-    - Kubernetes taints: ```keep it as it is```
-
-    - Tags: ```keep it as it is```
-
-    -  Proceed to the ```Next`` page.
- 
+    -  Proceed to the next page.
 
 5. On the ```Set compute and scaling configuration``` page:
  
-    - Choose the appropriate AMI type for non-GPU instances. (Amazon Linux 3 (AL2023_x86_64_STANDARD))
+    - Choose the appropriate AMI type for non-GPU instances. (Amazon Linux 2 (AL2_x86_64))
 
     - Choose ```t3.medium``` as the instance type.
 
         <i>Explain why we can't use</i> ```t2.micro```.
+    - Choose appropriate options for other fields. (3 nodes are enough for maximum, 2 nodes for minimum, and desired sizes.)
 
-    - Node group scaling configuration :
-
-      - Desired size: 1
-      - Minimum size: 1
-      - Maximum size: 3
-
-    - Node group update configuration:
-
-    - Proceed to the ```Next``` step.
+    - Proceed to the next step.
 
 6. On the ```Specify networking``` page:
 
@@ -311,19 +262,15 @@ aws eks describe-cluster --name <cluster-name> --query cluster.status
     
     - You can also limit the IPs for the connection.
 
-    - Proceed to the next step. 
+    - Proceed to the next step. Review and create the ```Node Group```.
 
-7. On the ```Review and create``` page:
-    
-    - Clik on the ```Next```.
-
-8. Run the command below on your local.
-
+7. Run the command below on your local.
 ```bash
 kubectl get nodes --watch
 ```
 
-9. Show the newly created EC2 instances.
+8. Show the newly created EC2 instances.
+
 
 ## Part 4 - Configuring Cluster Autoscaler
 
@@ -354,42 +301,72 @@ kubectl get nodes --watch
 
 3. Attach this policy to the IAM Worker Node Role, which is already in use.
 
-4. Deploy the ```Cluster Autoscaler``` with the following command.
+4. Download the "cluster-autoscaler" components and update.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-```
-5. Add an annotation to the deployment with the following command.
+cd && mkdir cluster-autoscaler && cd cluster-autoscale
 
+curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+```
+Replace <CLUSTER NAME> value with your cluster name, update the image version `registry.k8s.io/autoscaling/cluster-autoscaler:v1.xx.y` (e.g.:v1.33.0) and add the following command option ```--skip-nodes-with-system-pods=false``` to the command section under ```spec.containers```.
+
+**** Find an appropriate version of your cluster autoscaler in the [link](https://github.com/kubernetes/autoscaler/releases). The version number should start with version number of the cluster Kubernetes version. For example, if you have selected the Kubernetes version 1.29, you should find something like ```1.29.0```.
+
+5. IRSA Setup for Autoscaler
+
+To enable secure AWS access for the Cluster Autoscaler, we use IAM Roles for Service Accounts (IRSA). This allows the autoscaler pod to assume an IAM role without storing AWS credentials inside the container.
+
+- Associate an OIDC provider with your EKS cluster (one-time setup):
+```bash
+    eksctl utils associate-iam-oidc-provider \
+      --region <your-region> \
+      --cluster <your-cluster-name> \
+      --approve
+```
+
+- Create the service account with attached IAM policy:
+```bash
+    eksctl create iamserviceaccount \
+      --cluster <cluster-name> \
+      --namespace kube-system \
+      --name cluster-autoscaler \
+      --attach-policy-arn arn:aws:iam::<account-id>:policy/ClusterAutoscalerPolicy \
+      --approve
+```
+
+- Check that the service account file is already in your Cluster Autoscaler in the Deployment:
+
+```yaml
+    spec:
+      template:
+        spec:
+          serviceAccountName: cluster-autoscaler
+```
+
+*** Once deployed, the Cluster Autoscaler will assume the IAM role automatically using IRSA!
+
+6. Apply and annotate the deployment with the following commands.
+
+
+```bash
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+```
+*** Monitor created resources!
+
+
+*** `safe-to-evict="false"` well-known annotation marks the pod as critical to autoscaling — Kubernetes should avoid evicting it. 
 ```bash
 kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false"
 ```
 
-6. Edit the Cluster Autoscaler deployment with the following command.
-
-```bash
-kubectl -n kube-system edit deployment.apps/cluster-autoscaler
-```
-
-This command will open the YAML file for your editing. Replace <CLUSTER NAME> value with your cluster name, and add the following command option ```--skip-nodes-with-system-pods=false``` to the command section under ```containers``` under ```spec```. Save and exit the file by pressing ```:wq```. The changes will be applied.
-
-7. Find an appropriate version of your cluster autoscaler in the [link](https://github.com/kubernetes/autoscaler/releases). The version number should start with the version number of the cluster Kubernetes version. For example, if you have selected the Kubernetes version 1.31, you should find something like ```1.31.2```.
-
-8. Then, in the following command, set the Cluster Autoscaler image tag to that version you have found in the previous step.
-
-```bash
-kubectl -n kube-system set image deployment.apps/cluster-autoscaler cluster-autoscaler=registry.k8s.io/autoscaling/cluster-autoscaler:<YOUR-VERSION-HERE>
-```
-
-For example:
-
-```bash
-kubectl -n kube-system set image deployment.apps/cluster-autoscaler cluster-autoscaler=registry.k8s.io/autoscaling/cluster-autoscaler:v1.30.2
-```
 
 ## Part 5 - Deploying a Sample Application
 
 1. Create a `myapp.yml` file in your local environment with the following content.
+
+```bash
+cd && mkdir test-cluster-autoscaler && cd test-cluster-autoscaler
+```
 
 ```yaml
 kind: Namespace
@@ -452,7 +429,7 @@ kubectl apply -f myapp.yml
 kubectl -n my-namespace get svc
 ```
 
-4. In case the service remains in pending state then analyze it. 
+4. In case the service remains pending, then analyze it. 
 
 ```bash
 kubectl describe service container-info-svc -n my-namespace
@@ -484,17 +461,17 @@ kubectl describe service container-info-svc -n my-namespace
 kubectl edit deploy container-info-deploy -n my-namespace
 ```
 
-10. Watch the pods while creating. Show that some pods are in the pending state.
+10. Watch the pods while creating. Show that some pods are pending state.
 
 ```bash
 kubectl get po -n my-namespace -w
 ```
 
-11. Describe one of the pending pods. Show that there is no resource to run pods. So cluster-autoscaler scales out and creates one more node.
+11. Describe one of the pending pods. Show that there is no resource to run pods. So cluster-autoscaler scales out and create one more node.
 
 ```bash
 kubectl describe pod container-info-deploy-xxxxxx -n my-namespace
 kubectl get nodes
 ```
 
-12. After clean-up `worker nodes` and `cluster`, delete the `LoadBalancer` manually.
+12. After cleaning up `worker nodes` and `cluster`, delete the `LoadBalancer` manually.
