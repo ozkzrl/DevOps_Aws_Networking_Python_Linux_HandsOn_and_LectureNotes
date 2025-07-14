@@ -1,27 +1,27 @@
-# Hands-on Kubernetes : http://nginx.ingress.kubernetes.io/rewrite-target annotation
+# Hands-on Kubernetes: http://nginx.ingress.kubernetes.io/rewrite-target annotation
 
-The purpose of this hands-on training is to give students the knowledge of the  nginx ingress controller.
+The purpose of this hands-on training is to give students the knowledge of the NGINX ingress controller.
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- Learn about to nginx ingress controller.
+- Learn about the NGINX ingress controller.
 
 ## Outline
 
-- Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
+- Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target` annotation
 
-- Part 2 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
+- Part 2 - nginx ingress with `http://nginx.ingress.kubernetes.io/rewrite-target` annotation
 
 
-## Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
+## Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target` annotation
 
 - There is a Clarusshop app that is composed of two microservices: `storefront` and `account` services.
 
 - The application manifest files are under the `k8s` folder.
 
-- At the first example `storefront pods` publish its content from `/` path and `account pods` publish its content from `/account` path.
+- In the first example, `storefront pods` publish their content from `/` path and `account pods` publish their content from `/account` path.
 
 - storefront.py
 
@@ -83,7 +83,7 @@ spec:
                   number: 80
 ```
 
-- We do not need `nginx.ingress.kubernetes.io/rewrite-target: /` anotation. Because the `account service` publish its content from `/account` path.
+- We do not need `nginx.ingress.kubernetes.io/rewrite-target: /` annotation. Because the `account service` publishes its content from `/account` path.
 
 - Create the objects.
 
@@ -99,10 +99,10 @@ $ kubectl get ing
 NAME                 CLASS   HOSTS   ADDRESS        PORTS   AGE
 ingress-clarusshop   nginx   *       192.168.49.2   80      41m
 $ curl 192.168.49.2/account
-<h1>This is account service.</h1>
+<h1>This is the account service.</h1>
 ```
 
-## Part 2 - nginx ingress with `http://nginx.ingress.kubernetes.io/rewrite-target annotaion` annotation
+## Part 2 - nginx ingress with `http://nginx.ingress.kubernetes.io/rewrite-target` annotation
 
 - This time we use `clarusway/cs-account-without-path` image. 
 
@@ -133,7 +133,7 @@ kubectl apply -f k8s/account-deploy.yaml
 kubectl apply -f ing.yaml
 ```
 
-- Wait for the nw pod and check the ingress again.
+- Wait for the new pod and check the ingress again.
 
 ```bash
 $ kubectl get ing
@@ -147,7 +147,7 @@ $ curl 192.168.49.2/account
 <p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
 ```
 
-- As we see the request URL was not found. Because, the `account service` publish its content from `/` path now, but nginx search for `/account` path. We will rewrite target `/account` path as `/`. For this, we uncomment annotata in the ing.yaml file.
+- As we see, the request URL was not found. Because the `account service` publishes its content from `/` path now, but nginx searches for `/account` path. We will rewrite the target `/account` path as `/`. For this, we uncomment annotations in the ing.yaml file.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
