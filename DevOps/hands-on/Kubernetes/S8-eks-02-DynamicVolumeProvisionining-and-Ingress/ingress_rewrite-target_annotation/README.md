@@ -1,23 +1,23 @@
-# Hands-on Kubernetes : http://nginx.ingress.kubernetes.io/rewrite-target annotaion
+# Hands-on Kubernetes : http://nginx.ingress.kubernetes.io/rewrite-target annotation
 
-Purpose of the this hands-on training is to give students the knowledge of nginx ingress controller.
+The purpose of this hands-on training is to give students the knowledge of the  nginx ingress controller.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- Learn to nginx ingress controller.
+- Learn about to nginx ingress controller.
 
 ## Outline
 
-- Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotaion` annotation
+- Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
 
-- Part 2 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotaion` annotation
+- Part 2 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
 
 
-## Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotaion` annotation
+## Part 1 - nginx ingress without `http://nginx.ingress.kubernetes.io/rewrite-target annotation` annotation
 
-- There is a clarusshop app that is composed of two microservice. `storefront` and `account` services.
+- There is a Clarusshop app that is composed of two microservices: `storefront` and `account` services.
 
 - The application manifest files are under the `k8s` folder.
 
