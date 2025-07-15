@@ -116,7 +116,7 @@ aws configure
 - Create an EKS cluster via `eksctl`. It will take a while.
 
 ```bash
-eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name cw-cluster
+eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name my-cluster
 ```
 
 ### Alternative way (including SSH connection to the worker node)
@@ -125,7 +125,7 @@ eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-ea
 
 ```bash
 eksctl create cluster \
- --name cw-cluster \
+ --name my-cluster \
  --region us-east-1 \
  --version 1.29 \
  --zones us-east-1a,us-east-1b,us-east-1c \
@@ -522,7 +522,7 @@ kubectl delete -f mying.yaml
 - Determine whether you have an existing IAM OIDC provider for your cluster. Retrieve your cluster's OIDC provider ID and store it in a variable.
 
 ```bash
-oidc_id=$(aws eks describe-cluster --name cw-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+oidc_id=$(aws eks describe-cluster --name my-cluster --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 ```
 
 - Determine whether an IAM OIDC provider with your cluster's ID is already in your account.
@@ -535,7 +535,7 @@ If output is returned from the previous command, then you already have a provide
 - Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your value.
 
 ```bash
-eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=cw-cluster --approve
+eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=my-cluster --approve
 ```
 
 ### Creating the Amazon EBS CSI driver IAM role for service accounts
@@ -546,13 +546,13 @@ eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=cw-cluster
 
 #### To create your Amazon EBS CSI plugin IAM role with eksctl
 
-- Create an IAM role and attach the required AWS managed policy with the following command. Replace cw-cluster with the name of your cluster. The command deploys an AWS CloudFormation stack that creates an IAM role, attaches the IAM policy to it, and annotates the existing ebs-csi-controller-sa service account with the Amazon Resource Name (ARN) of the IAM role.
+- Create an IAM role and attach the required AWS managed policy with the following command. Replace my-cluster with the name of your cluster. The command deploys an AWS CloudFormation stack that creates an IAM role, attaches the IAM policy to it, and annotates the existing ebs-csi-controller-sa service account with the Amazon Resource Name (ARN) of the IAM role.
 
 ```bash
 eksctl create iamserviceaccount \
     --name ebs-csi-controller-sa \
     --namespace kube-system \
-    --cluster cw-cluster \
+    --cluster my-cluster \
     --role-name AmazonEKS_EBS_CSI_DriverRole \
     --role-only \
     --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
@@ -564,10 +564,10 @@ eksctl create iamserviceaccount \
 
 #### To add the Amazon EBS CSI add-on using eksctl
 
-- Run the following command. Replace cw-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
+- Run the following command. Replace my-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
 
 ```bash
-eksctl create addon --name aws-ebs-csi-driver --cluster cw-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
+eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
 ```
 
 - Firstly, check the StorageClass object in the cluster. 
@@ -748,10 +748,10 @@ eksctl get cluster --region us-east-1
 
 ```text
 NAME            REGION
-cw-cluster      us-east-1
+my-cluster      us-east-1
 ```
 ```bash
-eksctl delete cluster cw-cluster --region us-east-1
+eksctl delete cluster my-cluster --region us-east-1
 ```
 
 - Do no forget to delete related ebs volumes.
