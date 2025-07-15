@@ -564,10 +564,11 @@ eksctl create iamserviceaccount \
 
 #### To add the Amazon EBS CSI add-on using eksctl
 
-- Run the following command. Replace my-cluster with the name of your cluster, 111122223333 with your account ID, and AmazonEKS_EBS_CSI_DriverRole with the name of the IAM role created earlier.
+- Run the following commands. 
 
 ```bash
-eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster --service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKS_EBS_CSI_DriverRole --force
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+eksctl create addon --name aws-ebs-csi-driver --cluster my-cluster --service-account-role-arn arn:aws:iam::${ACCOUNT_ID}:role/AmazonEKS_EBS_CSI_DriverRole --force
 ```
 
 - Firstly, check the StorageClass object in the cluster. 
@@ -617,7 +618,7 @@ gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   f
 myaws-sc        ebs.csi.aws.com         Delete          WaitForFirstConsumer   false                  7s
 ```
 
-- Create a persistentvolumeclaim with the following settings and show that new volume is created on aws management console.
+- Create a persistentvolumeclaim with the following settings and show that the new volume is created on aws management console.
 
 ```bash
 vi clarus-pv-claim.yaml
