@@ -621,13 +621,13 @@ myaws-sc        ebs.csi.aws.com         Delete          WaitForFirstConsumer   f
 - Create a persistentvolumeclaim with the following settings and show that the new volume is created on aws management console.
 
 ```bash
-vi clarus-pv-claim.yaml
+vi my-pv-claim.yaml
 ```
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: clarus-pv-claim
+  name: my-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
@@ -638,7 +638,7 @@ spec:
 ```
 
 ```bash
-kubectl apply -f clarus-pv-claim.yaml
+kubectl apply -f my-pv-claim.yaml
 ```
 
 - List the pv and pvc and explain the connections.
@@ -677,14 +677,25 @@ spec:
   volumes:
   - name: aws-pd
     persistentVolumeClaim:
-      claimName: clarus-pv-claim
+      claimName: my-pv-claim
 ```
 
 ```bash
 kubectl apply -f pod-with-dynamic-storage.yaml
 ```
 
-- Enter the pod and see that ebs is mounted to  /usr/share/nginx/html path.
+```bash
+kubectl get storageclass
+```
+- You will see an output like this
+
+```text
+NAME       PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+myaws-sc   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  71m
+gp2        kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  4h10m
+```
+
+- Enter the pod and see that EBS is mounted to  /usr/share/nginx/html path.
 
 ```bash
 kubectl exec -it test-aws -- bash
@@ -705,18 +716,7 @@ tmpfs           1.9G     0  1.9G   0% /proc/acpi
 tmpfs           1.9G     0  1.9G   0% /sys/firmware
 ```
 
-- Delete the storageclass that we create.
-
-```bash
-kubectl get storageclass
-```
-- You will see an output like this
-
-```text
-NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-aws-standard    kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  71m
-gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  4h10m
-```
+- Delete the storageclass that we created.
 
 ```bash
 kubectl delete storageclass myaws-sc
@@ -729,15 +729,15 @@ kubectl get storageclass
 - You will see an output like this
 
 ```text
-NAME                     PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE     ALLOWVOLUMEEXPANSION   AGE
-gp2 (default)            kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer  false                  52m
+NAME          PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE     ALLOWVOLUMEEXPANSION   AGE
+gp2           kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer  false                  52m
 ```
 
 - Delete the pod
 
 ```bash
 kubectl delete -f pod-with-dynamic-storage.yaml
-kubectl delete -f clarus-pv-claim.yaml
+kubectl delete -f my-pv-claim.yaml
 ```
 
 - Delete the cluster
@@ -755,4 +755,4 @@ my-cluster      us-east-1
 eksctl delete cluster my-cluster --region us-east-1
 ```
 
-- Do no forget to delete related ebs volumes.
+- Do not forget to delete related EBS volumes.
