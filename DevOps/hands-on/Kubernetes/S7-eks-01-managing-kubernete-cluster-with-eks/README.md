@@ -34,21 +34,28 @@ sudo dnf update -y
 
 - Install eksctl
 
-*** You can check from this page: https://eksctl.io/installation/
+- Download and extract the latest release of eksctl with the following command.
 
 ```bash
-# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
-ARCH=amd64
-PLATFORM=$(uname -s)_$ARCH
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz"
+```
 
-curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+- Move and extract the binary to /tmp folder.
 
-# (Optional) Verify checksum
-curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+```bash
+tar -xzf eksctl_$(uname -s)_amd64.tar.gz -C /tmp && rm eksctl_$(uname -s)_amd64.tar.gz
+```
 
-tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+- Move the extracted binary to /usr/local/bin.
 
-sudo install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl
+```bash
+sudo mv /tmp/eksctl /usr/local/bin
+```
+
+- Test if your installation was successful with the following command.
+
+```bash
+eksctl version
 ```
 
 - Install kubectl
@@ -304,7 +311,7 @@ kubectl get nodes --watch
 4. Download the "cluster-autoscaler" components and update.
 
 ```bash
-cd && mkdir cluster-autoscaler && cd cluster-autoscale
+cd && mkdir cluster-autoscaler && cd cluster-autoscaler
 
 curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
 ```
@@ -319,18 +326,19 @@ To enable secure AWS access for the Cluster Autoscaler, we use IAM Roles for Ser
 - Associate an OIDC provider with your EKS cluster (one-time setup):
 ```bash
     eksctl utils associate-iam-oidc-provider \
-      --region <your-region> \
-      --cluster <your-cluster-name> \
+      --region <region> \
+      --cluster <cluster-name> \
       --approve
 ```
 
 - Create the service account with attached IAM policy:
 ```bash
+    ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
     eksctl create iamserviceaccount \
       --cluster <cluster-name> \
       --namespace kube-system \
       --name cluster-autoscaler \
-      --attach-policy-arn arn:aws:iam::<account-id>:policy/ClusterAutoscalerPolicy \
+      --attach-policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/ClusterAutoscalerPolicy \
       --approve
 ```
 
@@ -412,7 +420,7 @@ spec:
     spec:
       containers:
       - name: container-info
-        image: clarusway/container-info:1.0
+        image: ondiacademy/container-info:1.0
         ports:
         - containerPort: 80
 ```
