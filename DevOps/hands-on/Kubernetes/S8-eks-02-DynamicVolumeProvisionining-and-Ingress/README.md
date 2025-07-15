@@ -258,7 +258,7 @@ kubectl apply -f .
 - Open the official [ingress-nginx]( https://kubernetes.github.io/ingress-nginx/deploy/ ), explain the `ingress-controller` installation steps for different architectures. We install an ingress for bare metal.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/aws/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.13.0/deploy/static/provider/aws/deploy.yaml
 ```
 
 - Create a file named `ing.yaml` for the ingress object.
