@@ -116,7 +116,7 @@ aws configure
 - Create an EKS cluster via `eksctl`. It will take a while.
 
 ```bash
-eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name my-cluster
+eksctl create cluster --region us-east-1 --version 1.33 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name my-cluster
 ```
 
 ### Alternative way (including SSH connection to the worker node)
@@ -127,7 +127,7 @@ eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-ea
 eksctl create cluster \
  --name my-cluster \
  --region us-east-1 \
- --version 1.29 \
+ --version 1.33 \
  --zones us-east-1a,us-east-1b,us-east-1c \
  --nodegroup-name my-nodes \
  --node-type t3a.medium \
@@ -145,7 +145,7 @@ eksctl create cluster \
 eksctl create cluster --help
 ```
 
-- Show the AWS `eks service` on aws management console and explain `eksctl-my-cluster-cluster` stack on `cloudformation service`.
+- Show the AWS `eks service` on the AWS management console and explain `eksctl-my-cluster-cluster` stack on `cloudformation service`.
 
 
 ## Part 3 - Ingress
