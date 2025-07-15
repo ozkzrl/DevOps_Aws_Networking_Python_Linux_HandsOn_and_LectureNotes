@@ -33,7 +33,7 @@ At the end of this hands-on training, students will be able to;
 
 3. eksctl installed
 
-For information on installing or upgrading eksctl, see [Installing or upgrading eksctl.](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html#installing-eksctl)
+For more information on installing or upgrading eksctl, see [Installing or upgrading eksctl.](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html#installing-eksctl)
 
 ## Part 1 - Installing kubectl and eksctl on Amazon Linux 2023
 
@@ -52,7 +52,7 @@ sudo dnf update -y
 - Download the Amazon EKS vendor's kubectl binary.
 
 ```bash
-curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.0/2024-09-12/bin/linux/amd64/kubectl
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
 ```
 
 - Apply execute permissions to the binary.
@@ -119,15 +119,15 @@ aws configure
 eksctl create cluster --region us-east-1 --version 1.30 --zones us-east-1a,us-east-1b,us-east-1c --node-type t3a.medium --nodes 2 --nodes-min 2 --nodes-max 3 --name cw-cluster
 ```
 
-### Alternative way (including SSH connection to the worker nodes)
+### Alternative way (including SSH connection to the worker node)
 
-- If needed, create ssh-key withthe  command `ssh-keygen -f ~/.ssh/id_rsa`.
+- If needed, create ssh-key with the command `ssh-keygen -f ~/.ssh/id_rsa`.
 
 ```bash
 eksctl create cluster \
  --name cw-cluster \
  --region us-east-1 \
- --version 1.30 \
+ --version 1.29 \
  --zones us-east-1a,us-east-1b,us-east-1c \
  --nodegroup-name my-nodes \
  --node-type t3a.medium \
@@ -157,39 +157,39 @@ mkdir ingress-lesson
 cd ingress-lesson
 ```
 
-- Create a file named `clarusshop.yaml` forthe  clarusshop deployment object.
+- Create a file named `myshop.yaml` for the myshop deployment object.
 
 ```yaml
 apiVersion: apps/v1 
 kind: Deployment 
 metadata:
-  name: clarusshop-deploy
+  name: myshop-deploy
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: clarusshop 
+      app: myshop 
   template: 
     metadata:
       labels:
-        app: clarusshop
+        app: myshop
     spec:
       containers:
-      - name: clarusshop-pod
-        image: clarusway/clarusshop
+      - name: myshop-pod
+        image: clarusway/myshop
         ports:
         - containerPort: 80
 ```
 
-- Create a file named `clarusshop-svc.yaml` for the clarusshop service object.
+- Create a file named `myshop-svc.yaml` for the myshop service object.
 
 ```yaml
 apiVersion: v1
 kind: Service   
 metadata:
-  name: clarusshop-svc
+  name: myshop-svc
   labels:
-    app: clarusshop
+    app: myshop
 spec:
   type: NodePort  
   ports:
@@ -197,7 +197,7 @@ spec:
     targetPort: 80
     nodePort: 30001
   selector:
-    app: clarusshop
+    app: myshop
 ```
 
 - Create a file named `account.yaml` for the account deployment object.
@@ -219,7 +219,7 @@ spec:
     spec:
       containers:
       - name: account-pod
-        image: clarusway/clarusshop:account
+        image: clarusway/myshop:account
         ports:
         - containerPort: 80
 ```
@@ -251,14 +251,14 @@ kubectl apply -f .
 
 ### Ingress
 
-- Briefly explain ingress and ingress controller. For additional information, a few portals can be visited, like;
+- Briefly explain ingress and ingress controller. For additional information, a few portals can be visited like;
 
 - https://kubernetes.io/docs/concepts/services-networking/ingress/
     
 - Open the official [ingress-nginx]( https://kubernetes.github.io/ingress-nginx/deploy/ ), explain the `ingress-controller` installation steps for different architectures. We install an ingress for bare metal.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/aws/deploy.yaml
 ```
 
 - Create a file named `ing.yaml` for the ingress object.
@@ -267,7 +267,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: clarusshop-ingress
+  name: myshop-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -279,7 +279,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: clarusshop-svc
+                name: myshop-svc
                 port: 
                   number: 80
           - path: /account
@@ -300,7 +300,7 @@ kubectl apply -f ing.yaml
 > We can also create an ingress with the following command.
 
 ```bash
-kubectl create ingress clarusshop-ingress --rule="/account*=account-svc:80" --rule="/*=clarusshop-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
+kubectl create ingress myshop-ingress --rule="/account*=account-svc:80" --rule="/*=myshop-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
 ```
 
 - Check the ingress object.
@@ -309,20 +309,26 @@ kubectl create ingress clarusshop-ingress --rule="/account*=account-svc:80" --ru
 kubectl get ingress
 ```
 
-- You will get an output like the one below.
+- You will get an output like below.
 
 ```bash
 NAME                 CLASS   HOSTS   ADDRESS                                                                         PORTS   AGE
-clarusshop-ingress   nginx   *       afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      12s
+myshop-ingress   nginx   *       afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      12s
 ```
 
 - Use the address to reach the services.
 
 ```bash
 $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com
-<h1>WELCOME TO THE CLARUSSHOP</h1><h2>For account service:<br>/account</h2>
+<h1>WELCOME TO THE myshop</h1><h2>For account service:<br>/account</h2>
 $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com/account
 <h1>ACCOUNT SERVICE</h1>
+```
+
+- Delete everything.
+
+```bash
+kubectl delete -f .
 ```
 
 #### Host
@@ -333,20 +339,20 @@ $ curl afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: clarusshop-ingress
+  name: myshop-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: "clarusshop.clarusway.us"
+    - host: "myshop.clarusway.us"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: clarusshop-svc
+                name: myshop-svc
                 port: 
                   number: 80
           - path: /account
@@ -367,7 +373,7 @@ kubectl apply -f ing.yaml
 > We can also create an ingress with the following command.
 
 ```bash
-kubectl create ingress clarusshop-ingress --rule="clarusshop.clarusway.us/*=clarusshop-svc:80" --rule="clarusshop.clarusway.us/account/*=account-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
+kubectl create ingress myshop-ingress --rule="myshop.clarusway.us/*=myshop-svc:80" --rule="myshop.clarusway.us/account/*=account-svc:80" --class=nginx --annotation="nginx.ingress.kubernetes.io/rewrite-target=/"
 ```
 
 - Check the ingress object.
@@ -376,20 +382,26 @@ kubectl create ingress clarusshop-ingress --rule="clarusshop.clarusway.us/*=clar
 kubectl get ingress
 ```
 
-- You will get an output like the one below.
+- You will get an output like below.
 
 ```bash
 kubectl get ingress
 NAME                 CLASS   HOSTS                     ADDRESS                                                                         PORTS   AGE
-clarusshop-ingress   nginx   clarusshop.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      70s
+myshop-ingress   nginx   myshop.clarusway.us   afdfe2adcb6934b4abb645258b8f73d2-501976fbe439549f.elb.us-east-1.amazonaws.com   80      70s
 ```
 
-- To reach the application with `host` name, create `clarusshop.clarusway.us` record for address (network load balancer) in `route53` service.
+- To reach the application with `host` name, create `myshop.clarusway.us` record for address (network load balancer) in `route53` service.
+
+- Apply all files.
+
+```bash
+kubectl apply -f .
+```
 
 - You can reach the application using the curl command.
 
 ```bash
-curl clarusshop.clarusway.us
+curl myshop.clarusway.us
 ```
 
 - Delete all objects.
@@ -398,7 +410,7 @@ curl clarusshop.clarusway.us
 kubectl delete -f .
 ```
 
-#### Name based virtual hosting
+#### Name-based virtual hosting
 
 - Create a folder named `virtual-hosting`.
 
@@ -406,7 +418,7 @@ kubectl delete -f .
 mkdir virtual-hosting && cd virtual-hosting
 ```
 
-- Create two pods and services for nginx and apache.
+- Create two pods and services for nginx and Apache.
 
 ```bash
 kubectl run mynginx --image=nginx --port=80 --expose
@@ -414,7 +426,7 @@ kubectl run myapache --image=httpd --port=80 --expose
 kubectl get po,svc
 ```
 
-- Create ingress file named `mying.yaml` and use name based virtual hosting.
+- Create an ingress file named `mying.yaml` and use name-based virtual hosting.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -454,7 +466,7 @@ spec:
 kubectl apply -f mying.yaml
 ```
 
-> We can also create ingress with the following command.
+> We can also create an ingress with the following command.
 
 ```bash
 kubectl create ingress myingress \
@@ -493,7 +505,7 @@ curl apache.clarusway.us
 kubectl delete -f mying.yaml
 ```
 
-## Part 4 - Dynamic Volume Provisionining
+## Part 4 - Dynamic Volume Provisioning
 
 ### The Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver
 
@@ -518,9 +530,9 @@ oidc_id=$(aws eks describe-cluster --name cw-cluster --query "cluster.identity.o
 ```bash
 aws iam list-open-id-connect-providers | grep $oidc_id
 ```
-If output is returned from the previous command, then you already have a provider for your cluster and you can skip the next step. If no output is returned, then you must create an IAM OIDC provider for your cluster.
+If output is returned from the previous command, then you already have a provider for your cluster, and you can skip the next step. If no output is returned, then you must create an IAM OIDC provider for your cluster.
 
-- Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your own value.
+- Create an IAM OIDC identity provider for your cluster with the following command. Replace my-cluster with your value.
 
 ```bash
 eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=cw-cluster --approve
@@ -544,6 +556,7 @@ eksctl create iamserviceaccount \
     --role-name AmazonEKS_EBS_CSI_DriverRole \
     --role-only \
     --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+    --region us-east-1 \
     --approve
 ```
 
@@ -676,20 +689,19 @@ kubectl apply -f pod-with-dynamic-storage.yaml
 kubectl exec -it test-aws -- bash
 ```
 - You will see an output like this
+
 ```bash
 root@test-aws:/# df -h
 Filesystem      Size  Used Avail Use% Mounted on
-overlay          80G  3.5G   77G   5% /
+overlay          80G  3.7G   77G   5% /
 tmpfs            64M     0   64M   0% /dev
-tmpfs           2.0G     0  2.0G   0% /sys/fs/cgroup
-/dev/xvda1       80G  3.5G   77G   5% /etc/hosts
+tmpfs           1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/nvme0n1p1   80G  3.7G   77G   5% /etc/hosts
 shm              64M     0   64M   0% /dev/shm
-/dev/xvdcj      2.9G  9.1M  2.9G   1% /usr/share/nginx/html
-tmpfs           2.0G   12K  2.0G   1% /run/secrets/kubernetes.io/serviceaccount
-tmpfs           2.0G     0  2.0G   0% /proc/acpi
-tmpfs           2.0G     0  2.0G   0% /proc/scsi
-tmpfs           2.0G     0  2.0G   0% /sys/firmware
-root@test-aws:/#
+/dev/nvme1n1    974M   24K  958M   1% /usr/share/nginx/html
+tmpfs           3.3G   12K  3.3G   1% /run/secrets/kubernetes.io/serviceaccount
+tmpfs           1.9G     0  1.9G   0% /proc/acpi
+tmpfs           1.9G     0  1.9G   0% /sys/firmware
 ```
 
 - Delete the storageclass that we create.
