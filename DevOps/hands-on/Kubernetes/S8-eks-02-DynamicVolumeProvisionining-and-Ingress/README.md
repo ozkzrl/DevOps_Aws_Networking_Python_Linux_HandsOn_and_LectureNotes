@@ -176,7 +176,7 @@ spec:
     spec:
       containers:
       - name: myshop-pod
-        image: clarusway/myshop
+        image: clarusway/clarusshop
         ports:
         - containerPort: 80
 ```
@@ -219,7 +219,7 @@ spec:
     spec:
       containers:
       - name: account-pod
-        image: clarusway/myshop:account
+        image: clarusway/clarusshop:account
         ports:
         - containerPort: 80
 ```
