@@ -32,18 +32,18 @@ ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazon
 sudo dnf update -y
 ```
 
-- Install yum-config-manager to manage your repositories.
+- Install dnf config-manager to manage your repositories.
 
 ```bash
-sudo dnf install -y yum-utils shadow-utils
+sudo dnf install -y dnf-plugins-core
 ```
-- Use yum-config-manager to add the official HashiCorp Linux repository to the directory/etc/yum.repos.d.
+- Use dnf config-manager to add the official HashiCorp Amazon Linux repository.
 
 ```bash
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 ```
 
-- Install Terraform.
+- Install Terraform from the new repository.
 
 ```bash
 sudo dnf -y install terraform
