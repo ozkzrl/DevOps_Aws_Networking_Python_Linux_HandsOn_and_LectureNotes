@@ -88,15 +88,15 @@ terraform apply -help
 
 - The AWS CLI is installed. 
 
-- Your AWS credentials are configured locally. 
+- AWS credentials are configured. 
 
 ```bash
 aws configure
 ```
 
-- Hard-coding credentials into any Terraform configuration is not recommended, and risks secret leakage should this file ever be committed to a public version control system. Using AWS credentials in EC2 instance is not recommended.
+- Embedding credentials directly into a Terraform configuration is strongly discouraged, as it can lead to secret exposure if the file is accidentally committed to a public version control system. Similarly, storing AWS credentials on an EC2 instance is not a recommended practice.
 
-- We will use IAM role (temporary credentials) for accessing your AWS account. 
+- We will use an IAM role (temporary credentials) for accessing your AWS account. 
 
 ### Create a role in the IAM management console.
 
@@ -116,7 +116,7 @@ aws configure
 
 - The set of files used to describe infrastructure in Terraform is known as a Terraform configuration. You'll write your first configuration file to launch a single AWS EC2 instance.
 
-- Each configuration should be in its own directory. Create a directory ("terraform-aws") for the new configuration and change into the directory.
+- Each configuration should be in its directory. Create a directory ("terraform-aws") for the new configuration and change into the directory.
 
 ```bash
 mkdir terraform-aws && cd terraform-aws && touch main.tf
@@ -306,7 +306,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so Terraform can
 terraform apply
 ```
 
-- Terraform will wait for your approval before proceeding. If anything in the plan seems incorrect, it is safe to abort (ctrl+c) here with no changes made to your infrastructure.
+- Terraform will wait for your approval before proceeding. If anything in the plan seems incorrect, it is safe to abort here with no changes made to your infrastructure.
 
 - If the plan is acceptable, type "yes" at the confirmation prompt to proceed. Executing the plan will take a few minutes since Terraform waits for the EC2 instance to become available.
 
@@ -374,7 +374,7 @@ resource "aws_s3_bucket" "tf-s3" {
 }
 ```
 
-- Write your pem file without .pem extension and change the "addwhateveryouwant" part of the bucket name. Because the bucket name must be unique.
+- Write your pem file without .pem extension and change the "addwhateveryouwant" part of the bucket name because the bucket name must be unique.
 
 - Run the commands `terraform plan` and `terraform apply`.
 
