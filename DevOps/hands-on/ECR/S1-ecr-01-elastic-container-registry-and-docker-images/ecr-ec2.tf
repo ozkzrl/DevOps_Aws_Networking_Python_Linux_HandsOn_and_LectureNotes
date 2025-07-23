@@ -1,7 +1,7 @@
-/*This terraform file creates a Compose enabled Docker machine on EC2 Instance. 
-  Docker Machine is configured to work with AWS ECR using IAM role, and also
+/*This Terraform file creates a Compose-enabled Docker machine on an EC2 Instance. 
+  Docker Machine is configured to work with AWS ECR using an IAM role, and also
   upgraded to AWS CLI Version 2 to enable ECR commands.
-  Docker Machine will run on Amazon Linux 2023 Instance with
+  Docker Machine will run on an Amazon Linux 2023 Instance with
   custom security group allowing HTTP(80) and SSH (22) connections from anywhere. 
 */
 
@@ -13,9 +13,9 @@ provider "aws" {
 }
 
 locals {
-  user = "clarusway"
+  user = "ondia"
   instance-type = "t2.micro"
-  pem = "clarus"
+  pem = "mykey"
 }
 
 data "aws_ami" "al2023" {
@@ -54,7 +54,7 @@ resource "aws_instance" "ecr-instance" {
           systemctl start docker
           systemctl enable docker
           usermod -a -G docker ec2-user
-          curl -SL https://github.com/docker/compose/releases/download/v2.26.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+          curl -SL https://github.com/docker/compose/releases/download/v2.38.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
           EOF
 }
