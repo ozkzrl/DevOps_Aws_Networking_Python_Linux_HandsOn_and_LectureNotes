@@ -1,24 +1,24 @@
-# Hands-on ECR-01 : Pushing Docker Images to ECR Manually
+# Hands-on ECR-01: Pushing Docker Images to ECR Manually
 
-Purpose of the this hands-on training is to give basic understanding of how to use AWS Elastic Container Registry (ECR) and how to manage docker images using ECR.
+The purpose of this hands-on training is to give a basic understanding of how to use AWS Elastic Container Registry (ECR) and how to manage Docker images using ECR.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- prepare a Docker Machine with terraform.
+- Prepare a Docker Machine with terraform.
 
-- create and configure AWS ECR from the AWS Management Console.
+- Create and configure AWS ECR from the AWS Management Console.
 
-- create and configure AWS ECR from the AWS CLI.
+- Create and configure AWS ECR from the AWS CLI.
 
-- demonstrate how to build a docker image with Dockerfile.
+- Demonstrate how to build a Docker image with a Dockerfile.
 
-- use Docker commands effectively to tag, push, and pull images to/from ECR.
+- Use Docker commands effectively to tag, push, and pull images to/from ECR.
 
-- delete images and repositories on ECR from the AWS Management Console.
+- Delete images and repositories on ECR from the AWS Management Console.
 
-- delete images and repositories on ECR from the AWS CLI.
+- Delete images and repositories on ECR from the AWS CLI.
 
 ## Outline
 
@@ -32,27 +32,27 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launching a Docker Machine Instance Configured for ECR Management
 
-- Launch a Compose enabled Docker machine on Amazon Linux 2 AMI with security group allowing HTTP and SSH connections using the terraform file. 
+- Launch a Compose-enabled Docker machine on Amazon Linux 2 AMI with a security group allowing HTTP and SSH connections using the terraform file. 
 
-- Explain the resources in the terraform file.
+- Explain the resources in the Terraform file.
 
 ## Part 2 - Creating Repositories on AWS ECR
 
 - Go to the `Amazon Elastic Container Registry` service and explain what it is.
 
-- Introduce menus on the left side, `Amazon ECS`, `Amazon EKS`, `Amazon ECR`.
+- Introduce menus on the left side: `Amazon ECS`, `Amazon EKS`, `Amazon ECR`.
 
-- Click on `Repositories` on ECR section, and explain the UI.
+- Click on `Repositories` on the ECR section, and explain the UI.
 
-- Click on `Create Repository` and explain the default `registry` for user account. (`aws_account_id`.dkr.ecr.`region`.amazonaws.com)
+- Click on `Create Repository` and explain the default `registry` for the user account. (`aws_account_id`.dkr.ecr.`region`.amazonaws.com)
 
-- Explain repository name convention. (*Repository names can support namespaces, which you can use to group similar repositories. For example if there are several teams using the same registry, `Team A` could use the `team-a` namespace while `Team B` uses the `team-b` namespace. Each team could have their own image called `web-app`, but because they are each prefaced with the team namespace, the two images can be used simultaneously without interference. Team A's image would be called `team-a/web-app`, while Team B's image would be called `team-b/web-app`.*)
+- Explain repository name convention. (*Repository names can support namespaces, which you can use to group similar repositories. For example, if there are several teams using the same registry, `Team A` could use the `team-a` namespace while `Team B` uses the `team-b` namespace. Each team could have its own image called `web-app`, but because they are each prefaced with the team namespace, the two images can be used simultaneously without interference. Team A's image would be called `team-a/web-app`, while Team B's image would be called `team-b/web-app`.*)
 
-- Enter a repository name ex. `student1-repo/todo-app` (***In this hands-on, we will be working with a simple `todo list manager` that is running in `Node.js`. If you're not familiar with Node.js, don't worry! No real JavaScript experience is needed!***)
+- Enter a repository name, ex. `student1-repo/todo-app` (***In this hands-on, we will be working with a simple `todo list manager` that is running in `Node.js`. If you're not familiar with Node.js, don't worry! No real JavaScript experience is needed!***)
 
-- Explain `Image tag mutability` and choose as `mutable`.
+- Explain `Image tag mutability` and choose `mutable`.
 
-- Explain `Encrytion settings` and  choose as `AES-256`.
+- Explain `Encryption settings` and  choose `AES-256`.
 
 - Explain `Image scanning settings` and disable `Scan on push`.
 
@@ -64,7 +64,7 @@ xxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app
 
 ### Creating a lifecycle policy:
 
-- A lifecycle policy allows you to create a set of rules that expire unused repository images. The following procedure shows you how to create a lifecycle policy. You should expect that after creating a lifecycle policy, the affected images are expired within 24 hours.
+- A lifecycle policy allows you to create a set of rules that expire unused repository images. The following procedure shows you how to create a lifecycle policy. You should expect that after creating a lifecycle policy, the affected images will expire within 24 hours.
 
 - Create a lifecycle policy (AWS Management Console):
 
@@ -112,7 +112,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 
 ## Part 4 - Managing Docker Images using AWS ECR as Repository
 
-- Go your instance from terminal.
+- Go to your instance from the terminal.
 
 - Download the sample project `to-do-app-nodejs.tar` file from the GitHub Repo on your instance. In this hands-on, we will be working with a simple `todo list manager` that is running in `Node.js`.
   
@@ -130,7 +130,7 @@ ls
 
 - You will see "to-do-app-nodejs.tar" and "to-do-app-nodejs". 
 
-- Enter the "/to-do-app-nodejs/" directory. And create "Dockerfile" via vi editor.
+- Enter the "/to-do-app-nodejs/" directory. And create a "Dockerfile" via the vi editor.
 
 ```bash
 cd to-do-app-nodejs/
@@ -139,7 +139,7 @@ vi Dockerfile
 press "i" to edit.
 ```
 
-- Paste a following content into Dockerfile
+- Paste the following content into the Dockerfile
 
 ```dockerfile
 FROM node:12-alpine
@@ -156,7 +156,7 @@ CMD ["node", "/app/src/index.js"]
 docker build -t todo-app:latest .
 ```
 
-- Show the Docker image is created successfully.
+- Show that the Docker image is created successfully.
 
 ```bash
 docker image ls
@@ -168,7 +168,7 @@ docker image ls
 docker run --name todo -d -p 80:3000 todo-app
 ```
 
-- List running container.
+- List running containers.
 
 ```bash
 docker ps
@@ -178,74 +178,74 @@ docker container ls
 
 - Check if the To-Do App is running by entering `http://<ec2-host-name>` in a browser.
 
-- Stop and remove container
+- Stop and remove the container
 
 ```bash
 docker stop todo
 docker rm todo
 ```
 
-- Tag the image to push it to ECR repository.
+- Tag the image to push it to the ECR repository.
 
 ```bash
 docker tag todo-app:latest xxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
 
-- Push the image to your ECR repository and show the pushed image on AWS ECR Console.
+- Push the image to your ECR repository and show the pushed image on the AWS ECR Console.
 
 ```bash
 docker push xxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
 
-- Create an container from image located ECR
+- Create a container from an image located in ECR
 
 ```bash
 docker pull xxxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 docker run --name todo -dp 80:3000 xxxxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
-- Stop and remove container
+- Stop and remove the container
 
 ```bash
 docker stop todo
 docker rm todo
 ```
-- make change into the script.`<p className="text-center">No items yet! Add one above!</p>` with following new text.
+- make change into the script.`<p className="text-center">No items yet! Add one above!</p>` with the following new text.
 
 ```bash
 vi src/static/js/app.js
 ```
-- Create an Docker image
+- Create a Docker image
 ```bash
 docker build -t todo-app:latest .
 ```
-- Tag the image to push it to ECR repository.
+- Tag the image to push it to the ECR repository.
 
 ```bash
 docker tag todo-app:latest xxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
 
-- Push the image to your ECR repository and show the pushed image on AWS ECR Console.
+- Push the image to your ECR repository and show the pushed image on the AWS ECR Console.
 
 ```bash
 docker push xxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
-- Show the repository . Immutable disable.
+- Show the repository. Immutable disable.
 
-- Create an container from image located ECR
+- Create a container from an image located in ECR
 
 ```bash
 docker run --name todo-v1 -dp 80:3000 xxxxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student1-repo/todo-app:latest
 ```
 - Show the changes in the browser 
 
-- Stop and remove container
+- Stop and remove the container
 
 ```bash
 docker stop todo-v1
 docker rm todo-v1
 ```
 
-- Create a ECR repository named `student2-repo/todo-app` from AWS CLI and show it is created on AWS ECR Console.
+- Create an ECR repository named `student2-repo/todo-app` from AWS CLI and show it is created on the AWS ECR Console.
 
 ```bash
 aws ecr create-repository \
