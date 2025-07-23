@@ -1,22 +1,22 @@
 # Hands-on ECS-01 : AWS ECS Basics
 
-Purpose of the this hands-on training is to give basic understanding of how to use AWS Elastic Container Service (ECS).
+The purpose of this hands-on training is to give a basic understanding of how to use AWS Elastic Container Service (ECS).
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- prepare a Docker Machine with terraform.
+- Prepare a Docker Machine with Terraform.
 
-- create and configure AWS ECR from the AWS Management Console.
+- Create and configure AWS ECR from the AWS Management Console.
 
-- demonstrate how to build a docker image with Dockerfile.
+- Demonstrate how to build a Docker image with a Dockerfile.
 
-- use Docker commands effectively to tag, push, and pull images to/from ECR.
+- Use Docker commands effectively to tag, push, and pull images to/from ECR.
 
-- delete images and repositories on ECR from the AWS Management Console.
+- Delete images and repositories on ECR from the AWS Management Console.
 
-- Deploy application to AWS ECS using aws management console, aws cli and aws copilot.
+- Deploy application to AWS ECS using AWS Management Console, AWS CLI, and AWS Copilot.
 
 ## Outline
 
@@ -32,7 +32,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Launching a Docker Machine Instance Configured for ECR Management
 
-- Launch a Compose enabled Docker machine on Amazon Linux 2023 AMI with security group allowing HTTP and SSH connections using the cloudformation.
+- Launch a Compose-enabled Docker machine on Amazon Linux 2023 AMI with a security group allowing HTTP and SSH connections using the cloudformation.
 
 ## Part 2 - Containerize the Application and Push Image to ECR
 
@@ -40,7 +40,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Navigate to the [Amazon ECR console.](https://console.aws.amazon.com/ecs/home?#/repositories).
 
-- Click on `Create Repository` and explain the default `registry` for user account. (`aws_account_id`.dkr.ecr.`region`.amazonaws.com)
+- Click on `Create Repository` and explain the default `registry` for the user account. (`aws_account_id`.dkr.ecr.`region`.amazonaws.com)
 
 - Enter a repository name ex. `clarusshop`.
 
@@ -48,7 +48,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Create the repository.
 
-### Creating the Images and Push the ECR 
+### Creating the Images and Pushing to the ECR 
 
 - connect to your instance with SSH.
 
@@ -56,7 +56,7 @@ At the end of the this hands-on training, students will be able to;
 ssh -i .ssh/xxxxx.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazonaws.com
 ```
 
-- Configure AWS credentials or you can attach `AWS IAM Role` to your EC2 instance.
+- Configure AWS credentials, or you can attach `AWS IAM Role` to your EC2 instance.
 
 ```bash
 aws configure
@@ -85,7 +85,7 @@ cd clarusshop
 - Build your Docker image using the following command.
 
 ```bash
-docker build -t clarusshop . (if you get "permission denied" error, then use  "sudo chmod 777 /var/run/docker.sock")
+docker build -t clarusshop . (If you get "permission denied" error, then use  "sudo chmod 777 /var/run/docker.sock")
 ```
 
 - After the build completes, tag your image so you can push the image to this repository.
@@ -119,7 +119,7 @@ docker push <account id>.dkr.ecr.us-east-1.amazonaws.com/clarusshop:latest
 ### Write a Task Definition
 
 - Task definitions specify how Amazon ECS deploys the application containers across the cluster.
-- Before begin we need to create IAM role:
+- Before beginning, we need to create an IAM role:
 
 ```bash
 Use case : Elastic Container Service >>> Elastic Container Service task
@@ -167,7 +167,7 @@ Name     : ecsTaskExecutionRole
 
 - Navigate to the Amazon ECS console and select Clusters from the left menu bar.
 
-- Select the `clarusshop-ecs` cluster, select the Services tab then select Create.
+- Select the `clarusshop-ecs` cluster, select the Services tab, then select Create.
 
 - On the Deploy page, edit the following parameters (and keep the default values for parameters not listed below): 
 
