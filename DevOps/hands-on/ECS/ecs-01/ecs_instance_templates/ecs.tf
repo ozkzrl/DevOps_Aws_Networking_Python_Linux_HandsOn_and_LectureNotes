@@ -17,8 +17,8 @@ provider "aws" {
 }
 
 locals {
-  user = "cw-devops"
-  pem_file = "clarus"
+  user = "myuser"
+  pem_file = "mykey"
 }
 
 data "aws_ami" "al2023" {
