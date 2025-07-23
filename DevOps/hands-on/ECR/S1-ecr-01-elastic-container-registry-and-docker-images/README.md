@@ -6,7 +6,7 @@ The purpose of this hands-on training is to give a basic understanding of how to
 
 At the end of this hands-on training, students will be able to;
 
-- Prepare a Docker Machine with terraform.
+- Prepare a Docker Machine with Terraform.
 
 - Create and configure AWS ECR from the AWS Management Console.
 
@@ -262,7 +262,7 @@ docker tag todo-app:latest xxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student2-r
 docker push xxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student2-repo/todo-app:latest
 ```
 
-- Delete the all local images of `todo-app`.
+- Delete all local images of `todo-app`.
 
 ```bash
 docker image ls
@@ -290,7 +290,7 @@ docker run -dp 80:3000 xxxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/student2-re
 
 - Check if the To-Do App is running by entering `http://<ec2-host-name>` in a browser.
 
-- Delete Docker image on your `student2-repo/todo-app` repository from AWS CLI. Since we didn't configure aws CLI you may get error. If you can't do the process with root, then exit from root.
+- Delete Docker image on your `student2-repo/todo-app` repository from AWS CLI. Since we didn't configure aws CLI, you may get an error. If you can't do the process with root, then exit from root.
 
 ```bash
 aws ecr batch-delete-image \
