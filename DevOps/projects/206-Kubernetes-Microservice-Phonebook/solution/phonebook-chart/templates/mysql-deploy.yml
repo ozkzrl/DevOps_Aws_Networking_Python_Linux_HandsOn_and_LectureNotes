@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mysql
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        ports:
+        - containerPort: 3306
+        envFrom:
+        - secretRef:
+            name: mysql-secret
+        - configMapRef:
+            name: mysql-config
+        # env:
+        # - name: MYSQL_ROOT_PASSWORD
+          # value: rootpassword
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: mysql-secret
+          #     key: MYSQL_ROOT_PASSWORD
+        # - name: MYSQL_DATABASE
+        #   value: OndiaDB
+        # - name: MYSQL_USER
+        #   value: ondiauser
+        # - name: MYSQL_PASSWORD
+        #   value: password
+        volumeMounts:
+          - name: mysql-persistent-volume
+            mountPath: /var/lib/mysql
+        resources: {}
+
+      volumes:
+        - name: mysql-persistent-volume
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
