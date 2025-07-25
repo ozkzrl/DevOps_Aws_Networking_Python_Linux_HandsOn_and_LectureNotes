@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: resultserver-deploy
+  name: resultserver-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resultserver-deploy
+  template:
+    metadata:
+      labels:
+        app: resultserver-deploy
+    spec:
+      containers:
+      - image: olivercw/resultserver
+        name: resultserver
+        ports:
+          - containerPort: 80
+        envFrom:
+        - secretRef:
+            name: mysql-secret
+        - configMapRef:
+            name: server-config
+        # env:
+        # - name: MYSQL_PASSWORD
+        #   value: password
+        # - name: MYSQL_USER
+        #   value: ondiauser
+        # - name: MYSQL_DATABASE
+        #   value: OndiaDB
+        # - name: MYSQL_DATABASE_HOST
+        #   value: mysql
+        resources: {}
