@@ -1,20 +1,20 @@
-# Hands-on Kubernetes-01 : Installing Kubernetes on Ubuntu running on AWS EC2 Instances
+# Hands-on Kubernetes-01: Installing Kubernetes on Ubuntu running on AWS EC2 Instances
 
-Purpose of the this hands-on training is to give students the knowledge of how to install and configure Kubernetes on Ubuntu EC2 Instances.
+The purpose of this hands-on training is to give students the knowledge of how to install and configure Kubernetes on Ubuntu EC2 Instances.
 
 ## Learning Outcomes
 
-At the end of the this hands-on training, students will be able to;
+At the end of this hands-on training, students will be able to;
 
-- install Kubernetes on Ubuntu.
+- Install Kubernetes on Ubuntu.
 
-- explain steps of the Kubernetes installation.
+- Explain the steps of the Kubernetes installation.
 
-- set up a Kubernetes cluster.
+- Set up a Kubernetes cluster.
 
-- explain the Kubernetes architecture.
+- Explain the Kubernetes architecture.
 
-- deploy a simple server on Kubernetes cluster.
+- Deploy a simple server on a Kubernetes cluster.
 
 ## Outline
 
@@ -31,7 +31,7 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Setting Up Kubernetes Environment on All Nodes
 
-- In this hands-on, we will prepare two nodes for Kubernetes on `Ubuntu 22.04`. One of the node will be configured as the Master node, the other will be the worker node. Following steps should be executed on all nodes. *Note: It is recommended to install Kubernetes on machines with `2 CPU Core` and `2GB RAM` at minimum to get it working efficiently. For this reason, we will select `t3a.medium` as EC2 instance type, which has `2 CPU Core` and `4 GB RAM`.*
+- In this hands-on, we will prepare two nodes for Kubernetes on `Ubuntu 22.04`. One of the nodes will be configured as the Master node, and the other will be the worker node. The following steps should be executed on all nodes. *Note: It is recommended to install Kubernetes on machines with `2 CPU Core` and `2GB RAM` at a minimum to get it working efficiently. For this reason, we will select `t3a.medium` as EC2 instance type, which has `2 CPU Core` and `4 GB RAM`.*
 
 - Explain briefly [required ports](https://kubernetes.io/docs/reference/networking/ports-and-protocols/)  for Kubernetes. 
 
@@ -61,9 +61,9 @@ At the end of the this hands-on training, students will be able to;
 |TCP|Inbound|22|remote access with ssh|Self|
 |UDP|Inbound|8472|Cluster-Wide Network Comm. - Flannel VXLAN|Self|
 
-> **Ignore this section for AWS instances. But, it must be applied for real servers/workstations.**
+> **Ignore this section for AWS instances. But it must be applied to real servers/workstations.**
 >
-> - Find the line in `/etc/fstab` referring to swap, and comment out it as following.
+> - Find the line in `/etc/fstab` referring to swap, and comment it out as follows.
 >
 > ```bash
 > # Swap a usb extern (3.7 GB):
@@ -72,7 +72,7 @@ At the end of the this hands-on training, students will be able to;
 >
 > or,
 >
-> - Disable swap from command line
+> - Disable swap from the command line
 >
 > ```bash
 > free -m
@@ -80,7 +80,7 @@ At the end of the this hands-on training, students will be able to;
 > ```
 >
 
-- Hostname change of the nodes, so we can discern the roles of each nodes. For example, you can name the nodes (instances) like `kube-master, kube-worker-1`
+- Hostname change of the nodes, so we can discern the roles of each node. For example, you can name the nodes (instances) like `kube-master, kube-worker-1`
 
 ```bash
 sudo hostnamectl set-hostname <node-name-master-or-worker>
@@ -89,7 +89,7 @@ bash
 
 ### Install Container Runtimes
 
-- We install required container runtimes according to [kubernetes Container Runtimes](https://kubernetes.io/docs/setup/production-environment/container-runtimes/) documentation.
+- We install required container runtimes according to [Kubernetes Container Runtimes](https://kubernetes.io/docs/setup/production-environment/container-runtimes/) documentation.
 
 #### Install and configure prerequisites
 
@@ -114,7 +114,7 @@ EOF
 sudo sysctl --system
 ```
 
-- Verify that the br_netfilter, overlay modules are loaded by running the following commands:
+- Verify that the br_netfilter and overlay modules are loaded by running the following commands:
 
 ```bash
 lsmod | grep br_netfilter
@@ -127,7 +127,7 @@ lsmod | grep overlay
 sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
 ```
 
-#### Install containerd on ubuntu (https://docs.docker.com/engine/install/ubuntu/)
+#### Install containerd on Ubuntu (https://docs.docker.com/engine/install/ubuntu/)
 
 - Set up Docker's apt repository.
 
@@ -169,9 +169,9 @@ sudo ctr container ls
 
 #### Install nerdctl (Optional)
 
-- While the ctr tool is bundled together with containerd, it should be noted the ctr tool is solely made for debugging containerd. The nerdctl tool provides stable and human-friendly user experience.
+- While the ctr tool is bundled together with containerd, it should be noted that the ctr tool is solely made for debugging containerd. The nerdctl tool provides a stable and human-friendly user experience.
 
-- Download the nerdctl binary from nerdctl github page. (https://github.com/containerd/nerdctl/releases)
+- Download the nerdctl binary from the nerdctl GitHub page. (https://github.com/containerd/nerdctl/releases)
 
 - Download `nerdctl-full-*-linux-amd64.tar.gz` release.
 
@@ -196,7 +196,7 @@ sudo nerdctl container ls
 
 - On Linux, control groups are used to constrain resources that are allocated to processes.
 
-- Both the kubelet and the underlying container runtime need to interface with control groups to enforce resource management for pods and containers and set resources such as cpu/memory requests and limits. To interface with control groups, the kubelet and the container runtime need to use a cgroup driver. `It's critical that the kubelet and the container runtime use the same cgroup driver and are configured the same`.
+- Both the kubelet and the underlying container runtime need to interface with control groups to enforce resource management for pods and containers and set resources such as CPU/memory requests and limits. To interface with control groups, the kubelet and the container runtime need to use a cgroup driver. `It's critical that the kubelet and the container runtime use the same cgroup driver and are configured the same`.
 
 - There are two cgroup drivers available:
 
@@ -205,14 +205,14 @@ sudo nerdctl container ls
 
 #### Configuring the systemd cgroup driver for containerd.
 
-- Configure containerd so that it starts using systemd as cgroup.
+- Configure containerd so that it starts using systemd as a cgroup.
 
 ```bash
 sudo containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
 sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
 ```
 
-Restart and enable containerd service
+Restart and enable the containerd service
 
 ```bash
 sudo systemctl restart containerd
@@ -238,7 +238,7 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
-- Update apt package index, install kubelet, kubeadm and kubectl, and pin their version:
+- Update apt package index, install kubelet, kubeadm, and kubectl, and pin their version:
 
 ```bash
 sudo apt-get update
@@ -250,7 +250,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 ## Part 2 - Setting Up Master Node for Kubernetes (https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
 
-- Following commands should be executed on Master Node only.
+- The following commands should be executed on the Master Node only.
 
 - Pull the packages for Kubernetes beforehand
 
@@ -270,9 +270,9 @@ sudo kubeadm init --apiserver-advertise-address=<ec2-private-ip> --pod-network-c
 >sudo kubeadm init --apiserver-advertise-address=<ec2 private ip> --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU
 >```
 
-> **Note**: There are a bunch of pod network providers and some of them use pre-defined `--pod-network-cidr` block. Check the documentation at the References part. We will use Flannel for pod network and Flannel uses 10.244.0.0/16 CIDR block. 
+> **Note**: There are a bunch of pod network providers, and some of them use a pre-defined `--pod-network-cidr` block. Check the documentation in the References section. We will use Flannel for pod network and Flannel uses 10.244.0.0/16 CIDR block. 
 
->- In case of problems, use following command to reset the initialization and restart from Part 2 (Setting Up Master Node for Kubernetes).
+>- In case of problems, use the following command to reset the initialization and restart from Part 2 (Setting Up Master Node for Kubernetes).
 
 >```bash
 >sudo kubeadm reset
@@ -306,7 +306,7 @@ kubeadm join 172.31.32.92:6443 --token 6grb8s.6jjyof8xi8vtxztb \
 
 > Note down the `kubeadm join ...` part in order to connect your worker nodes to the master node. Remember to run this command with `sudo`.
 
-- Run following commands to set up local `kubeconfig` on master node.
+- Run the following commands to set up local `kubeconfig` on the master node.
 
 ```bash
 mkdir -p $HOME/.kube
@@ -314,25 +314,25 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-- Activate the `Flannel` pod networking and explain briefly the about network add-ons on `https://kubernetes.io/docs/concepts/cluster-administration/addons/`.
+- Activate the `Flannel` pod networking and explain briefly about network add-ons on `https://kubernetes.io/docs/concepts/cluster-administration/addons/`.
 
 ```bash
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 ```
 
-- Master node (also named as Control Plane) should be ready, show existing pods created by user. Since we haven't created any pods, list should be empty.
+- The master node (also known as the Control Plane) should be ready, showing existing pods created by the user. Since we haven't created any pods, the list should be empty.
 
 ```bash
 kubectl get nodes
 ```
 
-- Show the list of the pods created for Kubernetes service itself. Note that pods of Kubernetes service are running on the master node.
+- Show the list of the pods created for the Kubernetes service itself. Note that pods of the Kubernetes service are running on the master node.
 
 ```bash
 kubectl get pods -n kube-system
 ```
 
-- Show the details of pods in `kube-system` namespace. Note that pods of Kubernetes service are running on the master node.
+- Show the details of pods in `kube-system` namespace. Note that pods of the Kubernetes service are running on the master node.
 
 ```bash
 kubectl get pods -n kube-system -o wide
@@ -344,14 +344,14 @@ kubectl get pods -n kube-system -o wide
 sudo nerdctl --namespace k8s.io ps -a
 ```
 
-- Get the services available. Since we haven't created any services yet, we should see only Kubernetes service.
+- Get the services available. Since we haven't created any services yet, we should see only the Kubernetes service.
 
 ```bash
 kubectl get services
 ```
 ## Part 3 - Adding the Worker Nodes to the Cluster
 
-- Show the list of nodes. Since we haven't added worker nodes to the cluster, we should see only master node itself on the list.
+- Show the list of nodes. Since we haven't added worker nodes to the cluster, we should see only the master node itself on the list.
 
 ```bash
 kubectl get nodes
@@ -384,19 +384,19 @@ kubectl get nodes -o wide
 
 ## Part 4 - Deploying a Simple Nginx Server on Kubernetes
 
-- Check the readiness of nodes at the cluster on master node.
+- Check the readiness of nodes in the cluster on the master node.
 
 ```bash
 kubectl get nodes
 ```
 
-- Show the list of existing pods in default namespace on master. Since we haven't created any pods, list should be empty.
+- Show the list of existing pods in the default namespace on the master. Since we haven't created any pods, the list should be empty.
 
 ```bash
 kubectl get pods
 ```
 
-- Get the details of pods in all namespaces on master. Note that pods of Kubernetes service are running on the master node and also additional pods are running on the worker nodes to provide communication and management for Kubernetes service.
+- Get the details of pods in all namespaces on master. Note that pods of the Kubernetes service are running on the master node, and also additional pods are running on the worker nodes to provide communication and management for the Kubernetes service.
 
 ```bash
 kubectl get pods -o wide --all-namespaces
@@ -408,7 +408,7 @@ kubectl get pods -o wide --all-namespaces
 kubectl run nginx-server --image=nginx  --port=80
 ```
 
-- Get the list of pods in default namespace on master and check the status and readyness of `nginx-server`
+- Get the list of pods in the default namespace on master and check the status and readyness of `nginx-server`
 
 ```bash
 kubectl get pods -o wide
@@ -433,7 +433,7 @@ kubernetes     ClusterIP   10.96.0.1       <none>        443/TCP        13m    <
 nginx-server   NodePort    10.110.144.60   <none>        80:32276/TCP   113s   run=nginx-server
 ```
 
-- Open a browser and check the `public ip:<NodePort>` of worker node to see Nginx Server is running. In this example, NodePort is 32276.
+- Open a browser and check the `public ip:<NodePort>` of the worker node to see Nginx Server is running. In this example, NodePort is 32276.
 
 - Clean the service and pod from the cluster.
 
@@ -442,7 +442,7 @@ kubectl delete service nginx-server
 kubectl delete pods nginx-server
 ```
 
-- Check there is no pod left in default namespace.
+- Check there is no pod left in the default namespace.
 
 ```bash
 kubectl get pods
@@ -450,9 +450,9 @@ kubectl get pods
 
 ### Delete a worker node from Cluster
 
-- To delete a worker node from the cluster, follow the below steps.
+- To delete a worker node from the cluster, follow the steps below.
 
-  - Drain and delete worker node on the master.
+  - Drain and delete the worker node on the master.
 
   ```bash
   kubectl get nodes
@@ -468,7 +468,7 @@ kubectl get pods
   sudo kubeadm reset
   ```
   
-> Note: If you try to have worker rejoin cluster, it might be necessary to clean `kubelet.conf` and `ca.crt` files and free the port `10250`, before rejoining.
+> Note: If you try to have the worker rejoin the cluster, it might be necessary to clean `kubelet.conf` and `ca.crt` files and free the port `10250`, before rejoining.
 >
 > ```bash
 >  sudo rm /etc/kubernetes/kubelet.conf
