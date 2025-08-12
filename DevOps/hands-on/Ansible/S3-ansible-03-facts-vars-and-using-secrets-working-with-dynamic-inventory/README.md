@@ -512,7 +512,7 @@ ansible-playbook ping-playbook.yml
 - install "boto3 and botocore"
 
 ```bash
-sudo dnf install pip
+sudo dnf install -y pip
 pip install --user boto3 botocore
 ```
 
