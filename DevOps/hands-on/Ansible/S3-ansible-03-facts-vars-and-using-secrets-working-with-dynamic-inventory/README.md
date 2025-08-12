@@ -1,14 +1,14 @@
 # Hands-on Ansible-03: Using facts, vars, secrets, and dynamic inventory
 
-Purpose of the this hands-on training is to give students the knowledge of ansible facts gathering,  working with secret values and using dynamic inventory.
+The purpose of this hands-on training is to give students the knowledge of Ansible facts gathering,  working with secret values, and using dynamic inventory.
 
 ## Learning Outcomes
 
 At the end of this hands-on training, students will be able to;
 
-- Explain how and what facts gathering and how to use it in the playbook
+- Explain how and what facts gathering is and how to use it in the playbook
 - Learn how to deal with secret values with ansible-vault
-- Explain what is a dynamic inventory
+- Explain what a dynamic inventory
 - Explain how to use the dynamic inventory with the EC2 plugin.
 
 ## Outline
@@ -24,7 +24,7 @@ At the end of this hands-on training, students will be able to;
 ## Part 1 - Install Ansible
 
 
-- Spin-up 3 Amazon Linux 2023 instances and name them as:
+- Spin up 3 Amazon Linux 2023 instances and name them as:
     1. control node
     2. node1 ----> (SSH PORT 22, HTTP PORT 80)
     3. node2 ----> (SSH PORT 22, HTTP PORT 80)
@@ -80,7 +80,7 @@ interpreter_python=auto_silent
 scp -i <pem file> <pem file> ec2-user@<public DNS name of Control Node>:/home/ec2-user
 ```
 
-- or you can create a file name <pem file> into the directory `/home/ec2-user` on the control node and copy your pem file into it.
+- or you can create a file name <pem file> in the directory `/home/ec2-user` on the control node and copy your pem file into it.
 
 ```bash
 chmod 400 <pem file>
@@ -126,7 +126,7 @@ ansible all -m ping -o
 ansible-playbook myplaybook.yml
 ```
 
-- Notice that in the playbook we use the same content for each node but ip address. This time we get the ip address value from a variable. Update the myplaybook.yaml as follows.
+- Notice that in the playbook, we use the same content for each node, but ip address. This time we get the ip address value from a variable. Update the myplaybook.yaml as follows.
 
 ```yaml
 - name: Copy ip address to node1
@@ -160,7 +160,7 @@ ansible-playbook myplaybook.yml
 
 - This module prints statements during execution and can be useful for debugging variables or expressions without necessarily halting the playbook.
 
-Update the myplaybook.yaml as follow.
+Update the myplaybook.yaml as follows.
 
 ```yaml
 - name: Copy ip address to node1
@@ -224,7 +224,7 @@ ec2-34-201-69-79.compute-1.amazonaws.com | SUCCESS => {
       ansible.builtin.debug:
         var: ansible_facts
 ```
-- run the play book
+- run the playbook
 
 ```bash
 ansible-playbook facts.yml
@@ -290,7 +290,7 @@ ansible all -b -m command -a "grep john /etc/shadow"
 
 ### Using encrypted files
 
-- Create encrypted file using ``ansible-vault`` command
+- Create an encrypted file using ``ansible-vault`` command
 
 ```bash
 ansible-vault create secret.yml
@@ -340,7 +340,7 @@ ansible-playbook create-user.yml
 ```
 
 ```bash
-ERROR! Attempting to decrypt but no vault secrets found
+ERROR! Attempting to decrypt, but no vault secrets found
 ```
 
 - Run the playbook with ``--ask-vault-pass`` command:
@@ -366,7 +366,7 @@ node1 | CHANGED | rc=0 >>
 tyler:99abcd:18569:0:99999:7:::
 ```
 
-- Create another encrypted file using "ansible-vault" command but this time use SHA (Secure Hash Algorithm) for your password:
+- Create another encrypted file using "ansible-vault" command, but this time use SHA (Secure Hash Algorithm) for your password:
 
 ```bash
 ansible-vault create secret-1.yml
@@ -394,7 +394,7 @@ cat secret-1.yml
 ```
 - how to use it:
 
-- create a file named `create-user-1.yml` as below.
+- Create a file named `create-user-1.yml` as below.
 
 ```yml
 - name: create a user
@@ -499,15 +499,15 @@ ansible-playbook ping-playbook.yml
 
 ### Working with dynamic inventory
 
-- go to AWS Management Console and select the IAM roles:
+- Go to AWS Management Console and select the IAM roles:
 
-- click the  "create role" then create a role with "AmazonEC2FullAccess"
+- Click the  "create role" then create a role with "AmazonEC2FullAccess"
 
-- go to EC2 instance Dashboard, and select the control-node instance
+- Go to the EC2 instance Dashboard, and select the control-node instance
 
-- select actions -> security -> modify IAM role
+- Select actions -> security -> modify IAM role
 
-- select the role that you have just created for EC2 full access and save it.
+- Select the role that you have just created for EC2 full access and save it.
 
 - install "boto3 and botocore"
 
@@ -554,7 +554,7 @@ ansible-inventory -i inventory_aws_ec2.yml --graph
 ansible all -m ping --key-file "~/<pem file>"
 ```
 
-- create a playbook name `user.yml`.
+- Create a playbook named `user.yml`.
 
 ```yml
 ---
