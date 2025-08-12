@@ -104,11 +104,11 @@ ansible all -m ping -o
 ansible-playbook playbook1.yml
 ```
 
-- Create a text file named ``testfile1`` and write "Hello World" with using vim. Then create a yaml file named ``playbook2.yml`` and send the "testfile1" to the hosts. 
+- Create a text file named ``testfile1`` and write "Hello World" using vim. Then create a YAML file named ``playbook2.yml`` and send the "testfile1" to the hosts. 
 
 ```yml
 ---
-- name: Copy for linux
+- name: Copy for Linux
   hosts: webservers
   tasks:
    - name: Copy your file to the webservers
@@ -116,10 +116,10 @@ ansible-playbook playbook1.yml
        src: /home/ec2-user/playbooks/testfile1
        dest: /home/ec2-user/testfile1
 
-- name: Copy for ubuntu
+- name: Copy for Ubuntu
   hosts: ubuntuservers
   tasks:
-   - name: Copy your file to the ubuntuservers
+   - name: Copy your file to the Ubuntu servers
      ansible.builtin.copy:
        src: /home/ec2-user/playbooks/testfile1
        dest: /home/ubuntu/testfile1
@@ -130,25 +130,25 @@ ansible-playbook playbook1.yml
   tasks:
    - name: Copy using inline content
      ansible.builtin.copy:
-       content: 'This is content of file2'
+       content: 'This is the content of file2'
        dest: /home/ec2-user/testfile2
 
    - name: Create a new text file
      ansible.builtin.shell: "echo Hello World > /home/ec2-user/testfile3"
 ```
 
-- Run the yaml file.
+- Run the YAML file.
 
 ```bash
 ansible-playbook playbook2.yml
 ```
 
-- Connect the node1 with SSH and check if the text files are there.
+- Connect node1 with SSH and check if the text files are there.
 
 - Install Apache server with ``playbook3.yml``. After the installation, check if the Apache server is reachable from the browser.
 
 ```bash
-ansible-doc yum
+ansible-doc dnf
 ansible-doc apt
 
 vim playbook3.yml
@@ -166,7 +166,7 @@ vim playbook3.yml
    - name: start Apache
      ansible.builtin.shell: "service httpd start"
 
-- name: Apache installation for ubuntuservers
+- name: Apache installation for Ubuntu servers
   hosts: ubuntuservers
   tasks:
    - name: update
@@ -177,7 +177,7 @@ vim playbook3.yml
        name: apache2
        state: latest
 ```
-- Run the yaml file.
+- Run the YAML file.
 
 ```bash
 ansible-playbook -b playbook3.yml
@@ -200,7 +200,7 @@ vim playbook4.yml
        state: absent
        autoremove: yes
 
-- name: Remove Apache from ubuntuservers
+- name: Remove Apache from Ubuntu servers
   hosts: ubuntuservers
   tasks:
    - name: Remove Apache
@@ -211,7 +211,7 @@ vim playbook4.yml
        purge: yes
 ```
 
-- Run the yaml file.
+- Run the YAML file.
 
 ```bash
 ansible-playbook -b playbook4.yml
@@ -224,7 +224,7 @@ vim playbook5.yml
 ```
 ```yml
 ---
-- name: Apache installation and configuration for ubuntuservers
+- name: Apache installation and configuration for Ubuntu servers
   hosts: ubuntuservers
   tasks:
    - name: installing apache
@@ -255,7 +255,7 @@ vim playbook5.yml
         - wget
 ```
 
-- Run the yaml file.
+- Run the YAML file.
 
 ```bash
 ansible-playbook -b playbook5.yml
@@ -268,7 +268,7 @@ vim playbook6.yml
 ```
 ```yml
 ---
-- name: Remove Apache from ubuntuservers
+- name: Remove Apache from Ubuntu servers
   hosts: ubuntuservers
   tasks:
    - name: Uninstalling Apache
@@ -291,7 +291,7 @@ vim playbook6.yml
        - wget
 ```
 
-- Run the yaml file.
+- Run the YAML file.
 
 ```bash
 ansible-playbook -b playbook6.yml
