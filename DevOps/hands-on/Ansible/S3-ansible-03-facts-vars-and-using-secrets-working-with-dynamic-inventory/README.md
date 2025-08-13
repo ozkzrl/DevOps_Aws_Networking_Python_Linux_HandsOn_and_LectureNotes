@@ -527,6 +527,10 @@ nano inventory_aws_ec2.yml
 plugin: amazon.aws.aws_ec2
 regions:
   - "us-east-1"
+filters:
+ instance-state-name: running
+ tag:Name:
+  - "node*-david"
 keyed_groups:
   - key: tags.Name
 compose:
