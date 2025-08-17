@@ -283,7 +283,30 @@ kubectl get nodes --watch
 
 1. Explain what ```Cluster Autoscaler``` is and why we need it.
 
-2. Download the "cluster-autoscaler" components and update.
+2. Create a policy for `Cluster-Autoscaler` pod, with the following content. You can name it as ClusterAutoscalerPolicy.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+} 
+```
+
+3. Download the "cluster-autoscaler" components and update.
 
 ```bash
 cd && mkdir cluster-autoscaler && cd cluster-autoscaler
@@ -294,7 +317,7 @@ Replace <CLUSTER NAME> value with your cluster name, update the image version `r
 
 **** Find an appropriate version of your cluster autoscaler in the [link](https://github.com/kubernetes/autoscaler/releases). The version number should start with version number of the cluster Kubernetes version. For example, if you have selected the Kubernetes version 1.29, you should find something like ```1.29.0```.
 
-3. IRSA Setup for Autoscaler
+4. IRSA Setup for Autoscaler
 
 To enable secure AWS access for the Cluster Autoscaler, we use IAM Roles for Service Accounts (IRSA). This allows the autoscaler pod to assume an IAM role without storing AWS credentials inside the container.
 
